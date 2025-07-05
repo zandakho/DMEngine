@@ -1,0 +1,12 @@
+#Ignoring
+
+#dirs
+.vs/
+bin/
+bin-int/
+
+#files
+*.user
+*.sln
+*.json
+*.ini
