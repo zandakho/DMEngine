@@ -3,7 +3,7 @@
 #include <glm/glm.hpp>
 
 #include "DME/Renderer/OrthographicCamera.h"
-#include "DME/Renderer/Camera.h"
+#include "DME/Scene/SceneCamera.h"
 
 namespace DME
 {
@@ -44,12 +44,12 @@ namespace DME
 
 	struct CameraComponent
 	{
-		Camera Camera;
+		SceneCamera Camera;
 		bool Primary = true;
+		bool FixedAspectRatio = false;
 
 		CameraComponent() = default;
 		CameraComponent(const CameraComponent&) = default;
-		CameraComponent(const glm::mat4& projection) : Camera(projection) {}
 	};
 
 	

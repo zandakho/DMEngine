@@ -13,7 +13,7 @@ namespace DME
 
 	OpenGLTexture2D::OpenGLTexture2D(uint32_t width, uint32_t height) : m_Width(width), m_Height(height)
 	{
-		HZ_PROFILE_FUNCTION();
+		DME_PROFILE_FUNCTION();
 
 		m_InternalFormat = GL_RGBA8;
 		m_DataFormat = GL_RGBA;
@@ -31,13 +31,13 @@ namespace DME
 
 	OpenGLTexture2D::OpenGLTexture2D(const std::string& path) : m_Path(path)
 	{
-		HZ_PROFILE_FUNCTION();
+		DME_PROFILE_FUNCTION();
 		
 		int width, height, channels;
 		stbi_set_flip_vertically_on_load_thread(1);
 		stbi_uc* data = nullptr;
 		{
-			HZ_PROFILE_SCOPE("stbi_load - OpenGLTexture2D::OpenGLTexture2D(const std::string&)");
+			DME_PROFILE_SCOPE("stbi_load - OpenGLTexture2D::OpenGLTexture2D(const std::string&)");
 			data = stbi_load(path.c_str(), &width, &height, &channels, 0);
 		}
 		DME_CORE_ASSERT(data, "Failed to load image!");
@@ -79,14 +79,14 @@ namespace DME
 
 	OpenGLTexture2D::~OpenGLTexture2D()
 	{
-		HZ_PROFILE_FUNCTION();
+		DME_PROFILE_FUNCTION();
 	
 		glDeleteTextures(1, &m_RendererID);
 	}
 
 	void OpenGLTexture2D::SetData(void* data, uint32_t size)
 	{
-		HZ_PROFILE_FUNCTION();
+		DME_PROFILE_FUNCTION();
 		 
 		uint32_t bpp = m_DataFormat == GL_RGBA ? 4 : 3;
 		DME_CORE_ASSERT(size == m_Width * m_Height * bpp, "Data must be entire texture!");
@@ -96,7 +96,7 @@ namespace DME
 
 	void OpenGLTexture2D::Bind(uint32_t slot) const
 	{
-		HZ_PROFILE_FUNCTION();
+		DME_PROFILE_FUNCTION();
 		
 		glBindTextureUnit(slot, m_RendererID);
 	}

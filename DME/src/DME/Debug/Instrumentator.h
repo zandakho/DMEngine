@@ -133,23 +133,24 @@ namespace DME
 	};
 }
 
-#define HZ_PROFILE 1
+#define DME_PROFILE 1
 
-#if HZ_PROFILE
+#if DME_PROFILE
+
 #define CONCAT(x, y) x ## y
 #define C(x, y) CONCAT(x, y)
-#define HZ_PROFILE_BEGIN_SESSION(name, filepath) ::DME::Instrumentator::Get().BeginSession(name, filepath)
-#define HZ_PROFILE_END_SESSION() ::DME::Instrumentator::Get().EndSession()
-#define HZ_PROFILE_SCOPE(name) ::DME::InstrumentatorTimer C(timer,__LINE__)(name);
-#define HZ_PROFILE_FUNCTION() HZ_PROFILE_SCOPE(__FUNCSIG__)
+#define DME_PROFILE_BEGIN_SESSION(name, filepath) ::DME::Instrumentator::Get().BeginSession(name, filepath)
+#define DME_PROFILE_END_SESSION() ::DME::Instrumentator::Get().EndSession()
+#define DME_PROFILE_SCOPE(name) ::DME::InstrumentatorTimer C(timer,__LINE__)(name);
+#define DME_PROFILE_FUNCTION() DME_PROFILE_SCOPE(__FUNCSIG__)
 
 #else
 
 #define CONCAT(x, y) x ## y
 #define C(x, y) CONCAT(x, y)
-#define HZ_PROFILE_BEGIN_SESSION(name, filepath)
-#define HZ_PROFILE_END_SESSION()
-#define HZ_PROFILE_SCOPE(name)
-#define HZ_PROFILE_FUNCTION()
+#define DME_PROFILE_BEGIN_SESSION(name, filepath) 
+#define DME_PROFILE_END_SESSION()
+#define DME_PROFILE_SCOPE(name)
+#define DME_PROFILE_FUNCTION()
 
 #endif

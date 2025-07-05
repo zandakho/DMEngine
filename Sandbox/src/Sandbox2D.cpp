@@ -19,28 +19,28 @@ namespace DME
 
 	void Sandbox2D::OnAttach() 
 	{
-		HZ_PROFILE_FUNCTION();
+		DME_PROFILE_FUNCTION();
 
 		m_BlackFlagTexture = Texture2D::Create("C:/Engine/DME/Sandbox/assets/textures/Checkerboard.png");
 	}
 
 	void Sandbox2D::OnDetach()
 	{
-		HZ_PROFILE_FUNCTION();
+		DME_PROFILE_FUNCTION();
 
 	}
 
 	void Sandbox2D::OnUpdate(TimeStep ts)
 	{
 
-		HZ_PROFILE_FUNCTION();
+		DME_PROFILE_FUNCTION();
 		
 		m_CameraController.OnUpdate(ts);
 
 		//Render
 		Renderer2D::ResetStats();
 		{
-			HZ_PROFILE_SCOPE("Renderer Prep");
+			DME_PROFILE_SCOPE("Renderer Prep");
 			RenderCommand::SetClearColor({ 0.07f, 0.07f, 0.07f, 1.0f });
 			RenderCommand::Clear();
 
@@ -50,7 +50,7 @@ namespace DME
 			static float rotation = 0.0f;
 			rotation += ts * 50.0f;
 
-			HZ_PROFILE_SCOPE("Renderer Draw");
+			DME_PROFILE_SCOPE("Renderer Draw");
 
 			Renderer2D::BeginScene(m_CameraController.GetCamera());
 			
@@ -81,7 +81,7 @@ namespace DME
 
 	void Sandbox2D::OnImGuiRender()
 	{
-		HZ_PROFILE_FUNCTION();
+		DME_PROFILE_FUNCTION();
 
 		ImGui::Begin("Settings", nullptr, ImGuiWindowFlags_NoCollapse | ImGuiWindowFlags_HorizontalScrollbar | ImGuiWindowFlags_NoScrollbar | ImGuiWindowFlags_NoScrollWithMouse);
 

@@ -22,7 +22,7 @@ namespace DME
 
 	Application::Application(const std::string& name)
 	{
-		HZ_PROFILE_FUNCTION();
+		DME_PROFILE_FUNCTION();
 
 		DME_CORE_ASSERT(!s_Instance, "Application already exists!");
 		s_Instance = this;
@@ -38,21 +38,21 @@ namespace DME
 
 	Application::~Application()
 	{
-		HZ_PROFILE_FUNCTION();
+		DME_PROFILE_FUNCTION();
 
 		Renderer::Shutdown();
 	}
 
 	void Application::PushLayer(Layer* layer)
 	{
-		HZ_PROFILE_FUNCTION();
+		DME_PROFILE_FUNCTION();
 		m_LayerStack.PushLayer(layer);
 		layer->OnAttach();
 	}
 
 	void Application::PushOverlay(Layer* overlay)
 	{
-		HZ_PROFILE_FUNCTION();
+		DME_PROFILE_FUNCTION();
 
 		m_LayerStack.PushOverlay(overlay);
 		overlay->OnAttach();
@@ -60,7 +60,7 @@ namespace DME
 
 	void Application::OnEvent(Event& event)
 	{
-		HZ_PROFILE_FUNCTION();
+		DME_PROFILE_FUNCTION();
 		
 		EventDispatcher dispatcher(event);
 		dispatcher.Dispatch<WindowCloseEvent>(DME_BIND_EVENT_FN(Application::OnWindowClose));
@@ -76,11 +76,11 @@ namespace DME
 
 	void Application::Run()
 	{
-		HZ_PROFILE_FUNCTION();
+		DME_PROFILE_FUNCTION();
 
 		while (m_Running)
 		{
-			HZ_PROFILE_SCOPE("RunLoop");
+			DME_PROFILE_SCOPE("RunLoop");
 		
 			float time = static_cast<float>(glfwGetTime());
 			TimeStep timestep = time - m_LastFrameTime;
@@ -90,7 +90,7 @@ namespace DME
 			{
 				{
 					
-					HZ_PROFILE_SCOPE("LayerStack OnUpdate")
+					DME_PROFILE_SCOPE("LayerStack OnUpdate")
 
 					for (Layer* layer : m_LayerStack)
 						layer->OnUpdate(timestep);
@@ -99,7 +99,7 @@ namespace DME
 				
 				m_ImGuiLayer->Begin();
 				{
-					HZ_PROFILE_SCOPE("LayerStack OnImGuiRender")
+					DME_PROFILE_SCOPE("LayerStack OnImGuiRender")
 					for (Layer* layer : m_LayerStack)
 						layer->OnImGuiRender();
 				}
@@ -113,7 +113,7 @@ namespace DME
 
 	void Application::Shutdown()
 	{
-		HZ_PROFILE_FUNCTION();
+		DME_PROFILE_FUNCTION();
 		delete s_Instance;
 	}
 
@@ -125,7 +125,7 @@ namespace DME
 
 	bool Application::OnWindowResize(WindowResizeEvent& event)
 	{
-		HZ_PROFILE_FUNCTION();
+		DME_PROFILE_FUNCTION();
 
 		if (event.GetWidth() == 0 || event.GetHeight() == 0)
 		{

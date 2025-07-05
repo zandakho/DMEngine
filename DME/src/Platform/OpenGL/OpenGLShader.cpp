@@ -24,7 +24,7 @@ namespace DME
 
 	OpenGLShader::OpenGLShader(const std::string& filepath)
 	{
-		HZ_PROFILE_FUNCTION();
+		DME_PROFILE_FUNCTION();
 
 		std::string source = OpenGLShader::ReadFile(filepath);
 		auto shaderSource = PreProcess(source);
@@ -40,7 +40,7 @@ namespace DME
 	OpenGLShader::OpenGLShader(const std::string& name, const std::string& vertexSrc, const std::string& fragmentSrc)
 		: m_Name(name)
 	{
-		HZ_PROFILE_FUNCTION();
+		DME_PROFILE_FUNCTION();
 
 		std::unordered_map<GLenum, std::string> sources;
 		sources[GL_VERTEX_SHADER] = vertexSrc;
@@ -50,14 +50,14 @@ namespace DME
 
 	OpenGLShader::~OpenGLShader()
 	{
-		HZ_PROFILE_FUNCTION();
+		DME_PROFILE_FUNCTION();
 
 		glDeleteProgram(m_RendererID);
 	}
 
 	std::string OpenGLShader::ReadFile(const std::string& filepath)
 	{
-		HZ_PROFILE_FUNCTION();
+		DME_PROFILE_FUNCTION();
 
 		std::string result;
 		std::ifstream in(filepath, std::ios::in | std::ios::binary);
@@ -80,7 +80,7 @@ namespace DME
 
 	std::unordered_map<GLenum, std::string> OpenGLShader::PreProcess(const std::string& source)
 	{
-		HZ_PROFILE_FUNCTION();
+		DME_PROFILE_FUNCTION();
 		
 		std::unordered_map<GLenum, std::string> shaderSource;
 		
@@ -106,7 +106,7 @@ namespace DME
 
 	void OpenGLShader::Compile(const std::unordered_map<GLenum, std::string>& shaderSource)
 	{
-		HZ_PROFILE_FUNCTION();
+		DME_PROFILE_FUNCTION();
 		
 		GLuint program = glCreateProgram();
 		DME_CORE_ASSERT(shaderSource.size() <= 2, "We only support 2 shader for now");
@@ -180,21 +180,21 @@ namespace DME
 
 	void OpenGLShader::Bind() const
 	{
-		HZ_PROFILE_FUNCTION();
+		DME_PROFILE_FUNCTION();
 	
 		glUseProgram(m_RendererID);
 	}
 
 	void OpenGLShader::UnBind() const
 	{
-		HZ_PROFILE_FUNCTION();
+		DME_PROFILE_FUNCTION();
 		
 		glUseProgram(0);
 	}
 
 	void OpenGLShader::SetInt(const std::string& name, int value)
 	{
-		HZ_PROFILE_FUNCTION();
+		DME_PROFILE_FUNCTION();
 		
 		UploadUniformInt(name, value);
 	}
@@ -206,7 +206,7 @@ namespace DME
 
 	void OpenGLShader::SetFloat(const std::string& name, const float& value)
 	{
-		HZ_PROFILE_FUNCTION();
+		DME_PROFILE_FUNCTION();
 
 		UploadUniformFloat(name, value);
 	}
@@ -218,21 +218,21 @@ namespace DME
 
 	void OpenGLShader::SetFloat3(const std::string& name, const glm::vec3& value)
 	{
-		HZ_PROFILE_FUNCTION();
+		DME_PROFILE_FUNCTION();
 		
 		UploadUniformFloat3(name, value);
 	}
 
 	void OpenGLShader::SetFloat4(const std::string& name, const glm::vec4& value)
 	{
-		HZ_PROFILE_FUNCTION();
+		DME_PROFILE_FUNCTION();
 		
 		UploadUniformFloat4(name, value);
 	}
 
 	void OpenGLShader::SetMat4(const std::string& name, const glm::mat4& value)
 	{
-		HZ_PROFILE_FUNCTION();
+		DME_PROFILE_FUNCTION();
 		
 		UploadUniformMat4(name, value);
 	}

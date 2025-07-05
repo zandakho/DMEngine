@@ -36,9 +36,9 @@
 #ifdef DME_DEBUG
 	#if defined(DME_PLATFORM_WINDOWS)
 		#define DME_DEBUGBREAK() __debugbreak()
-	#elif defined(HZ_PLATFORM_LINUX)
+	#elif defined(DME_PLATFORM_LINUX)
 		#include <signal.h>
-		#define HZ_DEBUGBREAK() raise(SIGTRAP)
+		#define DME_DEBUGBREAK() raise(SIGTRAP)
 	#else
 		#error "Platform doesn`t support debugbreak yet!"
 	#endif
@@ -53,7 +53,7 @@
 #else
 	#define DME_ASSERT(x, ...)
 	#define DME_CORE_ASSERT(x, ...)
-#endif // HZ_ENABLE_ASSERTS 
+#endif // DME_ENABLE_ASSERTS 
 
 #define BIT(x) (1 << x)
 

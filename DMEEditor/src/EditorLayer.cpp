@@ -22,7 +22,7 @@ namespace DME
 
 	void EditorLayer::OnAttach()
 	{
-		HZ_PROFILE_FUNCTION(); 
+		DME_PROFILE_FUNCTION(); 
 
 		m_BlackFlagTexture = Texture2D::Create("C:/Engine/DME/Common/assets/textures/Checkerboard.png");
 
@@ -39,22 +39,22 @@ namespace DME
 		m_SquareEntity = square;
 
 		m_CameraEntity = m_ActiveScene->CreateEntity("Camera");
-		m_CameraEntity.AddComponent<CameraComponent>(glm::ortho(-16.0f, 16.0f, -9.0f, 9.0f, -1.0f, 1.0f));
-
+		m_CameraEntity.AddComponent<CameraComponent>();
+		 
 		m_SecondCamera = m_ActiveScene->CreateEntity("Second Camera");
-		auto&& cc = m_SecondCamera.AddComponent<CameraComponent>(glm::ortho(-1.0f, 1.0f, -1.0f, 1.0f, -1.0f, 1.0f));
+		auto&& cc = m_SecondCamera.AddComponent<CameraComponent>();
 		cc.Primary = false;
 	}
 
 	void EditorLayer::OnDetach()
 	{
-		HZ_PROFILE_FUNCTION();
+		DME_PROFILE_FUNCTION();
 
 	}
 
 	void EditorLayer::OnUpdate(TimeStep ts)
 	{
-		HZ_PROFILE_FUNCTION();
+		DME_PROFILE_FUNCTION();
 
 		if (FramebufferSpecification spec = m_Framebuffer->GetSpecification(); 
 			m_ViewportSize.x > 0.0f && m_ViewportSize.y > 0.0f && 
@@ -62,6 +62,8 @@ namespace DME
 		{
 			m_Framebuffer->Resize(static_cast<uint32_t>(m_ViewportSize.x), static_cast<uint32_t>(m_ViewportSize.y));
 			m_CameraController.OnResize(m_ViewportSize.x, m_ViewportSize.y);
+
+			m_ActiveScene->OnViewportResize(static_cast<uint32_t>(m_ViewportSize.x), static_cast<uint32_t>(m_ViewportSize.y));
 
 		}
 		
@@ -82,7 +84,7 @@ namespace DME
 
 	void EditorLayer::OnImGuiRender()
 	{
-		HZ_PROFILE_FUNCTION();
+		DME_PROFILE_FUNCTION();
 
 		EditorLayer::OnDockspace();
 
@@ -103,6 +105,36 @@ namespace DME
 				{
 					m_CameraEntity.GetComponent<CameraComponent>().Primary = m_PrimaryCamera;
 					m_SecondCamera.GetComponent<CameraComponent>().Primary = !m_PrimaryCamera;
+				}
+
+				{
+
+					
+
+					if (m_PrimaryCamera)
+					{
+						auto& camera1 = m_CameraEntity.GetComponent<CameraComponent>().Camera;
+						float orthoSize = camera1.GetOrthographicSize();
+
+						if (ImGui::DragFloat("Camera1", &orthoSize, 0.2f, 0.0f, FLT_MAX))
+						{
+							camera1.SetOrthographicSize(orthoSize);
+						}
+
+						
+					}
+					else
+					{
+						auto& camera2 = m_SecondCamera.GetComponent<CameraComponent>().Camera;
+						float orthoSize = camera2.GetOrthographicSize();
+
+						if (ImGui::DragFloat("Camera2", &orthoSize, 0.2f, 0.0f, FLT_MAX))
+						{
+							camera2.SetOrthographicSize(orthoSize);
+						}
+					}
+				
+					
 				}
 
 				m_PrimaryCamera ? 
@@ -127,7 +159,7 @@ namespace DME
 					{
 						ImGui::Text(m_CameraController.GetZoomLevel() > 0.25f ? m_CameraController.GetZoomLevel() < 30.0f ? "Zoom Level: %.2f" : "Zoom Level: %.2f (min)" : "Zoom Level: %.2f (max)", m_CameraController.GetZoomLevel());
 
-						ImGui::Text("Camera Position: X: %.1f Y: %.1f Z: %.1f",
+						ImGui::Text("Camera Position: X: %.3f Y: %.3f Z: %.3f",
 							m_CameraController.GetCameraPosition().x,
 							m_CameraController.GetCameraPosition().y,
 							m_CameraController.GetCameraPosition().z);

@@ -14,7 +14,7 @@ namespace DME
 
 	void OpenGLContext::Init()
 	{
-		HZ_PROFILE_FUNCTION();
+		DME_PROFILE_FUNCTION();
 
 		glfwMakeContextCurrent(m_WindowHandle);
 		int status = gladLoadGLLoader((GLADloadproc)glfwGetProcAddress);
@@ -32,7 +32,7 @@ namespace DME
 
 	void OpenGLContext::SwapBuffers()
 	{
-		HZ_PROFILE_FUNCTION();
+		DME_PROFILE_FUNCTION();
 
 		glfwSwapBuffers(m_WindowHandle);
 	}

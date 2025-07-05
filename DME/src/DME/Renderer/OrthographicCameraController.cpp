@@ -20,7 +20,7 @@ namespace DME
 
 	void OrthographicCameraController::OnUpdate(TimeStep ts)
 	{
-		HZ_PROFILE_FUNCTION();
+		DME_PROFILE_FUNCTION();
 
 		if (Input::IsKeyPressed(Key::A))
 		{
@@ -66,7 +66,7 @@ namespace DME
 
 	void OrthographicCameraController::OnEvent(Event& event)
 	{
-		HZ_PROFILE_FUNCTION();
+		DME_PROFILE_FUNCTION();
 
 		EventDispatcher dispatcher(event);
 		dispatcher.Dispatch<MouseScrolledEvent>(DME_BIND_EVENT_FN(OrthographicCameraController::OnMouseScrolled));
@@ -86,7 +86,7 @@ namespace DME
 
 	bool OrthographicCameraController::OnMouseScrolled(MouseScrolledEvent& event)
 	{
-		HZ_PROFILE_FUNCTION();
+		DME_PROFILE_FUNCTION();
 		
 		m_ZoomLevel -= event.GetOffsetY() * 0.25f;
 		m_ZoomLevel = std::max(m_ZoomLevel, 0.25f);
@@ -98,7 +98,7 @@ namespace DME
 
 	bool OrthographicCameraController::OnWindowResized(WindowResizeEvent& event)
 	{
-		HZ_PROFILE_FUNCTION();
+		DME_PROFILE_FUNCTION();
 		
 		OnResize((float)event.GetWidth(), (float)event.GetHeight());
 		

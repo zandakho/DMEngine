@@ -25,7 +25,7 @@ namespace DME
 
 	void ImGuiLayer::OnAttach()
 	{
-		HZ_PROFILE_FUNCTION();
+		DME_PROFILE_FUNCTION();
 
 		IMGUI_CHECKVERSION();
 		ImGui::CreateContext();
@@ -86,7 +86,7 @@ namespace DME
 
 	void ImGuiLayer::OnDetach()
 	{
-		HZ_PROFILE_FUNCTION();
+		DME_PROFILE_FUNCTION();
 		
 		ImGui_ImplOpenGL3_Shutdown();
 		ImGui_ImplGlfw_Shutdown();
@@ -105,7 +105,7 @@ namespace DME
 
 	void ImGuiLayer::Begin()
 	{
-		HZ_PROFILE_FUNCTION();
+		DME_PROFILE_FUNCTION();
 		
 		ImGui_ImplOpenGL3_NewFrame();
 		ImGui_ImplGlfw_NewFrame();
@@ -114,7 +114,7 @@ namespace DME
 
 	void ImGuiLayer::End()
 	{
-		HZ_PROFILE_FUNCTION();
+		DME_PROFILE_FUNCTION();
 		
 		ImGuiIO& io = ImGui::GetIO(); static_cast<void>(io);
 		Application& app = Application::Get();
