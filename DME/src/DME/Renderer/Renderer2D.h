@@ -1,10 +1,8 @@
 #pragma once
 
-// --- DME/Renderer/ -----------------------------------------//
-#include "DME/Renderer/OrthographicCamera.h"					//
-#include "DME/Renderer/Camera.h"					//
-#include "DME/Renderer/Texture.h"								//
-// -------------------------------------------------------------//
+#include "DME/Renderer/OrthographicCamera.h"
+#include "DME/Renderer/Camera.h"
+#include "DME/Renderer/Texture.h"
 
 namespace DME
 {

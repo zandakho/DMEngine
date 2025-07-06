@@ -1,14 +1,10 @@
 #include "dmepch.h"
 
-// --- Platform/OpenGL/ ----------------------------------------//
-#include "Platform/OpenGL/OpenGLShader.h"						//
-// -------------------------------------------------------------//
+#include "Platform/OpenGL/OpenGLShader.h"
 
-// --- Dependencies --------------------------------------------//
-#include <fstream>												//
-#include <glad/glad.h>											//
-#include <glm/gtc/type_ptr.hpp>									//
-// -------------------------------------------------------------//
+#include <fstream>
+#include <glad/glad.h>
+#include <glm/gtc/type_ptr.hpp>
 
 namespace DME
 {

@@ -1,8 +1,6 @@
 #pragma once
 
-// --- DME/Renderer/ -----------------------------------------//
-#include "DME/Renderer/RendererAPI.h"						    //
-// -------------------------------------------------------------//
+#include "DME/Renderer/RendererAPI.h"
 
 namespace DME
 {

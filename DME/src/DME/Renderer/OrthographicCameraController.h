@@ -1,17 +1,11 @@
 #pragma once
 
-// --- DME/Core/ ---------------------------------------------//
-#include "DME/Core/TimeStep.h"								//
-// -------------------------------------------------------------//
+#include "DME/Core/TimeStep.h"
 
-// --- DME/Events --------------------------------------------//
-#include "DME/Events/ApplicationEvent.h"						//
-#include "DME/Events/MouseEvent.h"							//
-// -------------------------------------------------------------//
+#include "DME/Events/ApplicationEvent.h"
+#include "DME/Events/MouseEvent.h"
 
-// --- DME/Renderer/ -----------------------------------------//
-#include "DME/Renderer/OrthographicCamera.h"					//
-// -------------------------------------------------------------//
+#include "DME/Renderer/OrthographicCamera.h"
 
 namespace DME
 {

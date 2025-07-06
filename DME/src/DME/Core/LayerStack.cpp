@@ -1,8 +1,6 @@
 #include "dmepch.h"
 
-// --- DME/Core/ ---------------------------------------------//
-#include "DME/Core/LayerStack.h"								//
-// -------------------------------------------------------------//
+#include "DME/Core/LayerStack.h"
 
 namespace DME
 {

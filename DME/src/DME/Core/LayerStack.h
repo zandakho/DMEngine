@@ -1,13 +1,9 @@
 #pragma once
 
-// --- DME/Core/ ---------------------------------------------//
-#include "DME/Core/Base.h"									//
-#include "DME/Core/Layer.h"									//
-// -------------------------------------------------------------//
+#include "DME/Core/Base.h"
+#include "DME/Core/Layer.h"
 
-// --- Dependencies --------------------------------------------//
-#include <vector>												//
-// -------------------------------------------------------------//
+#include <vector>
 
 namespace DME
 {

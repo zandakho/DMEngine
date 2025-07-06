@@ -1,13 +1,9 @@
 #include "dmepch.h"
 
-// --- DME/Core/ ---------------------------------------------//
-#include "DME/Core/Input.h"									//
-#include "DME/Core/KeyCodes.h"								//
-// -------------------------------------------------------------//
+#include "DME/Core/Input.h"
+#include "DME/Core/KeyCodes.h"
 
-// --- DME/Renderer/ -----------------------------------------//
-#include "DME/Renderer/OrthographicCameraController.h"		//
-// -------------------------------------------------------------//
+#include "DME/Renderer/OrthographicCameraController.h"
 
 namespace DME
 {

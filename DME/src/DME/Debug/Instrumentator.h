@@ -1,18 +1,12 @@
 #pragma once
 
+#include "DME/Core/Log.h"
 
-// --- Dependencies --------------------------------------------//
-#include "DME/Core/Log.h"										//
-// -------------------------------------------------------------//
-
-// --- Dependencies --------------------------------------------//
-#include <string>												//
-#include <chrono>												//
-#include <algorithm>											//
-#include <fstream>												//
-#include <thread>												//
-// -------------------------------------------------------------//
-
+#include <string>
+#include <chrono>
+#include <algorithm>
+#include <fstream>
+#include <thread>
 
 namespace DME
 {

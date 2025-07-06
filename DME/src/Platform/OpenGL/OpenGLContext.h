@@ -1,8 +1,6 @@
 #pragma once
 
-// --- DME/Renderer/ -----------------------------------------//
-#include "DME/Renderer/GraphicsContext.h"						//
-// -------------------------------------------------------------//
+#include "DME/Renderer/GraphicsContext.h"
 
 struct GLFWwindow;
 

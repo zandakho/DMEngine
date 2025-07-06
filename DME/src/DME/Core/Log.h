@@ -1,13 +1,9 @@
 #pragma once
 
-// --- DME/Core/ ---------------------------------------------//
-#include "DME/Core/Base.h"									//
-// -------------------------------------------------------------//
+#include "DME/Core/Base.h"
 
-// --- Dependencies --------------------------------------------//
-#include <spdlog/spdlog.h>										//
-#include <spdlog/fmt/ostr.h>									//
-// -------------------------------------------------------------//
+#include <spdlog/spdlog.h>
+#include <spdlog/fmt/ostr.h>
 
 namespace DME {
 

@@ -1,16 +1,11 @@
 #include "dmepch.h"
 
-// --- source --------------------------------------------------//
-#include "EditorLayer.h"										//
-// -------------------------------------------------------------//
+#include "EditorLayer.h"
 
-// --- Dependencies --------------------------------------------//
-#include <chrono>												//
-#include <ImGui/imgui.h>										//
-#include <glm/gtc/type_ptr.hpp>									//
-#include <glm/gtc/matrix_transform.hpp>							//
-// -------------------------------------------------------------//
-
+#include <chrono>
+#include <ImGui/imgui.h>
+#include <glm/gtc/type_ptr.hpp>
+#include <glm/gtc/matrix_transform.hpp>
 
 namespace DME
 {
@@ -78,6 +73,8 @@ namespace DME
 		
 		m_CameraEntity.AddComponent<NativeScriptComponent>().Bind<CameraController>();
 		m_SecondCamera.AddComponent<NativeScriptComponent>().Bind<CameraController>();
+
+		m_SceneHierarchy.SetContext(m_ActiveScene);
 	}
 
 	void EditorLayer::OnDetach()
@@ -125,6 +122,8 @@ namespace DME
 
 		EditorLayer::OnDockspace();
 
+		m_SceneHierarchy.OnImGuiRender();
+
 		ImGui::Begin("Settings", nullptr, ImGuiWindowFlags_NoCollapse | ImGuiWindowFlags_HorizontalScrollbar);
 
 		ImGuiIO& io = ImGui::GetIO(); static_cast<void>(io);
@@ -134,16 +133,12 @@ namespace DME
 
 			if (ImGui::CollapsingHeader("Scene"))
 			{
-				ImGui::DragFloat3("Camera Position", (float*)&m_CameraController.GetCameraPosition(), 0.1f, -FLT_MAX, FLT_MAX, "%.3f", ImGuiSliderFlags_ClampOnInput);
-				ImGui::DragFloat("Camera Rotation", (float*)&m_CameraController.GetCameraRotation(), 1.0f, -FLT_MAX, FLT_MAX, "%.f", ImGuiSliderFlags_ClampOnInput);
-
 				if (ImGui::Combo("Camera Select", &selected_items, items, 2))
 				{
 					selected_items == 0 ? m_PrimaryCamera = true : m_PrimaryCamera = false;
 					m_CameraEntity.GetComponent<CameraComponent>().Primary = m_PrimaryCamera;
 					m_SecondCamera.GetComponent<CameraComponent>().Primary = !m_PrimaryCamera;
 				}
-
 
 				{
 
@@ -169,7 +164,6 @@ namespace DME
 							camera2.SetOrthographicSize(orthoSize);
 						}
 					}
-				
 					
 				}
 
@@ -178,7 +172,6 @@ namespace DME
 					: 
 					ImGui::DragFloat3("Second Camera", glm::value_ptr(m_SecondCamera.GetComponent<TransformComponent>().Transform[3]), 0.1f, -FLT_MAX, FLT_MAX, "%.3f", ImGuiSliderFlags_ClampOnInput);
 
-				
 
 				ImGui::Separator();
 				auto& tag = m_SquareEntity.GetComponent<TagComponent>().Tag;
@@ -193,12 +186,6 @@ namespace DME
 				{
 					if (ImGui::TreeNode("Scene##information"))
 					{
-						ImGui::Text(m_CameraController.GetZoomLevel() > 0.25f ? m_CameraController.GetZoomLevel() < 30.0f ? "Zoom Level: %.2f" : "Zoom Level: %.2f (min)" : "Zoom Level: %.2f (max)", m_CameraController.GetZoomLevel());
-
-						ImGui::Text("Camera Position: X: %.3f Y: %.3f Z: %.3f",
-							m_CameraController.GetCameraPosition().x,
-							m_CameraController.GetCameraPosition().y,
-							m_CameraController.GetCameraPosition().z);
 
 						ImGui::TreePop();
 					} 

@@ -159,6 +159,7 @@
     <ClInclude Include="src\DME\Core\LayerStack.h" />
     <ClInclude Include="src\DME\Core\Log.h" />
     <ClInclude Include="src\DME\Core\MouseCodes.h" />
+    <ClInclude Include="src\DME\Core\PlatformDetection.h" />
     <ClInclude Include="src\DME\Core\TimeStep.h" />
     <ClInclude Include="src\DME\Core\Window.h" />
     <ClInclude Include="src\DME\Debug\Instrumentator.h" />

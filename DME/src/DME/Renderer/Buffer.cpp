@@ -1,13 +1,9 @@
 #include "dmepch.h"
 
-// --- DME/Renderer/ -----------------------------------------//
-#include "DME/Renderer/Buffer.h"								//
-#include "DME/Renderer/Renderer.h"							//
-// -------------------------------------------------------------//
+#include "DME/Renderer/Buffer.h"
+#include "DME/Renderer/Renderer.h"
 
-// --- Platform/OpenGL/ ----------------------------------------//
-#include "Platform/OpenGL/OpenGLBuffer.h"						//
-// -------------------------------------------------------------//
+#include "Platform/OpenGL/OpenGLBuffer.h"
 
 namespace DME
 {

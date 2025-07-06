@@ -57,8 +57,8 @@ namespace DME
 	{
 		ScriptableEntity* Instance = nullptr;
 
-		ScriptableEntity*(*InstantiateScript)();
-		void (*DestroyScript)(NativeScriptComponent*);
+		ScriptableEntity*(*InstantiateScript)() {};
+		void (*DestroyScript)(NativeScriptComponent*) {};
 
 		template<typename T>
 		void Bind()

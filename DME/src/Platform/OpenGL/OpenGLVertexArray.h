@@ -1,8 +1,6 @@
 #pragma once
 
-// --- DME/Renderer/ -----------------------------------------//
-#include "DME/Renderer/VertexArray.h"							//
-// -------------------------------------------------------------//
+#include "DME/Renderer/VertexArray.h"
 
 namespace DME
 {

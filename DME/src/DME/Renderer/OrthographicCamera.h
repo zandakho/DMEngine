@@ -1,13 +1,9 @@
 #pragma once
 
-// --- Dependencies --------------------------------------------//
-#include <glm/glm.hpp>											//
-// -------------------------------------------------------------//
+#include <glm/glm.hpp>
 
 namespace DME
 {
-
-	
 
 	class OrthographicCamera
 	{

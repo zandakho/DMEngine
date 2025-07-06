@@ -1,15 +1,11 @@
 #include "dmepch.h"
 
-// --- DME/Renderer/ -----------------------------------------//
-#include "DME/Renderer/RenderCommand.h"						//
-#include "DME/Renderer/Renderer2D.h"							//
-#include "DME/Renderer/VertexArray.h"							//
-#include "DME/Renderer/Shader.h"								//
-// -------------------------------------------------------------//
+#include "DME/Renderer/RenderCommand.h"
+#include "DME/Renderer/Renderer2D.h"
+#include "DME/Renderer/VertexArray.h"
+#include "DME/Renderer/Shader.h"
 
-// --- Dependencies --------------------------------------------//
-#include <glm/gtc/matrix_transform.hpp>							//
-// -------------------------------------------------------------//
+#include <glm/gtc/matrix_transform.hpp>
 
 namespace DME
 {

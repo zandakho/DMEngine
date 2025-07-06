@@ -1,13 +1,9 @@
 #include "dmepch.h"
 
-// --- DME/Renderer/ -----------------------------------------//
-#include "DME/Renderer/Renderer.h"							//
-#include "DME/Renderer/VertexArray.h"							//
-// -------------------------------------------------------------//
+#include "DME/Renderer/Renderer.h"
+#include "DME/Renderer/VertexArray.h"
 
-// --- Platform/OpenGL/ ----------------------------------------//
-#include "Platform/OpenGL/OpenGLVertexArray.h"					//
-// -------------------------------------------------------------//
+#include "Platform/OpenGL/OpenGLVertexArray.h"
 
 namespace DME
 {

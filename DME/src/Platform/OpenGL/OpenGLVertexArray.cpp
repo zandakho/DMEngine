@@ -1,12 +1,8 @@
 #include "dmepch.h"
 
-// --- Platform/OpenGL/ ----------------------------------------//
-#include "Platform/OpenGL/OpenGLVertexArray.h"					//
-// -------------------------------------------------------------//
+#include "Platform/OpenGL/OpenGLVertexArray.h"
 
-// --- Dependencies --------------------------------------------//
-#include <glad/glad.h>											//
-// -------------------------------------------------------------//
+#include <glad/glad.h>
 
 namespace DME
 {

@@ -1,12 +1,8 @@
 #include "dmepch.h"
 
-// --- DME/Renderer/ -----------------------------------------//
-#include "DME/Renderer/OrthographicCamera.h"					//
-// -------------------------------------------------------------//
+#include "DME/Renderer/OrthographicCamera.h"
 
-// --- Dependencies --------------------------------------------//
-#include <glm/gtc/matrix_transform.hpp>							//
-// -------------------------------------------------------------//
+#include <glm/gtc/matrix_transform.hpp>
 
 namespace DME
 {

@@ -1,8 +1,6 @@
 #pragma once
 
-// --- DME/Events/ -------------------------------------------//
-#include "DME/Events/Event.h"									//
-// -------------------------------------------------------------//
+#include "DME/Events/Event.h"
 
 namespace DME 
 {

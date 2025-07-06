@@ -1,16 +1,10 @@
 #pragma once
 
-// --- DME/Core/ ---------------------------------------------//
-#include "DME/Core/Window.h"								    //
-// -------------------------------------------------------------//
+#include "DME/Core/Window.h"
 
-// --- DME/Renderer/ -----------------------------------------//
-#include "DME/Renderer/GraphicsContext.h"					    //
-// -------------------------------------------------------------//
+#include "DME/Renderer/GraphicsContext.h"
 
-// --- Dependencies --------------------------------------------//
-#include <GLFW/glfw3.h>											//
-// -------------------------------------------------------------//
+#include <GLFW/glfw3.h>
 
 namespace DME
 {
@@ -42,9 +36,9 @@ namespace DME
 		struct WindowData
 		{
 
-			std::string Title;
-			uint32_t Width, Height;
-			bool VSync;
+			std::string Title = std::string();
+			uint32_t Width = 1600, Height = 900;
+			bool VSync = false;
 
 			EventCallbackFn EventCallback;
 		};

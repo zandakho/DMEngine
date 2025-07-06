@@ -1,14 +1,9 @@
 #include "dmepch.h"
 
-// --- DME/Renderer/ -----------------------------------------//
-#include "DME/Renderer/Renderer.h"							//
-#include "DME/Renderer/Renderer2D.h"							//
-// -------------------------------------------------------------//
+#include "DME/Renderer/Renderer.h"
+#include "DME/Renderer/Renderer2D.h"
 
-
-// --- Platform/OpenGL/ ----------------------------------------//
-#include "Platform/OpenGL/OpenGLShader.h"						//
-// -------------------------------------------------------------//
+#include "Platform/OpenGL/OpenGLShader.h"
 
 namespace DME
 {

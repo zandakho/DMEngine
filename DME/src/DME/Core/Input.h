@@ -1,11 +1,8 @@
 #pragma once
 
-// --- DME/Core/ ---------------------------------------------//
-#include "DME/Core/KeyCodes.h"								//
-#include "DME/Core/MouseCodes.h"								//
-#include "DME/Core/Base.h"									//
-// -------------------------------------------------------------//
-
+#include "DME/Core/KeyCodes.h"
+#include "DME/Core/MouseCodes.h"
+#include "DME/Core/Base.h"
 
 namespace DME
 {

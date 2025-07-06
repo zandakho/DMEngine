@@ -2,9 +2,7 @@
 
 #include "Platform/OpenGL/OpenGLFramebuffer.h"
 
-// --- Dependencies --------------------------------------------//
-#include <glad/glad.h>											//
-// -------------------------------------------------------------//
+#include <glad/glad.h>
 
 namespace DME
 {

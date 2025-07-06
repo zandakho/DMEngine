@@ -1,8 +1,6 @@
 #pragma once
 
-// --- DME/Core/ ---------------------------------------------//
-#include "DME/Core/Base.h"									//
-// -------------------------------------------------------------//
+#include "DME/Core/Base.h"
 
 #ifdef DME_PLATFORM_WINDOWS
 

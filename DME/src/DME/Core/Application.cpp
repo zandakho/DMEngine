@@ -1,19 +1,12 @@
 #include "dmepch.h"
 
-// --- DME/Core/ ---------------------------------------------//
-#include "DME/Core/Log.h"							            //
-#include "DME/Core/Input.h"						            //
-#include "DME/Core/Application.h"					            //
-// -------------------------------------------------------------//
+#include "DME/Core/Log.h"	
+#include "DME/Core/Input.h"	
+#include "DME/Core/Application.h"
 
-// --- DME/Renderer/ -----------------------------------------//
-#include "DME/Renderer/Renderer.h"				            //
-// -------------------------------------------------------------//
+#include "DME/Renderer/Renderer.h"
 													   
-// --- Dependencies --------------------------------------------//
-#include <GLFW/glfw3.h>								            //
-#include <print>
-// -------------------------------------------------------------//
+#include <GLFW/glfw3.h>
 
 namespace DME
 {

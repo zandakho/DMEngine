@@ -1,23 +1,13 @@
 
-// --- Dependencies --------------------------------------------//
-#include <dme.h>												//
-#include <ImGui/imgui.h>										//
-#include <glm/gtc/type_ptr.hpp>									//
-#include <glm/gtc/matrix_transform.hpp>							//
-// -------------------------------------------------------------//
+#include <dme.h>
+#include <ImGui/imgui.h>
+#include <glm/gtc/type_ptr.hpp>
+#include <glm/gtc/matrix_transform.hpp>
 
-// --- DME/Core/ ---------------------------------------------//
-#include <DME/Core/EntryPoint.h>								//
-// -------------------------------------------------------------//
+#include "Platform/OpenGL/OpenGLShader.h"
 
-// --- Platform/OpenGL/ ----------------------------------------//
-#include "Platform/OpenGL/OpenGLShader.h"						//
-// -------------------------------------------------------------//
-
-// --- src -----------------------------------------------------//
-#include "Sandbox2D.h"											//
-#include "ExampleLayer.h"										//
-// -------------------------------------------------------------//
+#include "Sandbox2D.h"
+#include "ExampleLayer.h"
 
 namespace DME
 {

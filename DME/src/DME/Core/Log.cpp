@@ -1,12 +1,8 @@
 #include "dmepch.h"
 
-// --- DME/Core/ ---------------------------------------------//
-#include "DME/Core/Log.h"										//
-// -------------------------------------------------------------//
+#include "DME/Core/Log.h"
 
-// --- Dependencies --------------------------------------------//
-#include <spdlog/sinks/stdout_color_sinks.h>					//
-// -------------------------------------------------------------//
+#include <spdlog/sinks/stdout_color_sinks.h>
 
 namespace DME
 {

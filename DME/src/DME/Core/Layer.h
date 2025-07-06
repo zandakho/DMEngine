@@ -1,13 +1,9 @@
 #pragma once
 
-// --- DME/Core/ ---------------------------------------------//
-#include "DME/Core/Base.h"									//
-#include "DME/Core/TimeStep.h"								//
-// -------------------------------------------------------------//
+#include "DME/Core/Base.h"
+#include "DME/Core/TimeStep.h"
 
-// --- DME/Events/ -------------------------------------------//
-#include "DME/Events/Event.h"									//
-// -------------------------------------------------------------//
+#include "DME/Events/Event.h"
 
 namespace DME
 {

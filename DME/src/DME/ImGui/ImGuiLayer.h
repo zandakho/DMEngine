@@ -1,14 +1,10 @@
 #pragma once
 
-// --- DME/Core/ ---------------------------------------------//
-#include "DME/Core/Layer.h"									//
-// -------------------------------------------------------------//
+#include "DME/Core/Layer.h"
 
-// --- DME/Events/ -------------------------------------------//
-#include "DME/Events/ApplicationEvent.h"						//
-#include "DME/Events/MouseEvent.h"							//
-#include "DME/Events/KeyEvent.h"								//
-// -------------------------------------------------------------//
+#include "DME/Events/ApplicationEvent.h"
+#include "DME/Events/MouseEvent.h"
+#include "DME/Events/KeyEvent.h"
 
 namespace DME
 {

@@ -1,20 +1,14 @@
 #include "dmepch.h"
 
-// --- DME/Core/ ---------------------------------------------//
-#include "DME/Core/Application.h"								//
-// -------------------------------------------------------------//
+#include "DME/Core/Application.h"
 
-// --- DME/ImGui/ --------------------------------------------//
-#include "DME/ImGui/ImGuiLayer.h"								//
-// -------------------------------------------------------------//
+#include "DME/ImGui/ImGuiLayer.h"
 
-// --- Dependencies --------------------------------------------//
-#include "imgui.h"												//
-#include "backends/imgui_impl_glfw.h"							//
-#include "backends/imgui_impl_opengl3.h"						//
-#include <GLFW/glfw3.h>											//
-#include <glad/glad.h>											//
-// -------------------------------------------------------------//
+#include "imgui.h"
+#include "backends/imgui_impl_glfw.h"
+#include "backends/imgui_impl_opengl3.h"
+#include <GLFW/glfw3.h>
+#include <glad/glad.h>
 
 
 

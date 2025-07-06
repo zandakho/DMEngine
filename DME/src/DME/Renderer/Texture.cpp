@@ -1,13 +1,9 @@
 #include "dmepch.h"
 
-// --- DME/Renderer/ -----------------------------------------//
-#include "DME/Renderer/Texture.h"								//
-#include "DME/Renderer/Renderer.h"							//
-// -------------------------------------------------------------//
+#include "DME/Renderer/Texture.h"
+#include "DME/Renderer/Renderer.h"
 
-// --- Platform/OpenGL/ ----------------------------------------//
-#include "Platform/OpenGL/OpenGLTexture.h"						//
-// -------------------------------------------------------------//
+#include "Platform/OpenGL/OpenGLTexture.h"
 
 namespace DME
 {

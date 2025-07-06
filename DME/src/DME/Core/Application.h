@@ -1,20 +1,14 @@
 #pragma once
 
-// --- DME/Core/ ---------------------------------------------//
-#include "DME/Core/Base.h"									//
-#include "DME/Core/Window.h"									//
-#include "DME/Core/TimeStep.h"     							//
-#include "DME/Core/LayerStack.h"								//
-// -------------------------------------------------------------//
+#include "DME/Core/Base.h"
+#include "DME/Core/Window.h"
+#include "DME/Core/TimeStep.h"
+#include "DME/Core/LayerStack.h"
 
-// --- DME/Events/ -------------------------------------------//
-#include "DME/Events/Event.h"									//
-#include "DME/Events/ApplicationEvent.h"						//
-// -------------------------------------------------------------//
+#include "DME/Events/Event.h"
+#include "DME/Events/ApplicationEvent.h"
 
-// --- DME/ImGui/ --------------------------------------------//
-#include "DME/ImGui/ImGuiLayer.h" 							//
-// -------------------------------------------------------------//
+#include "DME/ImGui/ImGuiLayer.h"
 
 int main(int argc, char** argv);
 

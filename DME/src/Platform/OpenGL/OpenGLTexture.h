@@ -1,12 +1,8 @@
 #pragma once
 
-// --- DME/Renderer/ -----------------------------------------//
-#include "DME/Renderer/Texture.h"								//
-// -------------------------------------------------------------//
+#include "DME/Renderer/Texture.h"
 
-// --- Dependencies --------------------------------------------//
-#include <glad/glad.h>											//
-// -------------------------------------------------------------//
+#include <glad/glad.h>
 
 namespace DME
 {

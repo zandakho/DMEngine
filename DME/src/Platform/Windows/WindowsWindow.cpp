@@ -1,18 +1,12 @@
 ﻿#include "dmepch.h"
 
-// --- DME/Events/ -------------------------------------------//
-#include "DME/Events/ApplicationEvent.h"						//
-#include "DME/Events/KeyEvent.h"								//
-#include "DME/Events/MouseEvent.h"							//
-// -------------------------------------------------------------//
+#include "DME/Events/ApplicationEvent.h"
+#include "DME/Events/KeyEvent.h"
+#include "DME/Events/MouseEvent.h"
 
-// --- Platform/OpenGL/ ----------------------------------------//
-#include "Platform/OpenGL/OpenGLContext.h"						//
-// -------------------------------------------------------------//
+#include "Platform/OpenGL/OpenGLContext.h"
 
-// --- Platform/Windows/ ---------------------------------------//
-#include "Platform/Windows/WindowsWindow.h"						//
-// -------------------------------------------------------------//
+#include "Platform/Windows/WindowsWindow.h"
 
 namespace DME
 {

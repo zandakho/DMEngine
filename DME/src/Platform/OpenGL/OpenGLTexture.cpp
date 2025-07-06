@@ -1,12 +1,8 @@
 #include "dmepch.h"
 
-// --- Platform/OpenGL/ ----------------------------------------//
-#include "Platform/OpenGL/OpenGLTexture.h"						//
-// -------------------------------------------------------------//
+#include "Platform/OpenGL/OpenGLTexture.h"
 
-// --- Dependencies --------------------------------------------//
-#include "stb_image.h"											//
-// -------------------------------------------------------------//
+#include "stb_image.h"
 
 namespace DME
 {

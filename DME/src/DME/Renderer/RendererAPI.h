@@ -1,12 +1,8 @@
 #pragma once
 
-// --- DME/Renderer/ -----------------------------------------//
-#include "DME/Renderer/VertexArray.h"							//
-// -------------------------------------------------------------//
+#include "DME/Renderer/VertexArray.h"
 
-// --- Dependencies --------------------------------------------//
-#include <glm/glm.hpp>											//
-// -------------------------------------------------------------//
+#include <glm/glm.hpp>
 
 namespace DME 
 {
