@@ -15,7 +15,7 @@ namespace DME
 
 	void Log::Init()
 	{
-		spdlog::set_pattern("%^DATE: [%D]\nTIME: [%T]\nLEVEL: [%l]\nLOGGER: [%n]\nMESSAGE: %v%$");
+		spdlog::set_pattern("%^IN: [%D] - [%T] MESSAGE: <<%v>>\nLOGGER: [%n] | LEVEL: [%l]\n%$");
 		c_Core = spdlog::stdout_color_mt("DME");
 		c_Core->set_level(spdlog::level::trace);
 

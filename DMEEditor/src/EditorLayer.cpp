@@ -12,8 +12,6 @@
 // -------------------------------------------------------------//
 
 
-
-
 namespace DME
 {
 
@@ -44,6 +42,42 @@ namespace DME
 		m_SecondCamera = m_ActiveScene->CreateEntity("Second Camera");
 		auto&& cc = m_SecondCamera.AddComponent<CameraComponent>();
 		cc.Primary = false;
+
+
+		class CameraController : public ScriptableEntity
+		{
+		public:
+
+			void OnCreate()
+			{
+				auto& transform = GetComponent<TransformComponent>().Transform;
+				transform[3][0] = rand() % 10 - 5.0f;
+			}
+
+			void OnDestroy()
+			{
+
+			}
+
+			void OnUpdate(TimeStep ts)
+			{
+
+				auto& transform = GetComponent<TransformComponent>().Transform;
+				float speed = 5.0f;
+
+				if (Input::IsKeyPressed(Key::LeftControl) && Input::IsKeyPressed(Key::Left))
+					transform[3][0] -= speed * ts;
+				if (Input::IsKeyPressed(Key::LeftControl) && Input::IsKeyPressed(Key::Right))
+					transform[3][0] += speed * ts;
+				if (Input::IsKeyPressed(Key::LeftControl) && Input::IsKeyPressed(Key::Down))
+					transform[3][1] -= speed * ts;
+				if (Input::IsKeyPressed(Key::LeftControl) && Input::IsKeyPressed(Key::Up))
+					transform[3][1] += speed * ts;
+			}
+		};
+		
+		m_CameraEntity.AddComponent<NativeScriptComponent>().Bind<CameraController>();
+		m_SecondCamera.AddComponent<NativeScriptComponent>().Bind<CameraController>();
 	}
 
 	void EditorLayer::OnDetach()
@@ -86,6 +120,9 @@ namespace DME
 	{
 		DME_PROFILE_FUNCTION();
 
+		//static bool show = true;
+		//ImGui::ShowDemoWindow(&show);
+
 		EditorLayer::OnDockspace();
 
 		ImGui::Begin("Settings", nullptr, ImGuiWindowFlags_NoCollapse | ImGuiWindowFlags_HorizontalScrollbar);
@@ -94,22 +131,21 @@ namespace DME
 		
 		if (m_SquareEntity)
 		{
+
 			if (ImGui::CollapsingHeader("Scene"))
 			{
 				ImGui::DragFloat3("Camera Position", (float*)&m_CameraController.GetCameraPosition(), 0.1f, -FLT_MAX, FLT_MAX, "%.3f", ImGuiSliderFlags_ClampOnInput);
 				ImGui::DragFloat("Camera Rotation", (float*)&m_CameraController.GetCameraRotation(), 1.0f, -FLT_MAX, FLT_MAX, "%.f", ImGuiSliderFlags_ClampOnInput);
 
-				
-
-				if (ImGui::Checkbox("Primary Camera", &m_PrimaryCamera))
+				if (ImGui::Combo("Camera Select", &selected_items, items, 2))
 				{
+					selected_items == 0 ? m_PrimaryCamera = true : m_PrimaryCamera = false;
 					m_CameraEntity.GetComponent<CameraComponent>().Primary = m_PrimaryCamera;
 					m_SecondCamera.GetComponent<CameraComponent>().Primary = !m_PrimaryCamera;
 				}
 
-				{
 
-					
+				{
 
 					if (m_PrimaryCamera)
 					{

@@ -2,8 +2,8 @@
 
 #include <glm/glm.hpp>
 
-#include "DME/Renderer/OrthographicCamera.h"
 #include "DME/Scene/SceneCamera.h"
+#include "DME/Scene/ScriptableEntity.h"
 
 namespace DME
 {
@@ -50,7 +50,24 @@ namespace DME
 
 		CameraComponent() = default;
 		CameraComponent(const CameraComponent&) = default;
+
 	};
 
-	
+	struct NativeScriptComponent
+	{
+		ScriptableEntity* Instance = nullptr;
+
+		ScriptableEntity*(*InstantiateScript)();
+		void (*DestroyScript)(NativeScriptComponent*);
+
+		template<typename T>
+		void Bind()
+		{
+
+			InstantiateScript = []() { return static_cast<ScriptableEntity*>(new T()); };
+			DestroyScript = [](NativeScriptComponent* ncs) { delete ncs->Instance; ncs->Instance = nullptr; };
+
+		}
+	};
+
 }

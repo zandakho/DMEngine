@@ -114,6 +114,9 @@
     <ClInclude Include="src\DME\Renderer\Buffer.h">
       <Filter>src\DME\Renderer</Filter>
     </ClInclude>
+    <ClInclude Include="src\DME\Renderer\Camera.h">
+      <Filter>src\DME\Renderer</Filter>
+    </ClInclude>
     <ClInclude Include="src\DME\Renderer\Framebuffer.h">
       <Filter>src\DME\Renderer</Filter>
     </ClInclude>
@@ -156,8 +159,11 @@
     <ClInclude Include="src\DME\Scene\Scene.h">
       <Filter>src\DME\Scene</Filter>
     </ClInclude>
-    <ClInclude Include="src\dme.h">
-      <Filter>src</Filter>
+    <ClInclude Include="src\DME\Scene\SceneCamera.h">
+      <Filter>src\DME\Scene</Filter>
+    </ClInclude>
+    <ClInclude Include="src\DME\Scene\ScriptableEntity.h">
+      <Filter>src\DME\Scene</Filter>
     </ClInclude>
     <ClInclude Include="src\Platform\OpenGL\OpenGLBuffer.h">
       <Filter>src\Platform\OpenGL</Filter>
@@ -182,6 +188,9 @@
     </ClInclude>
     <ClInclude Include="src\Platform\Windows\WindowsWindow.h">
       <Filter>src\Platform\Windows</Filter>
+    </ClInclude>
+    <ClInclude Include="src\dme.h">
+      <Filter>src</Filter>
     </ClInclude>
     <ClInclude Include="src\dmepch.h">
       <Filter>src</Filter>
@@ -1443,8 +1452,6 @@
     <ClInclude Include="vendor\stb\stb_image.h">
       <Filter>vendor\stb</Filter>
     </ClInclude>
-    <ClInclude Include="src\DME\Renderer\Camera.h" />
-    <ClInclude Include="src\DME\Scene\SceneCamera.h" />
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="src\DME\Core\Application.cpp">
@@ -1510,6 +1517,9 @@
     <ClCompile Include="src\DME\Scene\Scene.cpp">
       <Filter>src\DME\Scene</Filter>
     </ClCompile>
+    <ClCompile Include="src\DME\Scene\SceneCamera.cpp">
+      <Filter>src\DME\Scene</Filter>
+    </ClCompile>
     <ClCompile Include="src\Platform\OpenGL\OpenGLBuffer.cpp">
       <Filter>src\Platform\OpenGL</Filter>
     </ClCompile>
@@ -1543,6 +1553,5 @@
     <ClCompile Include="vendor\stb\stb_image.cpp">
       <Filter>vendor\stb</Filter>
     </ClCompile>
-    <ClCompile Include="src\DME\Scene\SceneCamera.cpp" />
   </ItemGroup>
 </Project>

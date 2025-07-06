@@ -34,6 +34,8 @@ namespace DME
 
 		bool m_PrimaryCamera = true;
 
+		inline static const char* items[2] = {"Primary", "Other" };
+		inline static int selected_items = 0;
 
 		Ref<Texture2D> m_BlackFlagTexture;
 
