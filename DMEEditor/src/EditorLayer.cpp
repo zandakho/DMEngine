@@ -28,8 +28,12 @@ namespace DME
 
 		auto square = m_ActiveScene->CreateEntity("Square");
 		square.AddComponent<SpriteRendererComponent>(glm::vec4{ 1.0f, 1.0f, 1.0f, 1.0f });
+
+		auto redsquare = m_ActiveScene->CreateEntity("Red Square");
+		redsquare.AddComponent<SpriteRendererComponent>(glm::vec4{ 1.0f, 1.0f, 1.0f, 1.0f });
 		
 		m_SquareEntity = square;
+		m_RedSquareEntity = redsquare;
 
 		m_CameraEntity = m_ActiveScene->CreateEntity("Camera");
 		m_CameraEntity.AddComponent<CameraComponent>();
@@ -181,6 +185,9 @@ namespace DME
 
 				auto& squareColor = m_SquareEntity.GetComponent<SpriteRendererComponent>().Color;
 				ImGui::ColorEdit4("Square", (float*)&squareColor);
+
+				auto& redsquareColor = m_RedSquareEntity.GetComponent<SpriteRendererComponent>().Color;
+				ImGui::ColorEdit4("Red Square", (float*)&redsquareColor);
 
 				if (ImGui::CollapsingHeader("Information"))
 				{

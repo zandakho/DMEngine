@@ -29,6 +29,7 @@ namespace DME
 		Ref<Scene> m_ActiveScene;
 
 		Entity m_SquareEntity;
+		Entity m_RedSquareEntity;
 		Entity m_CameraEntity;
 		Entity m_SecondCamera;
 

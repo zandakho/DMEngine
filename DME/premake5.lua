@@ -1,5 +1,4 @@
 project "DME"
-    location "DME"
     kind "StaticLib"
     language "C++"
     cppdialect "C++20"

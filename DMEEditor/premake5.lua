@@ -1,5 +1,4 @@
 project "DMEEditor"
-    location "DMEEditor"
     kind "ConsoleApp"
     language "C++"
     cppdialect "C++20"

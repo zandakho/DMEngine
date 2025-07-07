@@ -6,15 +6,15 @@
     </Filter>
   </ItemGroup>
   <ItemGroup>
-    <ClInclude Include="..\src\EditorLayer.h" />
-    <ClInclude Include="..\src\Panels\SceneHierarchyPanel.h">
+    <ClInclude Include="src\EditorLayer.h" />
+    <ClInclude Include="src\Panels\SceneHierarchyPanel.h">
       <Filter>Panels</Filter>
     </ClInclude>
   </ItemGroup>
   <ItemGroup>
-    <ClCompile Include="..\src\DMEEditor.cpp" />
-    <ClCompile Include="..\src\EditorLayer.cpp" />
-    <ClCompile Include="..\src\Panels\SceneHierarchyPanel.cpp">
+    <ClCompile Include="src\DMEEditor.cpp" />
+    <ClCompile Include="src\EditorLayer.cpp" />
+    <ClCompile Include="src\Panels\SceneHierarchyPanel.cpp">
       <Filter>Panels</Filter>
     </ClCompile>
   </ItemGroup>
