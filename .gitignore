@@ -10,3 +10,8 @@ bin-int/
 *.sln
 *.json
 *.ini
+*.sln
+*.vcxproj
+*.vcxproj.filters
+*.vcxproj.user
+*.csproj
