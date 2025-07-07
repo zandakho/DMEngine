@@ -6,12 +6,12 @@ bin/
 bin-int/
 
 #files
-*.user
-*.sln
-*.json
-*.ini
-*.sln
-*.vcxproj
-*.vcxproj.filters
-*.vcxproj.user
-*.csproj
+**/*.user
+**/*.sln
+**/*.json
+**/*.ini
+**/*.sln
+**/*.vcxproj
+**/*.vcxproj.filters
+**/*.vcxproj.user
+**/*.csproj
