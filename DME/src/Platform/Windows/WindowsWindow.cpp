@@ -8,6 +8,8 @@
 
 #include "Platform/Windows/WindowsWindow.h"
 
+#include "imgui.h"
+
 namespace DME
 {
 	static uint8_t s_GLFWWindowCount = 0;
@@ -56,6 +58,8 @@ namespace DME
 	{
 		return m_Data.VSync;
 	}
+
+	
 	void WindowsWindow::Init(const WindowProps& props)
 	{
 		DME_PROFILE_FUNCTION();

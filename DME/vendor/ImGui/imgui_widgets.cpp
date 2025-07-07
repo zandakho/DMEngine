@@ -2745,7 +2745,14 @@ bool ImGui::DragScalar(const char* label, ImGuiDataType data_type, void* p_data,
     const ImU32 frame_col = GetColorU32(g.ActiveId == id ? ImGuiCol_FrameBgActive : hovered ? ImGuiCol_FrameBgHovered : ImGuiCol_FrameBg);
     RenderNavCursor(frame_bb, id);
     RenderFrame(frame_bb.Min, frame_bb.Max, frame_col, true, style.FrameRounding);
-
+    if (flags & ImGuiSliderFlags_AsVectorX)
+        ImGui::GetWindowDrawList()->AddRectFilled(frame_bb.Min, frame_bb.Min + ImVec2(3, 25), ImColor(255, 0, 0, 255), 3.0f, ImDrawFlags_RoundCornersBottomLeft | ImDrawFlags_RoundCornersTopLeft);
+    if (flags & ImGuiSliderFlags_AsVectorY)
+        ImGui::GetWindowDrawList()->AddRectFilled(frame_bb.Min, frame_bb.Min + ImVec2(3, 25), ImColor(0, 255, 0, 255), 3.0f, ImDrawFlags_RoundCornersBottomLeft | ImDrawFlags_RoundCornersTopLeft);
+    if (flags & ImGuiSliderFlags_AsVectorZ)
+        ImGui::GetWindowDrawList()->AddRectFilled(frame_bb.Min, frame_bb.Min + ImVec2(3, 25), ImColor(0, 0, 255, 255), 3.0f, ImDrawFlags_RoundCornersBottomLeft | ImDrawFlags_RoundCornersTopLeft);
+    if (flags & ImGuiSliderFlags_AsVectorW)
+        ImGui::GetWindowDrawList()->AddRectFilled(frame_bb.Min, frame_bb.Min + ImVec2(3, 25), ImColor(255, 255, 0, 255), 3.0f, ImDrawFlags_RoundCornersBottomLeft | ImDrawFlags_RoundCornersTopLeft);
     // Drag behavior
     const bool value_changed = DragBehavior(id, data_type, p_data, v_speed, p_min, p_max, format, flags);
     if (value_changed)

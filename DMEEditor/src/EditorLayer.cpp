@@ -5,7 +5,6 @@
 #include <chrono>
 #include <ImGui/imgui.h>
 #include <glm/gtc/type_ptr.hpp>
-#include <glm/gtc/matrix_transform.hpp>
 
 namespace DME
 {
@@ -26,14 +25,18 @@ namespace DME
 
 		m_ActiveScene = CreateRef<Scene>();
 
-		auto square = m_ActiveScene->CreateEntity("Square");
-		square.AddComponent<SpriteRendererComponent>(glm::vec4{ 1.0f, 1.0f, 1.0f, 1.0f });
-
 		auto redsquare = m_ActiveScene->CreateEntity("Red Square");
-		redsquare.AddComponent<SpriteRendererComponent>(glm::vec4{ 1.0f, 1.0f, 1.0f, 1.0f });
+		redsquare.AddComponent<SpriteRendererComponent>(glm::vec4{ 1.0f, 0.0f, 0.0f, 1.0f });
+
+		auto greensquare = m_ActiveScene->CreateEntity("Green Square");
+		greensquare.AddComponent<SpriteRendererComponent>(glm::vec4{ 0.0f, 1.0f, 0.0f, 1.0f });
 		
-		m_SquareEntity = square;
+		auto bluesquare = m_ActiveScene->CreateEntity("Blue Square");
+		bluesquare.AddComponent<SpriteRendererComponent>(glm::vec4{ 0.0f, 0.0f, 1.0f, 1.0f });
+
 		m_RedSquareEntity = redsquare;
+		m_GreenSquareEntity = greensquare;
+		m_BlueSquareEntity = redsquare;
 
 		m_CameraEntity = m_ActiveScene->CreateEntity("Camera");
 		m_CameraEntity.AddComponent<CameraComponent>();
@@ -49,8 +52,8 @@ namespace DME
 
 			void OnCreate()
 			{
-				auto& transform = GetComponent<TransformComponent>().Transform;
-				transform[3][0] = rand() % 10 - 5.0f;
+				auto& position = GetComponent<TransformComponent>().Position;
+				position.x = rand() % 10 - 5.0f;
 			}
 
 			void OnDestroy()
@@ -61,17 +64,17 @@ namespace DME
 			void OnUpdate(TimeStep ts)
 			{
 
-				auto& transform = GetComponent<TransformComponent>().Transform;
+				auto& position = GetComponent<TransformComponent>().Position;
 				float speed = 5.0f;
 
 				if (Input::IsKeyPressed(Key::LeftControl) && Input::IsKeyPressed(Key::Left))
-					transform[3][0] -= speed * ts;
+					position.x -= speed * ts;
 				if (Input::IsKeyPressed(Key::LeftControl) && Input::IsKeyPressed(Key::Right))
-					transform[3][0] += speed * ts;
+					position.x += speed * ts;
 				if (Input::IsKeyPressed(Key::LeftControl) && Input::IsKeyPressed(Key::Down))
-					transform[3][1] -= speed * ts;
+					position.y -= speed * ts;
 				if (Input::IsKeyPressed(Key::LeftControl) && Input::IsKeyPressed(Key::Up))
-					transform[3][1] += speed * ts;
+					position.y += speed * ts;
 			}
 		};
 		
@@ -121,109 +124,13 @@ namespace DME
 	{
 		DME_PROFILE_FUNCTION();
 
-		//static bool show = true;
-		//ImGui::ShowDemoWindow(&show);
+		ImGui::ShowDemoWindow();
 
 		EditorLayer::OnDockspace();
 
 		m_SceneHierarchy.OnImGuiRender();
 
-		ImGui::Begin("Settings", nullptr, ImGuiWindowFlags_NoCollapse | ImGuiWindowFlags_HorizontalScrollbar);
-
-		ImGuiIO& io = ImGui::GetIO(); static_cast<void>(io);
-		
-		if (m_SquareEntity)
-		{
-
-			if (ImGui::CollapsingHeader("Scene"))
-			{
-				if (ImGui::Combo("Camera Select", &selected_items, items, 2))
-				{
-					selected_items == 0 ? m_PrimaryCamera = true : m_PrimaryCamera = false;
-					m_CameraEntity.GetComponent<CameraComponent>().Primary = m_PrimaryCamera;
-					m_SecondCamera.GetComponent<CameraComponent>().Primary = !m_PrimaryCamera;
-				}
-
-				{
-
-					if (m_PrimaryCamera)
-					{
-						auto& camera1 = m_CameraEntity.GetComponent<CameraComponent>().Camera;
-						float orthoSize = camera1.GetOrthographicSize();
-
-						if (ImGui::DragFloat("Camera1", &orthoSize, 0.2f, 0.0f, FLT_MAX))
-						{
-							camera1.SetOrthographicSize(orthoSize);
-						}
-
-						
-					}
-					else
-					{
-						auto& camera2 = m_SecondCamera.GetComponent<CameraComponent>().Camera;
-						float orthoSize = camera2.GetOrthographicSize();
-
-						if (ImGui::DragFloat("Camera2", &orthoSize, 0.2f, 0.0f, FLT_MAX))
-						{
-							camera2.SetOrthographicSize(orthoSize);
-						}
-					}
-					
-				}
-
-				m_PrimaryCamera ? 
-					ImGui::DragFloat3("First Camera", glm::value_ptr(m_CameraEntity.GetComponent<TransformComponent>().Transform[3]), 0.1f, -FLT_MAX, FLT_MAX, "%.3f", ImGuiSliderFlags_ClampOnInput) 
-					: 
-					ImGui::DragFloat3("Second Camera", glm::value_ptr(m_SecondCamera.GetComponent<TransformComponent>().Transform[3]), 0.1f, -FLT_MAX, FLT_MAX, "%.3f", ImGuiSliderFlags_ClampOnInput);
-
-
-				ImGui::Separator();
-				auto& tag = m_SquareEntity.GetComponent<TagComponent>().Tag;
-				ImGui::InputText("##name entities", (char*)tag.c_str(), 128);
-				ImGui::Text("%s", tag.c_str());
-				ImGui::Separator();
-
-				auto& squareColor = m_SquareEntity.GetComponent<SpriteRendererComponent>().Color;
-				ImGui::ColorEdit4("Square", (float*)&squareColor);
-
-				auto& redsquareColor = m_RedSquareEntity.GetComponent<SpriteRendererComponent>().Color;
-				ImGui::ColorEdit4("Red Square", (float*)&redsquareColor);
-
-				if (ImGui::CollapsingHeader("Information"))
-				{
-					if (ImGui::TreeNode("Scene##information"))
-					{
-
-						ImGui::TreePop();
-					} 
-
-					if (ImGui::TreeNode("2D Render stats"))
-					{
-						ImGui::Text("Draw calls: %d", Renderer2D::GetStats().DrawCalls);
-
-						ImGui::Text("Quad count: %d", Renderer2D::GetStats().QuadCount);
-						ImGui::Text("Vertices count: %d", Renderer2D::GetStats().GetTotalVertexCount());
-						ImGui::Text("Indices count: %d", Renderer2D::GetStats().GetTotalIndexCount());
-
-						ImGui::TreePop();
-					}
-					
-					if (ImGui::TreeNode("Render##information"))
-					{
-						ImGui::Text("FPS: %i", static_cast<uint32_t>(io.Framerate));
-						ImGui::Text("Frame time: %.3f", static_cast<float>(io.Framerate) / 1000.f);
-						ImGui::TreePop();
-					} 
-					
-				}
-			}
-
-		}
-
-		ImGui::End();
-
-		ImGui::PushStyleVar(ImGuiStyleVar_WindowPadding, ImVec2(2.0f, 2.0f));
-
+		ImGui::PushStyleVar(ImGuiStyleVar_WindowPadding, ImVec2(3, 3));
 		ImGui::Begin("Viewport", nullptr, ImGuiWindowFlags_NoTitleBar | ImGuiWindowFlags_NoScrollbar | ImGuiWindowFlags_NoScrollWithMouse);
 
 		m_ViewportFocused = ImGui::IsWindowFocused();
@@ -237,8 +144,7 @@ namespace DME
 		ImGui::Image(reinterpret_cast<void*>(static_cast<uintptr_t>(m_Framebuffer->GetColorAttachmentRendererID())), ImVec2(m_ViewportSize.x, m_ViewportSize.y), { 0, 1 }, { 1, 0 });
 
 		ImGui::End();
-		ImGui::PopStyleVar(1);
-
+		ImGui::PopStyleVar();
 		
 	}
 

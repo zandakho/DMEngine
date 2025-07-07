@@ -26,8 +26,8 @@ namespace DME
 		Entity entity = { m_Registry.create(), this };
 		entity.AddComponent<TransformComponent>();
 
-		auto& tag = entity.AddComponent<TagComponent>();
-		tag.Tag = name.empty() ? tag.Tag = "Entity" : name;
+		auto& tag = entity.AddComponent<TagComponent>().Tag;
+		tag = name.empty() ? tag = "Entity" : name;
 		
 		return entity;
 	}
@@ -53,11 +53,10 @@ namespace DME
 
 		// Renderer 2D
 		Camera* mainCamera = nullptr;
-		glm::mat4* cameraTransform = nullptr;
+		glm::mat4 cameraTransform;
 		{
 
 			auto view = m_Registry.view<TransformComponent, CameraComponent>();
-
 			for (auto entity : view)
 			{
 				auto [transform, camera] = view.get<TransformComponent, CameraComponent>(entity);
@@ -65,7 +64,7 @@ namespace DME
 				if (camera.Primary)
 				{
 					mainCamera = &camera.Camera;
-					cameraTransform = &transform.Transform;
+					cameraTransform = transform.GetTransform();
 					break;
 				}
 			}
@@ -75,13 +74,13 @@ namespace DME
 		if (mainCamera)
 		{
 
-			Renderer2D::BeginScene(mainCamera->GetProjection(), *cameraTransform);
+			Renderer2D::BeginScene(*mainCamera, cameraTransform);
 
 			auto group = m_Registry.group<TransformComponent>(entt::get<SpriteRendererComponent>);
 			for (auto entity : group)
 			{
 				auto [transform, sprite] = group.get<TransformComponent, SpriteRendererComponent>(entity);
-				Renderer2D::DrawQuad(transform, sprite.Color);
+				Renderer2D::DrawQuad(transform.GetTransform(), sprite.Color);
 			}
 
 			Renderer2D::EndScene();

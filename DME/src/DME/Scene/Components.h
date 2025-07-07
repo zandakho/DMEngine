@@ -1,6 +1,7 @@
 #pragma once
 
 #include <glm/glm.hpp>
+#include <glm/gtc/matrix_transform.hpp>
 
 #include "DME/Scene/SceneCamera.h"
 #include "DME/Scene/ScriptableEntity.h"
@@ -8,7 +9,7 @@
 namespace DME
 {
 
-	struct TagComponent
+	struct TagComponent 
 	{
 		std::string Tag;
 
@@ -18,21 +19,28 @@ namespace DME
 
 	};
 
-	struct TransformComponent
+	struct TransformComponent 
 	{
-		glm::mat4 Transform{ 1.0f };
+		glm::vec3 Position{ 0.0f, 0.0f, 0.0f };
+		glm::vec3 Rotation { 0.0f };
+		glm::vec3 Scale { 1.0f, 1.0f, 1.0f };
 
 		TransformComponent() = default;
 		TransformComponent(const TransformComponent&) = default;
-		TransformComponent(const glm::mat4& transform) : Transform(transform) {}
+		TransformComponent(const glm::vec3& position) : Position(position) {}
+		
+		glm::mat4 GetTransform() const
+		{
+			glm::mat4 rotation = glm::rotate(glm::mat4(1.0f), Rotation.x, { 1, 0, 0 })
+							   * glm::rotate(glm::mat4(1.0f), Rotation.y, { 0, 1, 0 })
+							   * glm::rotate(glm::mat4(1.0f), Rotation.z, { 0, 0, 1 });
 
-		operator glm::mat4& () { return Transform; }
-		operator const glm::mat4& () const { return Transform; }
-
+			return glm::translate(glm::mat4(1.0f), Position) * rotation * glm::scale(glm::mat4(1.0f), Scale);
+		}
 
 	};
 
-	struct SpriteRendererComponent
+	struct SpriteRendererComponent 
 	{
 		glm::vec4 Color{ 1.0f, 1.0f, 1.0f, 1.0f };
 
@@ -42,7 +50,7 @@ namespace DME
 
 	};
 
-	struct CameraComponent
+	struct CameraComponent 
 	{
 		SceneCamera Camera;
 		bool Primary = true;
@@ -50,6 +58,8 @@ namespace DME
 
 		CameraComponent() = default;
 		CameraComponent(const CameraComponent&) = default;
+
+
 
 	};
 
@@ -68,6 +78,6 @@ namespace DME
 			DestroyScript = [](NativeScriptComponent* ncs) { delete ncs->Instance; ncs->Instance = nullptr; };
 
 		}
-	};
 
+	};
 }

@@ -28,8 +28,9 @@ namespace DME
 		Ref<Framebuffer> m_Framebuffer;
 		Ref<Scene> m_ActiveScene;
 
-		Entity m_SquareEntity;
 		Entity m_RedSquareEntity;
+		Entity m_GreenSquareEntity;
+		Entity m_BlueSquareEntity;
 		Entity m_CameraEntity;
 		Entity m_SecondCamera;
 
