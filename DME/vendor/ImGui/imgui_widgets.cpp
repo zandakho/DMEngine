@@ -2678,7 +2678,8 @@ bool ImGui::DragScalar(const char* label, ImGuiDataType data_type, void* p_data,
     const float w = CalcItemWidth();
 
     const ImVec2 label_size = CalcTextSize(label, NULL, true);
-    const ImRect frame_bb(window->DC.CursorPos, window->DC.CursorPos + ImVec2(w, label_size.y + style.FramePadding.y * 2.0f));
+    const ImRect label_pos( window->DC.CursorPos, window->DC.CursorPos + ImVec2(w, label_size.y + style.FramePadding.y * 2.0f));
+    const ImRect frame_bb( flags & ImGuiSliderFlags_LabelLeft ? ImVec2(window->DC.CursorPos.x + label_size.x + 5.0f, window->DC.CursorPos.y) : window->DC.CursorPos, window->DC.CursorPos + ImVec2(w, label_size.y + style.FramePadding.y * 2.0f));
     const ImRect total_bb(frame_bb.Min, frame_bb.Max + ImVec2(label_size.x > 0.0f ? style.ItemInnerSpacing.x + label_size.x : 0.0f, 0.0f));
 
     const bool temp_input_allowed = (flags & ImGuiSliderFlags_NoInput) == 0;
@@ -2746,13 +2747,13 @@ bool ImGui::DragScalar(const char* label, ImGuiDataType data_type, void* p_data,
     RenderNavCursor(frame_bb, id);
     RenderFrame(frame_bb.Min, frame_bb.Max, frame_col, true, style.FrameRounding);
     if (flags & ImGuiSliderFlags_AsVectorX)
-        ImGui::GetWindowDrawList()->AddRectFilled(frame_bb.Min, frame_bb.Min + ImVec2(3, 25), ImColor(255, 0, 0, 255), 3.0f, ImDrawFlags_RoundCornersBottomLeft | ImDrawFlags_RoundCornersTopLeft);
+        ImGui::GetWindowDrawList()->AddRectFilled(frame_bb.Min, frame_bb.Min + ImVec2(3, 26), ImColor(255, 0, 0, 255), 3.0f, ImDrawFlags_RoundCornersBottomLeft | ImDrawFlags_RoundCornersTopLeft);
     if (flags & ImGuiSliderFlags_AsVectorY)
-        ImGui::GetWindowDrawList()->AddRectFilled(frame_bb.Min, frame_bb.Min + ImVec2(3, 25), ImColor(0, 255, 0, 255), 3.0f, ImDrawFlags_RoundCornersBottomLeft | ImDrawFlags_RoundCornersTopLeft);
+        ImGui::GetWindowDrawList()->AddRectFilled(frame_bb.Min, frame_bb.Min + ImVec2(3, 26), ImColor(0, 255, 0, 255), 3.0f, ImDrawFlags_RoundCornersBottomLeft | ImDrawFlags_RoundCornersTopLeft);
     if (flags & ImGuiSliderFlags_AsVectorZ)
-        ImGui::GetWindowDrawList()->AddRectFilled(frame_bb.Min, frame_bb.Min + ImVec2(3, 25), ImColor(0, 0, 255, 255), 3.0f, ImDrawFlags_RoundCornersBottomLeft | ImDrawFlags_RoundCornersTopLeft);
+        ImGui::GetWindowDrawList()->AddRectFilled(frame_bb.Min, frame_bb.Min + ImVec2(3, 26), ImColor(0, 0, 255, 255), 3.0f, ImDrawFlags_RoundCornersBottomLeft | ImDrawFlags_RoundCornersTopLeft);
     if (flags & ImGuiSliderFlags_AsVectorW)
-        ImGui::GetWindowDrawList()->AddRectFilled(frame_bb.Min, frame_bb.Min + ImVec2(3, 25), ImColor(255, 255, 0, 255), 3.0f, ImDrawFlags_RoundCornersBottomLeft | ImDrawFlags_RoundCornersTopLeft);
+        ImGui::GetWindowDrawList()->AddRectFilled(frame_bb.Min, frame_bb.Min + ImVec2(3, 26), ImColor(255, 255, 0, 255), 3.0f, ImDrawFlags_RoundCornersBottomLeft | ImDrawFlags_RoundCornersTopLeft);
     // Drag behavior
     const bool value_changed = DragBehavior(id, data_type, p_data, v_speed, p_min, p_max, format, flags);
     if (value_changed)
@@ -2765,8 +2766,17 @@ bool ImGui::DragScalar(const char* label, ImGuiDataType data_type, void* p_data,
         LogSetNextTextDecoration("{", "}");
     RenderTextClipped(frame_bb.Min, frame_bb.Max, value_buf, value_buf_end, NULL, ImVec2(0.5f, 0.5f));
 
-    if (label_size.x > 0.0f)
-        RenderText(ImVec2(frame_bb.Max.x + style.ItemInnerSpacing.x, frame_bb.Min.y + style.FramePadding.y), label);
+    if (flags & ImGuiSliderFlags_LabelLeft)
+    {
+        if (label_size.x > 0.0f)
+            RenderText(ImVec2(label_pos.Min.x, label_pos.Min.y + style.FramePadding.y), label);
+    }
+    else
+    {
+        if (label_size.x > 0.0f)
+            RenderText(ImVec2(frame_bb.Max.x + style.ItemInnerSpacing.x, frame_bb.Min.y + style.FramePadding.y), label);
+    }
+    
 
     IMGUI_TEST_ENGINE_ITEM_INFO(id, label, g.LastItemData.StatusFlags | (temp_input_allowed ? ImGuiItemStatusFlags_Inputable : 0));
     return value_changed;

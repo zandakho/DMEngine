@@ -1,8 +1,8 @@
 #pragma once
 
-#include <memory>
-
 #include "DME/Core/PlatformDetection.h"
+
+#include <memory>
 
 #ifdef DME_DEBUG
 	#if defined(DME_PLATFORM_WINDOWS)
@@ -18,18 +18,12 @@
 	#define DME_DEBUGBREAK() 
 #endif
 
-#ifdef DME_ENABLE_ASSERTS
-	#define DME_ASSERT(x, ...) {if(!(x)) {DME_ERROR("Assertation Failed: {0}", __VA_ARGS__); DME_DEBUGBREAK(); } }
-	#define DME_CORE_ASSERT(x, ...) {if(!(x)) {DME_CORE_ERROR("Assertation Failed: {0}", __VA_ARGS__); DME_DEBUGBREAK(); } }
-#else
-	#define DME_ASSERT(x, ...)
-	#define DME_CORE_ASSERT(x, ...)
-#endif // DME_ENABLE_ASSERTS 
+#define DME_EXPAND_MACRO(x) x
+#define DME_STRINGIFY_MACRO(x) #x
 
 #define BIT(x) (1 << x)
 
 #define DME_BIND_EVENT_FN(fn) [this](auto&&... args) -> decltype(auto) { return this->fn(std::forward<decltype(args)>(args)...); }
-
 
 namespace DME
 {
@@ -52,4 +46,5 @@ namespace DME
 }
 
 
-#include "DME/Debug/Instrumentator.h"
+#include "DME/Core/Log.h"
+#include "DME/Core/Assert.h"

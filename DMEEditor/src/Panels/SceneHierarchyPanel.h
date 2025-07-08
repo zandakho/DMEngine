@@ -5,8 +5,11 @@
 #include "DME/Scene/Scene.h"
 #include "DME/Scene/Entity.h"
 
+#include "FontLibrary.h"
+
 namespace DME
 {
+	
 	class SceneHierarchyPanel
 	{
 	public:
@@ -16,6 +19,8 @@ namespace DME
 		void SetContext(const Ref<Scene>& context);
 
 		void OnImGuiRender();
+		static int SetFont(FontLibrary font) { return static_cast<int>(font); }
+
 	private:
 		void DrawEntityNode(Entity entity);
 		void DrawComponents(Entity entity);
@@ -23,5 +28,6 @@ namespace DME
 	private:
 		Ref<Scene> m_Context;
 		Entity m_SelectionContext;
+
 	};
 }

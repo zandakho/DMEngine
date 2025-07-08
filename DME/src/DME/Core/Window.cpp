@@ -14,7 +14,7 @@ namespace DME
 #ifdef DME_PLATFORM_WINDOWS
 		return CreateScope<WindowsWindow>(props);
 #else
-		HZ_CORE_ASSERT(false, "Unknown platform!");
+		DME_CORE_ASSERT(false, "Unknown platform!");
 		return nullptr;
 #endif
 	}

@@ -31,9 +31,8 @@ namespace DME
 		Entity m_RedSquareEntity;
 		Entity m_GreenSquareEntity;
 		Entity m_BlueSquareEntity;
-		Entity m_CameraEntity;
-		Entity m_SecondCamera;
-
+		Entity m_CameraA;
+		Entity m_CameraB;
 
 		bool m_PrimaryCamera = true;
 

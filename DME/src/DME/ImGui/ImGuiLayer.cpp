@@ -31,32 +31,43 @@ namespace DME
 		//io.ConfigFlags |= ImGuiConfigFlags_ViewportsNoTaskBarIcons;
 		//io.ConfigFlags |= ImGuiConfigFlags_ViewportsNoMerge;
 
-		float fontSize = 18.0f; 
-		io.Fonts->AddFontFromFileTTF("C:/Engine/DME/Common/assets/fonts/opensans/OpenSans-Bold.ttf", fontSize);
-		io.Fonts->AddFontFromFileTTF("C:/Engine/DME/Common/assets/fonts/opensans/OpenSans-Regular.ttf", fontSize);
+		io.Fonts->AddFontFromFileTTF("C:/Engine/DME/Common/assets/fonts/opensans/OpenSans-Bold.ttf", 15);
+		io.Fonts->AddFontFromFileTTF("C:/Engine/DME/Common/assets/fonts/opensans/OpenSans-Bold.ttf", 18);
+		io.Fonts->AddFontFromFileTTF("C:/Engine/DME/Common/assets/fonts/opensans/OpenSans-Bold.ttf", 21);
+		io.Fonts->AddFontFromFileTTF("C:/Engine/DME/Common/assets/fonts/opensans/OpenSans-Regular.ttf", 15);
+		io.Fonts->AddFontFromFileTTF("C:/Engine/DME/Common/assets/fonts/opensans/OpenSans-Regular.ttf", 18);
+		io.Fonts->AddFontFromFileTTF("C:/Engine/DME/Common/assets/fonts/opensans/OpenSans-Regular.ttf", 21);
 
-		io.Fonts->AddFontFromFileTTF("C:/Engine/DME/Common/assets/fonts/Roboto/Roboto.ttf", fontSize);
-		io.Fonts->AddFontFromFileTTF("C:/Engine/DME/Common/assets/fonts/Roboto/Roboto-Italic.ttf", fontSize);
+		io.Fonts->AddFontFromFileTTF("C:/Engine/DME/Common/assets/fonts/Roboto/Roboto.ttf", 15);
+		io.Fonts->AddFontFromFileTTF("C:/Engine/DME/Common/assets/fonts/Roboto/Roboto.ttf", 18);
+		io.Fonts->AddFontFromFileTTF("C:/Engine/DME/Common/assets/fonts/Roboto/Roboto.ttf", 21);
+		io.Fonts->AddFontFromFileTTF("C:/Engine/DME/Common/assets/fonts/Roboto/Roboto-Italic.ttf", 15);
+		io.Fonts->AddFontFromFileTTF("C:/Engine/DME/Common/assets/fonts/Roboto/Roboto-Italic.ttf", 18);
+		io.Fonts->AddFontFromFileTTF("C:/Engine/DME/Common/assets/fonts/Roboto/Roboto-Italic.ttf", 21);
 
-		io.Fonts->AddFontFromFileTTF("C:/Engine/DME/Common/assets/fonts/Noto/NotoSansDevanagari-Regular.ttf", fontSize);
+		io.Fonts->AddFontFromFileTTF("C:/Engine/DME/Common/assets/fonts/Noto/NotoSansDevanagari-Regular.ttf", 15);
+		io.Fonts->AddFontFromFileTTF("C:/Engine/DME/Common/assets/fonts/Noto/NotoSansDevanagari-Regular.ttf", 18);
+		io.Fonts->AddFontFromFileTTF("C:/Engine/DME/Common/assets/fonts/Noto/NotoSansDevanagari-Regular.ttf", 21);
 
-		io.Fonts->AddFontFromFileTTF("C:/Engine/DME/Common/assets/fonts/Droid/DroidSansFallback.ttf", fontSize);
+		io.Fonts->AddFontFromFileTTF("C:/Engine/DME/Common/assets/fonts/Droid/DroidSansFallback.ttf", 15);
+		io.Fonts->AddFontFromFileTTF("C:/Engine/DME/Common/assets/fonts/Droid/DroidSansFallback.ttf", 18);
+		io.Fonts->AddFontFromFileTTF("C:/Engine/DME/Common/assets/fonts/Droid/DroidSansFallback.ttf", 21);
 
-		io.FontDefault = io.Fonts->AddFontFromFileTTF("C:/Engine/DME/Common/assets/fonts/Roboto/Roboto.ttf", fontSize);
+		io.FontDefault = io.Fonts->AddFontFromFileTTF("C:/Engine/DME/Common/assets/fonts/Roboto/Roboto.ttf", 18);
+
 
 		ImGuiStyle& style = ImGui::GetStyle();
-
 		style.FrameRounding = 2.5f;
 		style.PopupRounding = 2.5f;
 		style.ScrollbarRounding = 2.5f;
 		style.GrabRounding = 2.5f;
 
-		style.WindowPadding = ImVec2(8.0f, 8.0f);
-		style.FramePadding = ImVec2(5.0f, 4.0f);
-		style.ItemSpacing = ImVec2(4.0f, 4.0f);
-		style.ItemInnerSpacing = ImVec2(5.0f, 5.0f);
+		style.WindowPadding = ImVec2(10.0f, 10.0f);
+		style.FramePadding = ImVec2(10.0f, 5.0f);
+		style.ItemSpacing = ImVec2(4.0f, 5.0f);
+		style.ItemInnerSpacing = ImVec2(10.0f, 5.0f);
 		style.TouchExtraPadding = ImVec2(0.0f, 0.0f);
-		style.IndentSpacing = 21.0f;
+		style.IndentSpacing = 15.0f;
 		style.ScrollbarSize = 15.0f;
 		style.GrabMinSize = 19.0f;
 
@@ -125,5 +136,10 @@ namespace DME
 			ImGui::RenderPlatformWindowsDefault();
 			glfwMakeContextCurrent(backup_current_context);
 		}
+	}
+
+	void ImGuiLayer::SetImGuiStyle()
+	{
+
 	}
 }

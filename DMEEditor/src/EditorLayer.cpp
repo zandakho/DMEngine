@@ -1,10 +1,11 @@
 #include "dmepch.h"
 
 #include "EditorLayer.h"
+#include "DME/Scene/SceneSerializer.h"
 
-#include <chrono>
 #include <ImGui/imgui.h>
 #include <glm/gtc/type_ptr.hpp>
+
 
 namespace DME
 {
@@ -24,27 +25,6 @@ namespace DME
 		m_Framebuffer = Framebuffer::Create(fbSpec);
 
 		m_ActiveScene = CreateRef<Scene>();
-
-		auto redsquare = m_ActiveScene->CreateEntity("Red Square");
-		redsquare.AddComponent<SpriteRendererComponent>(glm::vec4{ 1.0f, 0.0f, 0.0f, 1.0f });
-
-		auto greensquare = m_ActiveScene->CreateEntity("Green Square");
-		greensquare.AddComponent<SpriteRendererComponent>(glm::vec4{ 0.0f, 1.0f, 0.0f, 1.0f });
-		
-		auto bluesquare = m_ActiveScene->CreateEntity("Blue Square");
-		bluesquare.AddComponent<SpriteRendererComponent>(glm::vec4{ 0.0f, 0.0f, 1.0f, 1.0f });
-
-		m_RedSquareEntity = redsquare;
-		m_GreenSquareEntity = greensquare;
-		m_BlueSquareEntity = redsquare;
-
-		m_CameraEntity = m_ActiveScene->CreateEntity("Camera");
-		m_CameraEntity.AddComponent<CameraComponent>();
-		 
-		m_SecondCamera = m_ActiveScene->CreateEntity("Second Camera");
-		auto&& cc = m_SecondCamera.AddComponent<CameraComponent>();
-		cc.Primary = false;
-
 
 		class CameraController : public ScriptableEntity
 		{
@@ -78,10 +58,8 @@ namespace DME
 			}
 		};
 		
-		m_CameraEntity.AddComponent<NativeScriptComponent>().Bind<CameraController>();
-		m_SecondCamera.AddComponent<NativeScriptComponent>().Bind<CameraController>();
-
 		m_SceneHierarchy.SetContext(m_ActiveScene);
+
 	}
 
 	void EditorLayer::OnDetach()
@@ -125,7 +103,6 @@ namespace DME
 		DME_PROFILE_FUNCTION();
 
 		ImGui::ShowDemoWindow();
-
 		EditorLayer::OnDockspace();
 
 		m_SceneHierarchy.OnImGuiRender();
@@ -186,20 +163,55 @@ namespace DME
 
 		// Submit the DockSpace
 		ImGuiIO& io = ImGui::GetIO();
+		ImGuiStyle& style = ImGui::GetStyle();
+		float minWindowSizeX = style.WindowMinSize.x = 290.0f;
+		float minWindowSizeY = style.WindowMinSize.y = 100.0f;
 		if (io.ConfigFlags & ImGuiConfigFlags_DockingEnable)
 		{
 			ImGuiID dockspace_id = ImGui::GetID("MyDockSpace");
 			ImGui::DockSpace(dockspace_id, ImVec2(0.0f, 0.0f), dockspace_flags);
 		}
 
+		style.WindowMinSize.x = minWindowSizeX;
+		style.WindowMinSize.y = minWindowSizeY;
+
 		if (ImGui::BeginMenuBar())
 		{
 			if (ImGui::BeginMenu("File"))
 			{
-				if (ImGui::MenuItem("Close")) Application::Get().Close();
+				if (ImGui::Button("Save", ImVec2(70, 30)))
+					ImGui::OpenPopup("FileDialogs");
+				if (ImGui::BeginPopupModal("FileDialogs"))
+				{
+					static char buffer[256] = "FileName";
+					ImGui::InputText("Name", buffer, 256);
+
+					std::string name = buffer;
+					std::string save_name = std::format("C:/Engine/DME/Common/assets/scenes/{}.dme", name);
+
+					if (ImGui::Button("Save file"))
+					{
+						if (ImGui::CalcTextSize(name.c_str()).x > 0)
+						{
+							SceneSerializer serializer(m_ActiveScene);
+							serializer.Serialize(save_name);
+							ImGui::CloseCurrentPopup();
+						}
+
+					}
+
+					ImGui::Text("Path directory: %s", save_name.c_str());
+
+					ImGui::EndPopup();
+				}
+
+				if (ImGui::Button("Close", ImVec2(70, 30))) Application::Get().Close();
 
 				ImGui::EndMenu();
 			}
+
+
+
 			ImGui::EndMenuBar();
 		}
 

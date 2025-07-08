@@ -9,6 +9,7 @@
 #include "Platform/Windows/WindowsWindow.h"
 
 #include "imgui.h"
+#include "stb_image.h"
 
 namespace DME
 {
@@ -84,7 +85,6 @@ namespace DME
 
 		{
 			DME_PROFILE_SCOPE("glfwCreateWindows");
-
 			m_Window = glfwCreateWindow(static_cast<uint32_t>(props.Width), static_cast<uint32_t>(props.Height), m_Data.Title.c_str(), nullptr, nullptr);
 			++s_GLFWWindowCount;
 		}

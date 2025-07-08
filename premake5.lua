@@ -1,3 +1,5 @@
+include "./vendor/premake/premake_customization/solution_items.lua"
+
 workspace "DME"
     architecture "x86_64"
     startproject "DMEEditor"
@@ -7,6 +9,11 @@ workspace "DME"
         "Debug",
         "Release",
         "Dist"
+    }
+
+    solution_items
+    {
+        ".editorconfig"
     }
 
     flags
@@ -23,11 +30,14 @@ IncludeDir["ImGui"] = "%{wks.location}/DME/vendor/ImGui"
 IncludeDir["glm"] = "%{wks.location}/DME/vendor/glm"
 IncludeDir["stb"] = "%{wks.location}/DME/vendor/stb"
 IncludeDir["entt"] = "%{wks.location}/DME/vendor/entt/include"
-    
+IncludeDir["yaml_cpp"] = "%{wks.location}/DME/vendor/yaml-cpp/include"
+
 group "Dependencies"
+    include "vendor/premake"
     include "DME/vendor/GLFW"
     include "DME/vendor/Glad"
     include "DME/vendor/ImGui"
+    include "DME/vendor/yaml-cpp"
 
 group ""
 

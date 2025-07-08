@@ -25,6 +25,7 @@ project "DME"
     defines
     {
         "_CRT_SECURE_NO_WARNINGS",
+        "YAML_CPP_STATIC_DEFINE",
 		"GLFW_INCLUDE_NONE"
     }
 
@@ -37,7 +38,8 @@ project "DME"
         "%{IncludeDir.ImGui}",
         "%{IncludeDir.glm}",
         "%{IncludeDir.stb}",
-        "%{IncludeDir.entt}"
+        "%{IncludeDir.entt}",
+        "%{IncludeDir.yaml_cpp}"
 
     }
 
@@ -46,6 +48,7 @@ project "DME"
         "GLFW",
         "Glad",
         "ImGui",
+        "yaml-cpp",
         "opengl32.lib"
     }
 

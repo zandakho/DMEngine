@@ -9,7 +9,7 @@
 namespace DME
 {
 
-	struct TagComponent 
+	struct TagComponent
 	{
 		std::string Tag;
 
@@ -19,7 +19,7 @@ namespace DME
 
 	};
 
-	struct TransformComponent 
+	struct TransformComponent
 	{
 		glm::vec3 Position{ 0.0f, 0.0f, 0.0f };
 		glm::vec3 Rotation { 0.0f };
@@ -40,7 +40,7 @@ namespace DME
 
 	};
 
-	struct SpriteRendererComponent 
+	struct SpriteRendererComponent
 	{
 		glm::vec4 Color{ 1.0f, 1.0f, 1.0f, 1.0f };
 
@@ -48,9 +48,11 @@ namespace DME
 		SpriteRendererComponent(const SpriteRendererComponent&) = default;
 		SpriteRendererComponent(const glm::vec4& color) : Color(color) {}
 
+
+
 	};
 
-	struct CameraComponent 
+	struct CameraComponent
 	{
 		SceneCamera Camera;
 		bool Primary = true;
@@ -58,8 +60,6 @@ namespace DME
 
 		CameraComponent() = default;
 		CameraComponent(const CameraComponent&) = default;
-
-
 
 	};
 

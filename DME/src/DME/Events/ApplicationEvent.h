@@ -48,7 +48,7 @@ namespace DME
 	class AppTickEvent : public Event
 	{
 	public:
-		AppTickEvent();
+		AppTickEvent() {};
 
 		EVENT_CLASS_TYPE(AppTick)
 		EVENT_CLASS_CATEGORY(EventCategoryApplication)
@@ -57,7 +57,7 @@ namespace DME
 	class AppUpdateEvent : public Event
 	{
 	public:
-		AppUpdateEvent();
+		AppUpdateEvent() {};
 
 		EVENT_CLASS_TYPE(AppUpdate)
 		EVENT_CLASS_CATEGORY(EventCategoryApplication)
@@ -66,7 +66,7 @@ namespace DME
 	class AppRenderEvent : public Event
 	{
 	public:
-		AppRenderEvent();
+		AppRenderEvent() {};
 
 		EVENT_CLASS_TYPE(AppRender)
 		EVENT_CLASS_CATEGORY(EventCategoryApplication)

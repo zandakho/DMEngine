@@ -1,6 +1,6 @@
 #pragma once
 
-#include "DME/Core/Base.h"
+#include "DME/Debug/Instrumentator.h"
 
 #ifdef DME_PLATFORM_WINDOWS
 

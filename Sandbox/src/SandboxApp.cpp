@@ -1,13 +1,5 @@
 
-#include <dme.h>
-#include <ImGui/imgui.h>
-#include <glm/gtc/type_ptr.hpp>
-#include <glm/gtc/matrix_transform.hpp>
-
-#include "Platform/OpenGL/OpenGLShader.h"
-
 #include "Sandbox2D.h"
-#include "ExampleLayer.h"
 
 namespace DME
 {
