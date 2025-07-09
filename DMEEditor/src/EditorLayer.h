@@ -3,6 +3,7 @@
 #include <dme.h>
 #include "Panels/SceneHierarchyPanel.h"
 
+
 namespace DME
 {
 	class EditorLayer : public Layer
@@ -44,6 +45,8 @@ namespace DME
 
 		
 		bool m_PrimaryCamera = true;
+
+		int m_GizmoType = -1;
 
 		bool m_ViewportFocused = false, m_ViewportHovered = false;
 

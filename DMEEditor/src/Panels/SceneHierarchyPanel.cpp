@@ -11,10 +11,13 @@
 
 #include "DME/Renderer/Renderer2D.h"
 
-namespace DME
+#ifdef _MSVC_LANG
+	#define _CRT_SECURE_NO_WARNINGS
+#endif
 
+namespace DME
 {
-	static void DrawVec3Control(const std::string& label, glm::vec3& values, float columnWidth = 200.0f)
+	static void DrawVec3Control(const std::string& label, glm::vec3& values, float min = -FLT_MAX, float max = FLT_MAX, float columnWidth = 200.0f, ImGuiSliderFlags flags = ImGuiSliderFlags_ClampOnInput | ImGuiSliderFlags_WrapAround)
 	{
 		ImGui::PushID(label.c_str());
 
@@ -26,20 +29,16 @@ namespace DME
 		ImGui::PushMultiItemsWidths(3, ImGui::CalcItemWidth() + 50);
 		ImGui::PushStyleVar(ImGuiStyleVar_ItemSpacing, ImVec2(4, 5));
 
-		ImGui::PushFont(ImGui::GetIO().Fonts->Fonts[SceneHierarchyPanel::SetFont(OpenSansBold_15)]);
-		ImGui::DragFloat("##X", &values.x, 0.1f, -FLT_MAX, FLT_MAX, "%.3f", ImGuiSliderFlags_AsVectorX);
-		ImGui::PopFont();
+		ImGui::PushFont(ImGui::GetIO().Fonts->Fonts[SceneHierarchyPanel::SetFont(OpenSansRegular_21)]);
+		ImGui::DragFloat("##X", &values.x, 0.05f, min, max, "%.3f", flags | ImGuiSliderFlags_AsVectorX);
 		ImGui::PopItemWidth();
 		ImGui::SameLine();
 
-		ImGui::PushFont(ImGui::GetIO().Fonts->Fonts[SceneHierarchyPanel::SetFont(OpenSansBold_15)]);
-		ImGui::DragFloat("##Y", &values.y, 0.1f, -FLT_MAX, FLT_MAX, "%.3f", ImGuiSliderFlags_AsVectorY);
-		ImGui::PopFont();
+		ImGui::DragFloat("##Y", &values.y, 0.05f, min, max, "%.3f", flags | ImGuiSliderFlags_AsVectorY);
 		ImGui::PopItemWidth();
 		ImGui::SameLine();
 
-		ImGui::PushFont(ImGui::GetIO().Fonts->Fonts[SceneHierarchyPanel::SetFont(OpenSansBold_15)]);
-		ImGui::DragFloat("##Z", &values.z, 0.1f, -FLT_MAX, FLT_MAX, "%.3f", ImGuiSliderFlags_AsVectorZ);
+		ImGui::DragFloat("##Z", &values.z, 0.05f, min, max, "%.3f", flags | ImGuiSliderFlags_AsVectorZ);
 		ImGui::PopFont();
 		ImGui::PopStyleVar();
 		ImGui::PopItemWidth();
@@ -50,7 +49,7 @@ namespace DME
 
 	}
 
-	const ImGuiTreeNodeFlags treeNodeFlags = ImGuiTreeNodeFlags_DefaultOpen | ImGuiTreeNodeFlags_Framed | ImGuiTreeNodeFlags_SpanAvailWidth | ImGuiTreeNodeFlags_FramePadding;
+	const ImGuiTreeNodeFlags treeNodeFlags = ImGuiTreeNodeFlags_DefaultOpen | ImGuiTreeNodeFlags_Framed | ImGuiTreeNodeFlags_SpanAvailWidth;
 	template<typename T, typename UFunction>
 	static void DrawComponent(const std::string& name, Entity entity, UFunction uifunction)
 	{ 
@@ -161,7 +160,7 @@ namespace DME
 			tag = tag.empty() ? "Entity" : tag;
 		}
 
-		ImGuiTreeNodeFlags flags =  ((m_SelectionContext == entity) ? ImGuiTreeNodeFlags_Selected : 0) | ImGuiTreeNodeFlags_SpanAvailWidth;
+		ImGuiTreeNodeFlags flags =  ((m_SelectionContext == entity) ? ImGuiTreeNodeFlags_Selected : 0) | ImGuiTreeNodeFlags_SpanAvailWidth | ImGuiTreeNodeFlags_DrawLinesToNodes | ImGuiTreeNodeFlags_OpenOnDoubleClick;
 		bool opened = ImGui::TreeNodeEx(reinterpret_cast<const void*>(static_cast<uint64_t>(static_cast<uint32_t>(entity))), flags, tag.c_str());
 		if (ImGui::IsItemClicked())
 		{
@@ -180,11 +179,9 @@ namespace DME
 
 		if (opened)
 		{
-			ImGuiTreeNodeFlags flags =  ImGuiTreeNodeFlags_SpanAvailWidth;
-			bool opened = ImGui::TreeNodeEx(reinterpret_cast<const void*>(static_cast<uint64_t>(static_cast<uint32_t>(entity)) + 1000), flags, tag.c_str());
-			if (opened)
-				ImGui::TreePop(); 
+
 			ImGui::TreePop();
+
 		}
 
 		if (entityDeleted)
@@ -264,11 +261,11 @@ namespace DME
 
 		DrawComponent<TransformComponent>("Transform", entity, [](auto& component)
 		{
-			DrawVec3Control("Position", component.Position);
+			DrawVec3Control("Position", component.Position, -FLT_MAX, FLT_MAX);
 			glm::vec3 rotation = glm::degrees(component.Rotation);
-			DrawVec3Control("Rotation", rotation);
+			DrawVec3Control("Rotation", rotation, -180, 180);
 			component.Rotation = glm::radians(rotation);
-			DrawVec3Control("Scale", component.Scale);
+			DrawVec3Control("Scale", component.Scale, -FLT_MAX, FLT_MAX);
 		});
 
 		DrawComponent<CameraComponent>("Camera", entity, [](auto& component)
@@ -333,7 +330,7 @@ namespace DME
 
 		DrawComponent<SpriteRendererComponent>("Sprite Renderer", entity, [](auto& component)
 		{
-			ImGui::ColorEdit4("Color", glm::value_ptr(component.Color));
+			ImGui::ColorEdit4("Color", glm::value_ptr(component.Color), ImGuiColorEditFlags_NoInputs);
 		});
 		
 		

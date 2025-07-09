@@ -6,9 +6,10 @@
 #include <ImGui/imgui.h>
 #include <glm/gtc/type_ptr.hpp>
 
-
 #include "DME/Utils/PlatformUtils.h"
 
+#include "ImGuizmo.h"
+#include "DME/Math/Math.h" 
 
 namespace DME
 {
@@ -111,6 +112,9 @@ namespace DME
 		ImGui::PushStyleVar(ImGuiStyleVar_WindowPadding, ImVec2(3, 3));
 		ImGui::Begin("Viewport", nullptr, ImGuiWindowFlags_NoTitleBar | ImGuiWindowFlags_NoScrollbar | ImGuiWindowFlags_NoScrollWithMouse);
 
+
+		
+
 		m_ViewportFocused = ImGui::IsWindowFocused();
 		m_ViewportHovered = ImGui::IsWindowHovered();
 
@@ -119,7 +123,69 @@ namespace DME
 		ImVec2 viewportPanelSize = ImGui::GetContentRegionAvail();
 		m_ViewportSize = { viewportPanelSize.x, viewportPanelSize.y };
 
-		ImGui::Image(reinterpret_cast<void*>(static_cast<uintptr_t>(m_Framebuffer->GetColorAttachmentRendererID())), ImVec2(m_ViewportSize.x, m_ViewportSize.y), { 0, 1 }, { 1, 0 });
+		ImGui::Image(reinterpret_cast<void*>(static_cast<uint64_t>(m_Framebuffer->GetColorAttachmentRendererID())), ImVec2(m_ViewportSize.x, m_ViewportSize.y), { 0, 1 }, { 1, 0 });
+
+		ImGui::SetNextWindowPos(ImVec2(ImGui::GetWindowPos().x + 15, ImGui::GetWindowPos().y + 40));
+		ImGui::PushStyleVar(ImGuiStyleVar_Alpha, 0.5f);
+		if (ImGui::BeginChildFrame(23, ImVec2(100, 35), ImGuiWindowFlags_NoDecoration | ImGuiWindowFlags_NoDocking | ImGuiWindowFlags_NoMove))
+		{
+			ImGui::PopStyleVar();
+
+			ImGui::PushFont(ImGui::GetIO().Fonts->Fonts[SceneHierarchyPanel::SetFont(OpenSansBold_15)]);
+
+			ImGui::PushStyleColor(ImGuiCol_Button, ImVec4(0.2f, 0.2f, 0.2f, 0.5f));
+			ImGui::PushStyleColor(ImGuiCol_ButtonHovered, ImVec4(0.2f, 0.2f, 0.2f, 0.5f));
+			ImGui::PushStyleColor(ImGuiCol_ButtonActive, ImVec4(0.2f, 0.2f, 0.2f, 0.5f));
+			ImGui::PushStyleColor(ImGuiCol_Text, ImVec4(1.0f, 1.0f, 1.0f, 1.0f));
+			ImGui::PushStyleVar(ImGuiStyleVar_FramePadding, ImVec2(9, 5));
+			if (ImGui::Button("T", ImVec2(25, 25))) m_GizmoType = ImGuizmo::OPERATION::TRANSLATE; ImGui::SameLine();
+			if (ImGui::Button("R", ImVec2(25, 25))) m_GizmoType = ImGuizmo::OPERATION::ROTATE; ImGui::SameLine();
+			if (ImGui::Button("S", ImVec2(25, 25))) m_GizmoType = ImGuizmo::OPERATION::SCALE;
+			ImGui::PopStyleVar();
+
+			ImGui::PopStyleColor(4);
+
+			ImGui::PopFont();
+
+			ImGui::EndChildFrame();
+
+		}
+
+
+		// Gizmos
+
+		Entity selectedEntity = m_SceneHierarchy.GetSelectedEntity();
+
+		if (selectedEntity && m_GizmoType != -1)
+		{
+			ImGuizmo::SetOrthographic(false);
+			ImGuizmo::SetDrawlist();
+
+			glm::vec2 windowSize = { static_cast<float>(ImGui::GetWindowWidth()), static_cast<float>(ImGui::GetWindowHeight()) };
+			ImGuizmo::SetRect(ImGui::GetWindowPos().x, ImGui::GetWindowPos().y, windowSize.x, windowSize.y);
+
+			auto cameraEntity = m_ActiveScene->GetPrimaryCameraEntity();
+			const auto& camera = cameraEntity.GetComponent<CameraComponent>().Camera;
+			const glm::mat4& cameraProjection =  camera.GetProjection();
+			glm::mat4 cameraView = glm::inverse(cameraEntity.GetComponent<TransformComponent>().GetTransform());
+
+			auto& tc = selectedEntity.GetComponent<TransformComponent>();
+			glm::mat4 transform = tc.GetTransform();
+
+			ImGuizmo::Manipulate(glm::value_ptr(cameraView), glm::value_ptr(cameraProjection),
+				static_cast<ImGuizmo::OPERATION>(m_GizmoType), ImGuizmo::LOCAL, glm::value_ptr(transform));
+
+			if (ImGuizmo::IsUsing())
+			{
+				glm::vec3 position{ 0.0f }, rotation{ 0.0f }, scale{ 1.0f };
+				math::DecomposeTransform(transform, position, rotation, scale);
+
+				glm::vec3 deltaRotation = rotation - tc.Rotation;
+				tc.Position = position;
+				tc.Rotation += deltaRotation;
+				tc.Scale = scale;
+			}
+		}
 
 		ImGui::End();
 		ImGui::PopStyleVar();
@@ -200,8 +266,6 @@ namespace DME
 				ImGui::EndMenu();
 			}
 
-
-
 			ImGui::EndMenuBar();
 		}
 
@@ -252,6 +316,24 @@ namespace DME
 
 				break;
 			}
+
+
+
+			case Key::Q:
+				m_GizmoType = -1;
+				break;
+
+			case Key::W:
+				m_GizmoType = ImGuizmo::OPERATION::TRANSLATE;
+				break;
+
+			case Key::E:
+				m_GizmoType = ImGuizmo::OPERATION::SCALE;
+				break;
+
+			case Key::R:
+				m_GizmoType = ImGuizmo::OPERATION::ROTATE;
+				break;
 
 		}
 	}

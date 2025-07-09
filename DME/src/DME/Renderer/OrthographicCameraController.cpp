@@ -45,15 +45,8 @@ namespace DME
 			if (Input::IsKeyPressed(Key::R) && Input::IsKeyPressed(Key::Equal)) m_CameraRotation += m_CameraRotationSpeed * ts;
 			else if (Input::IsKeyPressed(Key::R) && Input::IsKeyPressed(Key::Minus)) m_CameraRotation -= m_CameraRotationSpeed * ts;
 			
-			if (m_CameraRotation > 180.0f)
-				m_CameraRotation -= 360.0f;
-			else if (m_CameraRotation <= -180.0f)
-				m_CameraRotation += 360.0f;
-
 			m_Camera.SetRotation(m_CameraRotation);
 		}
-
-
 
 		m_Camera.SetPosition(m_CameraPosition);
 

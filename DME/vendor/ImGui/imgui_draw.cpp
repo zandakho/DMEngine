@@ -240,7 +240,7 @@ void ImGui::StyleColorsDark(ImGuiStyle* dst)
     colors[ImGuiCol_TableRowBgAlt]                      = ImColor(50, 50, 50, 255);
     colors[ImGuiCol_TextLink]                           = ImColor(66, 150, 250, 255);
     colors[ImGuiCol_TextSelectedBg]                     = ImColor(70, 70, 70, 255);
-    colors[ImGuiCol_TreeLines]                          = ImColor(255, 255, 255, 255);
+    colors[ImGuiCol_TreeLines]                          = ImColor(65, 65, 65, 255);
     colors[ImGuiCol_DragDropTarget]                     = ImColor(255, 255, 255, 255);
     colors[ImGuiCol_NavCursor]                          = ImColor(255, 255, 255, 255);
     colors[ImGuiCol_NavWindowingHighlight]              = ImColor(255, 255, 255, 179);

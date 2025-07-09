@@ -13,3 +13,6 @@
 [submodule "DME/vendor/yaml-cpp"]
 	path = DME/vendor/yaml-cpp
 	url = https://github.com/TheCherno/yaml-cpp
+[submodule "DME/vendor/ImGuizmo"]
+	path = DME/vendor/ImGuizmo
+	url = https://github.com/CedricGuillemet/ImGuizmo.git

@@ -21,7 +21,8 @@ project "DMEEditor"
         "%{wks.location}/DME/src",
         "%{wks.location}/DME/vendor",
         "%{IncludeDir.glm}",
-        "%{IncludeDir.entt}"
+        "%{IncludeDir.entt}",
+        "%{IncludeDir.ImGuizmo}"
     }
 
     links

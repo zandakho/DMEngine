@@ -10,6 +10,8 @@
 #include <GLFW/glfw3.h>
 #include <glad/glad.h>
 
+#include "ImGuizmo.h"
+
 
 
 namespace DME
@@ -76,6 +78,9 @@ namespace DME
 		style.PopupBorderSize = 0.0f;
 		style.FrameBorderSize = 0.0f;
 
+		style.TreeLinesRounding = 1.5f;
+		style.TreeLinesSize = 1.5f;
+
 		Application& app = Application::Get();
 		GLFWwindow* window = static_cast<GLFWwindow*>(app.GetWindow().GetNativeWindow());
 
@@ -115,6 +120,7 @@ namespace DME
 		ImGui_ImplOpenGL3_NewFrame();
 		ImGui_ImplGlfw_NewFrame();
 		ImGui::NewFrame();
+		ImGuizmo::BeginFrame();
 	}
 
 	void ImGuiLayer::End()

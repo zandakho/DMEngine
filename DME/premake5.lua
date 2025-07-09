@@ -19,7 +19,10 @@ project "DME"
         "vendor/stb/**.h",
         "vendor/stb/**.cpp",
         "vendor/glm/glm/**.hpp",
-        "vendor/glm/glm/**.inl"
+        "vendor/glm/glm/**.inl",
+
+        "vendor/ImGuizmo/ImGuizmo.h",
+        "vendor/ImGuizmo/ImGuizmo.cpp"
     }
 
     defines
@@ -39,7 +42,8 @@ project "DME"
         "%{IncludeDir.glm}",
         "%{IncludeDir.stb}",
         "%{IncludeDir.entt}",
-        "%{IncludeDir.yaml_cpp}"
+        "%{IncludeDir.yaml_cpp}",
+        "%{IncludeDir.ImGuizmo}"
 
     }
 
@@ -51,6 +55,9 @@ project "DME"
         "yaml-cpp",
         "opengl32.lib"
     }
+
+    filter "files:vendor/ImGuizmo/**.cpp"
+    flags {"NoPCH"}
 
     filter "system:windows"
         systemversion "latest"
