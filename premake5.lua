@@ -32,8 +32,11 @@ IncludeDir["stb"] = "%{wks.location}/DME/vendor/stb"
 IncludeDir["entt"] = "%{wks.location}/DME/vendor/entt/include"
 IncludeDir["yaml_cpp"] = "%{wks.location}/DME/vendor/yaml-cpp/include"
 
-group "Dependencies"
+group "Vendor"
     include "vendor/premake"
+group ""
+
+group "Dependencies"
     include "DME/vendor/GLFW"
     include "DME/vendor/Glad"
     include "DME/vendor/ImGui"
@@ -50,5 +53,4 @@ group "Tools"
 group ""
 
 group "Other"
-    include "Sandbox"
 group ""

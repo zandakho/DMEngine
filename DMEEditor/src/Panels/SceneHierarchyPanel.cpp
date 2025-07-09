@@ -16,8 +16,6 @@ namespace DME
 {
 	static void DrawVec3Control(const std::string& label, glm::vec3& values, float columnWidth = 200.0f)
 	{
-
-
 		ImGui::PushID(label.c_str());
 
 		ImGui::Columns(2);
@@ -28,15 +26,21 @@ namespace DME
 		ImGui::PushMultiItemsWidths(3, ImGui::CalcItemWidth() + 50);
 		ImGui::PushStyleVar(ImGuiStyleVar_ItemSpacing, ImVec2(4, 5));
 
+		ImGui::PushFont(ImGui::GetIO().Fonts->Fonts[SceneHierarchyPanel::SetFont(OpenSansBold_15)]);
 		ImGui::DragFloat("##X", &values.x, 0.1f, -FLT_MAX, FLT_MAX, "%.3f", ImGuiSliderFlags_AsVectorX);
+		ImGui::PopFont();
 		ImGui::PopItemWidth();
 		ImGui::SameLine();
 
+		ImGui::PushFont(ImGui::GetIO().Fonts->Fonts[SceneHierarchyPanel::SetFont(OpenSansBold_15)]);
 		ImGui::DragFloat("##Y", &values.y, 0.1f, -FLT_MAX, FLT_MAX, "%.3f", ImGuiSliderFlags_AsVectorY);
+		ImGui::PopFont();
 		ImGui::PopItemWidth();
 		ImGui::SameLine();
 
+		ImGui::PushFont(ImGui::GetIO().Fonts->Fonts[SceneHierarchyPanel::SetFont(OpenSansBold_15)]);
 		ImGui::DragFloat("##Z", &values.z, 0.1f, -FLT_MAX, FLT_MAX, "%.3f", ImGuiSliderFlags_AsVectorZ);
+		ImGui::PopFont();
 		ImGui::PopStyleVar();
 		ImGui::PopItemWidth();
 
@@ -99,6 +103,7 @@ namespace DME
 	void SceneHierarchyPanel::SetContext(const Ref<Scene>& context)
 	{
 		m_Context = context;
+		m_SelectionContext = {};
 	}
 
 	void SceneHierarchyPanel::OnImGuiRender()

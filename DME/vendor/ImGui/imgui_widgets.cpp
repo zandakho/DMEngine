@@ -2742,19 +2742,10 @@ bool ImGui::DragScalar(const char* label, ImGuiDataType data_type, void* p_data,
         return TempInputScalar(frame_bb, id, label, data_type, p_data, format, clamp_enabled ? p_min : NULL, clamp_enabled ? p_max : NULL);
     }
 
-    // Draw frame
+
     const ImU32 frame_col = GetColorU32(g.ActiveId == id ? ImGuiCol_FrameBgActive : hovered ? ImGuiCol_FrameBgHovered : ImGuiCol_FrameBg);
     RenderNavCursor(frame_bb, id);
     RenderFrame(frame_bb.Min, frame_bb.Max, frame_col, true, style.FrameRounding);
-    if (flags & ImGuiSliderFlags_AsVectorX)
-        ImGui::GetWindowDrawList()->AddRectFilled(frame_bb.Min, frame_bb.Min + ImVec2(3, 26), ImColor(255, 0, 0, 255), 3.0f, ImDrawFlags_RoundCornersBottomLeft | ImDrawFlags_RoundCornersTopLeft);
-    if (flags & ImGuiSliderFlags_AsVectorY)
-        ImGui::GetWindowDrawList()->AddRectFilled(frame_bb.Min, frame_bb.Min + ImVec2(3, 26), ImColor(0, 255, 0, 255), 3.0f, ImDrawFlags_RoundCornersBottomLeft | ImDrawFlags_RoundCornersTopLeft);
-    if (flags & ImGuiSliderFlags_AsVectorZ)
-        ImGui::GetWindowDrawList()->AddRectFilled(frame_bb.Min, frame_bb.Min + ImVec2(3, 26), ImColor(0, 0, 255, 255), 3.0f, ImDrawFlags_RoundCornersBottomLeft | ImDrawFlags_RoundCornersTopLeft);
-    if (flags & ImGuiSliderFlags_AsVectorW)
-        ImGui::GetWindowDrawList()->AddRectFilled(frame_bb.Min, frame_bb.Min + ImVec2(3, 26), ImColor(255, 255, 0, 255), 3.0f, ImDrawFlags_RoundCornersBottomLeft | ImDrawFlags_RoundCornersTopLeft);
-    // Drag behavior
     const bool value_changed = DragBehavior(id, data_type, p_data, v_speed, p_min, p_max, format, flags);
     if (value_changed)
         MarkItemEdited(id);
@@ -2776,6 +2767,15 @@ bool ImGui::DragScalar(const char* label, ImGuiDataType data_type, void* p_data,
         if (label_size.x > 0.0f)
             RenderText(ImVec2(frame_bb.Max.x + style.ItemInnerSpacing.x, frame_bb.Min.y + style.FramePadding.y), label);
     }
+
+    if (flags & ImGuiSliderFlags_AsVectorX)
+        ImGui::GetWindowDrawList()->AddRectFilled(frame_bb.Min, ImVec2(frame_bb.Min.x + 4, frame_bb.Max.y), ImColor(255, 0, 0, 255), 3.0f, ImDrawFlags_RoundCornersBottomLeft | ImDrawFlags_RoundCornersTopLeft);
+    if (flags & ImGuiSliderFlags_AsVectorY)
+        ImGui::GetWindowDrawList()->AddRectFilled(frame_bb.Min, ImVec2(frame_bb.Min.x + 4, frame_bb.Max.y), ImColor(0, 255, 0, 255), 3.0f, ImDrawFlags_RoundCornersBottomLeft | ImDrawFlags_RoundCornersTopLeft);
+    if (flags & ImGuiSliderFlags_AsVectorZ)
+        ImGui::GetWindowDrawList()->AddRectFilled(frame_bb.Min, ImVec2(frame_bb.Min.x + 4, frame_bb.Max.y), ImColor(0, 0, 255, 255), 3.0f, ImDrawFlags_RoundCornersBottomLeft | ImDrawFlags_RoundCornersTopLeft);
+    if (flags & ImGuiSliderFlags_AsVectorW)
+        ImGui::GetWindowDrawList()->AddRectFilled(frame_bb.Min, ImVec2(frame_bb.Min.x + 4, frame_bb.Max.y), ImColor(255, 255, 0, 255), 3.0f, ImDrawFlags_RoundCornersBottomLeft | ImDrawFlags_RoundCornersTopLeft);
     
 
     IMGUI_TEST_ENGINE_ITEM_INFO(id, label, g.LastItemData.StatusFlags | (temp_input_allowed ? ImGuiItemStatusFlags_Inputable : 0));
@@ -7276,9 +7276,9 @@ bool ImGui::Selectable(const char* label, bool selected, ImGuiSelectableFlags fl
         const bool highlighted = hovered || (flags & ImGuiSelectableFlags_Highlight);
         if (highlighted || selected)
         {
-            // Between 1.91.0 and 1.91.4 we made selected Selectable use an arbitrary lerp between _Header and _HeaderHovered. Removed that now. (#8106)
+            
             ImU32 col = GetColorU32((held && highlighted) ? ImGuiCol_HeaderActive : highlighted ? ImGuiCol_HeaderHovered : ImGuiCol_Header);
-            RenderFrame(bb.Min, bb.Max, col, false, 0.0f);
+            RenderFrame(bb.Min, bb.Max, col, false, style.FrameRounding);
         }
         if (g.NavId == id)
         {
@@ -7299,7 +7299,9 @@ bool ImGui::Selectable(const char* label, bool selected, ImGuiSelectableFlags fl
 
     // Text stays at the submission position. Alignment/clipping extents ignore SpanAllColumns.
     if (is_visible)
+    {
         RenderTextClipped(pos, ImVec2(ImMin(pos.x + size.x, window->WorkRect.Max.x), pos.y + size.y), label, NULL, &label_size, style.SelectableTextAlign, &bb);
+    }
 
     // Automatically close popups
     if (pressed && (window->Flags & ImGuiWindowFlags_Popup) && !(flags & ImGuiSelectableFlags_NoAutoClosePopups) && (g.LastItemData.ItemFlags & ImGuiItemFlags_AutoClosePopups))
@@ -9322,7 +9324,7 @@ bool ImGui::MenuItemEx(const char* label, const char* icon, const char* shortcut
             {
                 PushStyleColor(ImGuiCol_Text, style.Colors[ImGuiCol_TextDisabled]);
                 LogSetNextTextDecoration("(", ")");
-                RenderText(pos + ImVec2(offsets->OffsetShortcut + stretch_w, 0.0f), shortcut, NULL, false);
+                RenderText(pos + ImVec2(offsets->OffsetShortcut + stretch_w + 15.0f, 0.0f), shortcut, NULL, false);
                 PopStyleColor();
             }
             if (selected)
@@ -9342,6 +9344,11 @@ bool ImGui::MenuItemEx(const char* label, const char* icon, const char* shortcut
 bool ImGui::MenuItem(const char* label, const char* shortcut, bool selected, bool enabled)
 {
     return MenuItemEx(label, NULL, shortcut, selected, enabled);
+}
+
+bool ImGui::MenuItemIcon(const char* label, const char* icon, const char* shortcut, bool selected, bool enabled)
+{
+    return MenuItemEx(label, icon, shortcut, selected, enabled);
 }
 
 bool ImGui::MenuItem(const char* label, const char* shortcut, bool* p_selected, bool enabled)

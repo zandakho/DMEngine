@@ -67,7 +67,7 @@ namespace DME
 		style.ItemSpacing = ImVec2(4.0f, 5.0f);
 		style.ItemInnerSpacing = ImVec2(10.0f, 5.0f);
 		style.TouchExtraPadding = ImVec2(0.0f, 0.0f);
-		style.IndentSpacing = 15.0f;
+		style.IndentSpacing = 25.0f;
 		style.ScrollbarSize = 15.0f;
 		style.GrabMinSize = 19.0f;
 

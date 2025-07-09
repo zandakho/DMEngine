@@ -7,6 +7,9 @@
 #include <glm/gtc/type_ptr.hpp>
 
 
+#include "DME/Utils/PlatformUtils.h"
+
+
 namespace DME
 {
 
@@ -16,8 +19,6 @@ namespace DME
 	void EditorLayer::OnAttach()
 	{
 		DME_PROFILE_FUNCTION(); 
-
-		m_BlackFlagTexture = Texture2D::Create("C:/Engine/DME/Common/assets/textures/Checkerboard.png");
 
 		FramebufferSpecification fbSpec;
 		fbSpec.Width = 1600;
@@ -179,33 +180,22 @@ namespace DME
 		{
 			if (ImGui::BeginMenu("File"))
 			{
-				if (ImGui::Button("Save", ImVec2(70, 30)))
-					ImGui::OpenPopup("FileDialogs");
-				if (ImGui::BeginPopupModal("FileDialogs"))
-				{
-					static char buffer[256] = "FileName";
-					ImGui::InputText("Name", buffer, 256);
+				if (ImGui::MenuItem("New", "Ctrl+N"))
+					NewScene();
 
-					std::string name = buffer;
-					std::string save_name = std::format("C:/Engine/DME/Common/assets/scenes/{}.dme", name);
+				ImGui::Separator();
 
-					if (ImGui::Button("Save file"))
-					{
-						if (ImGui::CalcTextSize(name.c_str()).x > 0)
-						{
-							SceneSerializer serializer(m_ActiveScene);
-							serializer.Serialize(save_name);
-							ImGui::CloseCurrentPopup();
-						}
+				if (ImGui::MenuItem("Open...", "Ctrl+O"))
+					OpenScene();
 
-					}
+				ImGui::Separator();
 
-					ImGui::Text("Path directory: %s", save_name.c_str());
+				if (ImGui::MenuItem("Save as...", "Ctrl+Shift+A"))
+					SaveSceneAs();
 
-					ImGui::EndPopup();
-				}
+				ImGui::Separator();
 
-				if (ImGui::Button("Close", ImVec2(70, 30))) Application::Get().Close();
+				if (ImGui::MenuItem("Exit")) Application::Get().Close();
 
 				ImGui::EndMenu();
 			}
@@ -221,6 +211,82 @@ namespace DME
 	void EditorLayer::OnEvent(Event& event)
 	{
 		m_CameraController.OnEvent(event);
+
+		EventDispatcher dispatcher(event);
+		dispatcher.Dispatch<KeyPressedEvent>(DME_BIND_EVENT_FN(EditorLayer::OnKeyPressed));
+
 	}
+
+	bool EditorLayer::OnKeyPressed(KeyPressedEvent& event)
+	{
+		if (event.GetRepeatCount() > 0)
+			return false;
+
+		bool control = Input::IsKeyPressed(Key::LeftControl) || Input::IsKeyPressed(Key::RightControl);
+		bool super = Input::IsKeyPressed(Key::LeftSuper) || Input::IsKeyPressed(Key::RightSuper);
+		bool shift = Input::IsKeyPressed(Key::LeftShift) || Input::IsKeyPressed(Key::RightShift);
+		bool alt = Input::IsKeyPressed(Key::LeftAlt) || Input::IsKeyPressed(Key::RightAlt);
+
+		switch (event.GetKeyCode())
+		{
+			case Key::N:
+			{
+				if (control)
+					NewScene();
+
+				break;
+			}
+
+			case Key::O:
+			{
+				if (control)
+					OpenScene();
+
+				break;
+			}
+
+			case Key::A:
+			{
+				if (control & shift)
+					SaveSceneAs();
+
+				break;
+			}
+
+		}
+	}
+
+	void EditorLayer::NewScene()
+	{
+		m_ActiveScene = CreateRef<Scene>();
+		m_ActiveScene->OnViewportResize(static_cast<uint32_t>(m_ViewportSize.x), static_cast<uint32_t>(m_ViewportSize.y));
+		m_SceneHierarchy.SetContext(m_ActiveScene);
+	}
+
+	void EditorLayer::OpenScene()
+	{
+		std::string filepath = FileDialogs::OpenFile("DME Scene (*.dme)\0*.dme\0");
+		if (!filepath.empty())
+		{
+
+			m_ActiveScene = CreateRef<Scene>();
+			m_ActiveScene->OnViewportResize(static_cast<uint32_t>(m_ViewportSize.x), static_cast<uint32_t>(m_ViewportSize.y));
+			m_SceneHierarchy.SetContext(m_ActiveScene);
+
+			SceneSerializer serializer(m_ActiveScene);
+			serializer.Deserialize(filepath);
+		}
+	}
+
+	void EditorLayer::SaveSceneAs()
+	{
+		std::string filepath = FileDialogs::SaveFile("DME Scene (*.dme)\0*.dme\0");
+		if (!filepath.empty())
+		{
+			SceneSerializer serializer(m_ActiveScene);
+			serializer.Serialize(filepath);
+		}
+	}
+
 }
 
