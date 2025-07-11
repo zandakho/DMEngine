@@ -3,6 +3,8 @@
 #include <dme.h>
 #include "Panels/SceneHierarchyPanel.h"
 
+#include "DME/Renderer/EditorCamera.h"
+
 
 namespace DME
 {
@@ -40,6 +42,7 @@ namespace DME
 
 	private:
 		SceneHierarchyPanel m_SceneHierarchy;
+		EditorCamera m_EditorCamera;
 
 	private:
 

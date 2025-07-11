@@ -7,11 +7,9 @@ namespace DME
 
 	struct FramebufferSpecification
 	{
-		uint32_t Width, Height;
+		uint32_t Width = 1, Height = 1;
 		// FramebufferFormat Format = ;
 		uint32_t Samples = 1; 
-
-		FramebufferSpecification() : Width(1600), Height(900) {};
 
 		bool SwapChainTarget = false;
 	};

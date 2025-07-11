@@ -1,8 +1,9 @@
 #pragma once
 
+#include "DME/Core/TimeStep.h"
+#include "DME/Renderer/EditorCamera.h"
 #include "entt.hpp"
 
-#include "DME/Core/TimeStep.h"
 
 namespace DME
 {
@@ -16,7 +17,8 @@ namespace DME
 		Entity CreateEntity(const std::string& name = std::string());
 		void DestroyEntity(Entity entity);
 
-		void OnUpdate(TimeStep ts);
+		void OnUpdateEditor(TimeStep ts, EditorCamera camera);
+		void OnUpdateRuntime(TimeStep ts);
 		void OnViewportResize(uint32_t width, uint32_t height);
 
 		Entity GetPrimaryCameraEntity();

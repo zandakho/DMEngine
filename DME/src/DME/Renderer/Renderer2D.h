@@ -1,8 +1,9 @@
 #pragma once
 
 #include "DME/Renderer/OrthographicCamera.h"
-#include "DME/Renderer/Camera.h"
 #include "DME/Renderer/Texture.h"
+#include "DME/Renderer/Camera.h"
+#include "DME/Renderer/EditorCamera.h"
 
 namespace DME
 {
@@ -14,6 +15,7 @@ namespace DME
 		static void Shutdown();
 
 		static void BeginScene(const Camera& camera, const glm::mat4& transform);
+		static void BeginScene(const EditorCamera& camera);
 		static void BeginScene(const OrthographicCamera& camera); // TODO: Remove
 		static void EndScene();
 		static void Flush();
@@ -44,7 +46,8 @@ namespace DME
 		static void ResetStats();
 	private:
 
-		static void FlashAndReset();
+		static void StartBatch();
+		static void NextBatch();
 	};
 
 }

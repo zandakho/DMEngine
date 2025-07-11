@@ -35,8 +35,7 @@ namespace DME
 		m_Registry.destroy(entity);
 	}
 
-
-	void Scene::OnUpdate(TimeStep ts)
+	void Scene::OnUpdateRuntime(TimeStep ts)
 	{
 
 		// Update script
@@ -61,17 +60,13 @@ namespace DME
 		{
 
 			auto view = m_Registry.view<TransformComponent, CameraComponent>();
-			for (auto entity : view)
-			{
-				auto [transform, camera] = view.get<TransformComponent, CameraComponent>(entity);
-
-				if (camera.Primary)
-				{
+			view.each([&](auto entity, TransformComponent& transform, CameraComponent& camera) {
+				if (camera.Primary) {
 					mainCamera = &camera.Camera;
 					cameraTransform = transform.GetTransform();
-					break;
+					return;
 				}
-			}
+			});
 			
 		}
 
@@ -91,6 +86,20 @@ namespace DME
 
 		}
 		
+	}
+
+	void Scene::OnUpdateEditor(TimeStep ts, EditorCamera camera)
+	{
+		Renderer2D::BeginScene(camera);
+
+		auto group = m_Registry.group<TransformComponent>(entt::get<SpriteRendererComponent>);
+		for (auto entity : group)
+		{
+			auto [transform, sprite] = group.get<TransformComponent, SpriteRendererComponent>(entity);
+			Renderer2D::DrawQuad(transform.GetTransform(), sprite.Color);
+		}
+
+		Renderer2D::EndScene();
 	}
 
 	void Scene::OnViewportResize(uint32_t width, uint32_t height)
@@ -117,9 +126,8 @@ namespace DME
 		{
 			const auto& camera = view.get<CameraComponent>(entity);
 			if (camera.Primary)
-				return Entity {entity, this};
+				return Entity{ entity, this };
 		}
-
 		return {};
 	}
 
@@ -139,7 +147,8 @@ namespace DME
 	template<>
 	void Scene::OnComponentAdded<CameraComponent>(Entity entity, CameraComponent& component)
 	{
-		component.Camera.SetViewportSize(m_ViewportWidth, m_ViewportHeight);
+		if (m_ViewportWidth > 0 && m_ViewportHeight > 0)
+			component.Camera.SetViewportSize(m_ViewportWidth, m_ViewportHeight);
 	}
 
 	template<>
