@@ -1,10 +1,12 @@
 #pragma once
 
+#include "DME/Renderer/Shader.h"
+#include "DME/Renderer/Framebuffer.h"
+
 #include <imgui.h>
 
 namespace DME::UI
 {
-
 	struct ScopedStyleColor
 	{
 		ScopedStyleColor() = default;

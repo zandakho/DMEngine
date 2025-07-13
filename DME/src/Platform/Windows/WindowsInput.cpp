@@ -43,4 +43,18 @@ namespace DME
 		return static_cast<float>(y);
 	}
 
+	bool DME::Input::IsKeyPressedMode(KeyCode keycode)
+	{
+		auto window = static_cast<GLFWwindow*>(Application::Get().GetWindow().GetNativeWindow());
+		auto state = glfwGetKey(window, static_cast<uint32_t>(keycode));
+		return state == GLFW_PRESS;
+	}
+
+	bool DME::Input::IsKeyReleasedMode(KeyCode keycode)
+	{
+		auto window = static_cast<GLFWwindow*>(Application::Get().GetWindow().GetNativeWindow());
+		auto state = glfwGetKey(window, static_cast<uint32_t>(keycode));
+		return state == GLFW_REPEAT;
+	}
+
 }

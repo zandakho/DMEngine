@@ -12,8 +12,6 @@
 
 #include "ImGuizmo.h"
 
-
-
 namespace DME
 {
 
@@ -56,7 +54,6 @@ namespace DME
 		io.Fonts->AddFontFromFileTTF("C:/Engine/DME/Common/assets/fonts/Droid/DroidSansFallback.ttf", 21);
 
 		io.FontDefault = io.Fonts->AddFontFromFileTTF("C:/Engine/DME/Common/assets/fonts/Roboto/Roboto.ttf", 18);
-
 
 		ImGuiStyle& style = ImGui::GetStyle();
 		style.FrameRounding = 2.5f;

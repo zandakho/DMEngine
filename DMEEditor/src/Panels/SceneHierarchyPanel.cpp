@@ -62,6 +62,7 @@ namespace DME
 			auto& component = entity.GetComponent<T>();
 
 			ImGui::PushStyleVar(ImGuiStyleVar_FramePadding, ImVec2(8, 4));
+			ImGui::PushStyleVar(ImGuiStyleVar_ItemSpacing, ImVec2(15, 10));
 			if (ImGui::Button(AddButton.c_str()))
 				ImGui::OpenPopup(DialogWindowName.c_str());
 			bool removeComponent = false;
@@ -86,7 +87,7 @@ namespace DME
 				uifunction(component);
 				ImGui::TreePop();
 			}
-			ImGui::PopStyleVar();
+			ImGui::PopStyleVar(2);
 
 			if (removeComponent)
 				entity.RemoveComponent<T>();

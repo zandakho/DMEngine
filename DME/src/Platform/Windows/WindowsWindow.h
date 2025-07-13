@@ -38,7 +38,7 @@ namespace DME
 		{
 
 			std::string Title = std::string();
-			uint32_t Width = 1280, Height = 720;
+			uint32_t Width = 1600, Height = 900;
 			bool VSync = false;
 
 			EventCallbackFn EventCallback;

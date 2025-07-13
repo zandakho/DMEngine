@@ -10,6 +10,8 @@ namespace DME
 	{
 	public:
 		static bool IsKeyPressed(KeyCode keycode);
+		static bool IsKeyPressedMode(KeyCode keycode);
+		static bool IsKeyReleasedMode(KeyCode keycode);
 
 		static bool IsMouseButtonPressed(MouseCode button);
 		static std::pair<float, float> GetMousePosition();

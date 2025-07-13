@@ -1,6 +1,7 @@
 #pragma once
 
 #include <dme.h>
+#include <ImGui/imgui.h>
 #include "Panels/SceneHierarchyPanel.h"
 
 #include "DME/Renderer/EditorCamera.h"
@@ -27,6 +28,7 @@ namespace DME
 		void NewScene();
 		void OpenScene();
 		void SaveSceneAs();
+		
 
 	private:
 		bool OnKeyPressed(KeyPressedEvent& event);
@@ -39,19 +41,19 @@ namespace DME
 		Ref<Shader> m_FlatColorShader;
 		Ref<Framebuffer> m_Framebuffer;
 		Ref<Scene> m_ActiveScene;
-
+		
 	private:
 		SceneHierarchyPanel m_SceneHierarchy;
 		EditorCamera m_EditorCamera;
 
 	private:
-
 		
+		bool m_BlockViewportEvents = false;
 		bool m_PrimaryCamera = true;
 
 		int m_GizmoType = -1;
 
-		bool m_ViewportFocused = false, m_ViewportHovered = false;
+		bool m_ViewportFocused = false, m_ViewportHovered = false, m_ViewportDocked = true;
 
 		glm::vec2 m_ViewportSize = { 0.0f, 0.0f };
 

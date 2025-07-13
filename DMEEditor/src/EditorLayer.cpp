@@ -2,67 +2,30 @@
 
 #include "EditorLayer.h"
 #include "DME/Scene/SceneSerializer.h"
-
-#include <ImGui/imgui.h>
-#include <glm/gtc/type_ptr.hpp>
-
 #include "DME/Utils/PlatformUtils.h"
+#include "DME/Math/Math.h"
 
 #include "ImGuizmo.h"
-#include "DME/Math/Math.h" 
+#include <glm/gtc/type_ptr.hpp>
 
 namespace DME
 {
 
-	EditorLayer::EditorLayer() : Layer("EditorLayer"), m_CameraController(1280.0f / 720.0f) { }
-
+	EditorLayer::EditorLayer() : Layer("EditorLayer"), m_CameraController(1600.0f / 900.0f) { }
 
 	void EditorLayer::OnAttach()
 	{
-		DME_PROFILE_FUNCTION(); 
+
+		DME_PROFILE_FUNCTION();
 
 		FramebufferSpecification fbSpec;
-		fbSpec.Width = 1280;
-		fbSpec.Width = 720;
+		fbSpec.Width = 1600;
+		fbSpec.Width = 900;
 		m_Framebuffer = Framebuffer::Create(fbSpec);
 
 		m_ActiveScene = CreateRef<Scene>();
 
 		m_EditorCamera = EditorCamera(30.0f, 1.778f, 0.1f, 1000.0f);
-
-#if 0
-		class CameraController : public ScriptableEntity
-		{
-		public:
-
-			void OnCreate()
-			{
-				auto& position = GetComponent<TransformComponent>().Position;
-				position.x = rand() % 10 - 5.0f;
-			}
-
-			void OnDestroy()
-			{
-
-			}
-
-			void OnUpdate(TimeStep ts)
-			{
-
-				auto& position = GetComponent<TransformComponent>().Position;
-				float speed = 5.0f;
-
-				if (Input::IsKeyPressed(Key::LeftControl) && Input::IsKeyPressed(Key::Left))
-					position.x -= speed * ts;
-				if (Input::IsKeyPressed(Key::LeftControl) && Input::IsKeyPressed(Key::Right))
-					position.x += speed * ts;
-				if (Input::IsKeyPressed(Key::LeftControl) && Input::IsKeyPressed(Key::Down))
-					position.y -= speed * ts;
-				if (Input::IsKeyPressed(Key::LeftControl) && Input::IsKeyPressed(Key::Up))
-					position.y += speed * ts;
-			}
-		};
-#endif
 		
 		m_SceneHierarchy.SetContext(m_ActiveScene);
 
@@ -117,9 +80,9 @@ namespace DME
 
 		m_SceneHierarchy.OnImGuiRender();
 
-		ImGui::PushStyleVar(ImGuiStyleVar_WindowPadding, ImVec2(3, 3));
-		ImGui::Begin("Viewport", nullptr, ImGuiWindowFlags_NoTitleBar | ImGuiWindowFlags_NoScrollbar | ImGuiWindowFlags_NoScrollWithMouse);
-
+		ImGui::PushStyleVar(ImGuiStyleVar_WindowPadding, ImVec2(0, 0));
+		ImGui::Begin("Viewport", nullptr, ImGuiWindowFlags_NoCollapse);
+		ImGui::PopStyleVar();
 
 		m_ViewportFocused = ImGui::IsWindowFocused();
 		m_ViewportHovered = ImGui::IsWindowHovered();
@@ -131,13 +94,13 @@ namespace DME
 
 		ImGui::Image(reinterpret_cast<void*>(static_cast<uint64_t>(m_Framebuffer->GetColorAttachmentRendererID())), ImVec2(m_ViewportSize.x, m_ViewportSize.y), { 0, 1 }, { 1, 0 });
 
+		ImGui::PushStyleColor(ImGuiCol_FrameBg, ImVec4(0.11f, 0.11f, 0.11f, 0.5f));
 		ImGui::SetNextWindowPos(ImVec2(ImGui::GetWindowPos().x + 15, ImGui::GetWindowPos().y + 40));
-		ImGui::PushStyleVar(ImGuiStyleVar_Alpha, 0.5f);
-		if (ImGui::BeginChildFrame(23, ImVec2(130, 35), ImGuiWindowFlags_NoDecoration | ImGuiWindowFlags_NoDocking | ImGuiWindowFlags_NoMove))
+		if (ImGui::BeginChild("Control panel", ImVec2(130, 35), ImGuiChildFlags_FrameStyle, ImGuiWindowFlags_NoDecoration | ImGuiWindowFlags_NoDocking | ImGuiWindowFlags_NoMove))
 		{
-			ImGui::PopStyleVar();
+			ImGui::PopStyleColor();
 
-			ImGui::PushFont(ImGui::GetIO().Fonts->Fonts[SceneHierarchyPanel::SetFont(OpenSansBold_15)]);
+			ImGui::PushFont(ImGui::GetIO().Fonts->Fonts[SceneHierarchyPanel::SetFont(OpenSansBold_21)]);
 
 			ImGui::PushStyleColor(ImGuiCol_Button, ImVec4(0.2f, 0.2f, 0.2f, 0.5f));
 			ImGui::PushStyleColor(ImGuiCol_ButtonHovered, ImVec4(0.2f, 0.2f, 0.2f, 0.5f));
@@ -149,18 +112,15 @@ namespace DME
 			if (ImGui::Button("R", ImVec2(25, 25))) m_GizmoType = ImGuizmo::OPERATION::ROTATE; ImGui::SameLine();
 			if (ImGui::Button("S", ImVec2(25, 25))) m_GizmoType = ImGuizmo::OPERATION::SCALE;
 			ImGui::PopStyleVar();
-
 			ImGui::PopStyleColor(4);
 
 			ImGui::PopFont();
 
-			ImGui::EndChildFrame();
+			ImGui::EndChild();
 
 		}
 
-
 		// Gizmos
-
 		Entity selectedEntity = m_SceneHierarchy.GetSelectedEntity();
 		if (selectedEntity && m_GizmoType != -1)
 		{
@@ -211,7 +171,6 @@ namespace DME
 		}
 
 		ImGui::End();
-		ImGui::PopStyleVar();
 		
 	}
 
@@ -297,6 +256,7 @@ namespace DME
 
 	void EditorLayer::OnEvent(Event& event)
 	{
+
 		m_CameraController.OnEvent(event);
 		m_EditorCamera.OnEvent(event);
 
@@ -340,8 +300,6 @@ namespace DME
 
 				break;
 			}
-
-
 
 			case Key::Q:
 				m_GizmoType = -1;
@@ -395,6 +353,5 @@ namespace DME
 			serializer.Serialize(filepath);
 		}
 	}
-
 }
 
