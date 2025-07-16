@@ -1,9 +1,6 @@
-[15:01:05] DME: Creating window DMEEditor (1600, 900)
-[15:01:16] DME: Deserializing scene 'Untitled'
-[15:01:16] DME: Deserialized entity with ID = 342534786893, name = TopTop
-[15:01:16] DME: Deserialized entity with ID = 342534786893, name = TopRight
-[15:01:16] DME: Deserialized entity with ID = 342534786893, name = TopLeft
-[15:01:16] DME: Deserialized entity with ID = 342534786893, name = Right
-[15:01:16] DME: Deserialized entity with ID = 342534786893, name = Left
-[15:01:16] DME: Deserialized entity with ID = 342534786893, name = Top
-[15:01:16] DME: Deserialized entity with ID = 342534786893, name = Camera
+[00:09:17] DME: Creating window DMEEditor (1600, 900)
+[00:09:24] DME: Deserializing scene 'Untitled'
+[00:09:24] DME: Deserialized entity with ID = 342534786893, name = Camera
+[00:09:24] DME: Deserialized entity with ID = 342534786893, name = Top
+[00:09:24] DME: Deserialized entity with ID = 342534786893, name = Left
+[00:09:24] DME: Deserialized entity with ID = 342534786893, name = Right

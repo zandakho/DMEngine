@@ -19,6 +19,7 @@ namespace DME
 		DME_PROFILE_FUNCTION();
 
 		FramebufferSpecification fbSpec;
+		fbSpec.Attachments = { FramebufferTextureFormat::RGBA8, FramebufferTextureFormat::RGBA8, FramebufferTextureFormat::Depth };
 		fbSpec.Width = 1600;
 		fbSpec.Width = 900;
 		m_Framebuffer = Framebuffer::Create(fbSpec);
@@ -92,7 +93,8 @@ namespace DME
 		ImVec2 viewportPanelSize = ImGui::GetContentRegionAvail();
 		m_ViewportSize = { viewportPanelSize.x, viewportPanelSize.y };
 
-		ImGui::Image(reinterpret_cast<void*>(static_cast<uint64_t>(m_Framebuffer->GetColorAttachmentRendererID())), ImVec2(m_ViewportSize.x, m_ViewportSize.y), { 0, 1 }, { 1, 0 });
+		uint64_t textureID = m_Framebuffer->GetColorAttachmentRendererID(1);
+		ImGui::Image(reinterpret_cast<void*>(textureID), ImVec2(m_ViewportSize.x, m_ViewportSize.y), { 0, 1 }, { 1, 0 });
 
 		ImGui::PushStyleColor(ImGuiCol_FrameBg, ImVec4(0.11f, 0.11f, 0.11f, 0.5f));
 		ImGui::SetNextWindowPos(ImVec2(ImGui::GetWindowPos().x + 15, ImGui::GetWindowPos().y + 40));

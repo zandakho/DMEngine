@@ -42,7 +42,6 @@ namespace DME
 				* rotation
 				* glm::scale(glm::mat4(1.0f), Scale);
 		}
-
 	};
 
 	struct SpriteRendererComponent
@@ -52,9 +51,6 @@ namespace DME
 		SpriteRendererComponent() = default;
 		SpriteRendererComponent(const SpriteRendererComponent&) = default;
 		SpriteRendererComponent(const glm::vec4& color) : Color(color) {}
-
-
-
 	};
 
 	struct CameraComponent
@@ -65,7 +61,6 @@ namespace DME
 
 		CameraComponent() = default;
 		CameraComponent(const CameraComponent&) = default;
-
 	};
 
 	struct NativeScriptComponent
@@ -83,6 +78,5 @@ namespace DME
 			DestroyScript = [](NativeScriptComponent* ncs) { delete ncs->Instance; ncs->Instance = nullptr; };
 
 		}
-
 	};
 }

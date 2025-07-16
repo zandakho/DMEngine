@@ -29,6 +29,7 @@ void main()
 #version 450
 			
 layout(location = 0) out vec4 color;
+layout(location = 1) out vec4 color2;
 
 in vec4 v_Color;
 in vec2 v_TextCoord;
@@ -76,4 +77,6 @@ void main()
 		case 31: textColor *= texture(u_Textures[31], v_TextCoord * v_TilingFactor); break;
 	}
 	color = textColor;
+
+	color2 = vec4(0.7, 0.2, 0.1, 1.0);
 }
