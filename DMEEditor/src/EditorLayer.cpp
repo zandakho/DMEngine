@@ -19,7 +19,7 @@ namespace DME
 		DME_PROFILE_FUNCTION();
 
 		FramebufferSpecification fbSpec;
-		fbSpec.Attachments = { FramebufferTextureFormat::RGBA8, FramebufferTextureFormat::RGBA8, FramebufferTextureFormat::Depth };
+		fbSpec.Attachments = { FramebufferTextureFormat::RGBA8, FramebufferTextureFormat::RED_INTEGER, FramebufferTextureFormat::Depth };
 		fbSpec.Width = 1600;
 		fbSpec.Width = 900;
 		m_Framebuffer = Framebuffer::Create(fbSpec);
@@ -68,7 +68,22 @@ namespace DME
 
 		m_ActiveScene->OnUpdateEditor(ts, m_EditorCamera);
 
-		m_Framebuffer->UnBind();
+		auto [mx, my] = ImGui::GetMousePos();
+		mx -= m_ViewportBounds[0].x;
+		my -= m_ViewportBounds[0].y;
+		glm::vec2 viewportSize = m_ViewportBounds[1] - m_ViewportBounds[0];
+		my = viewportSize.y - my;
+		int mouseX = static_cast<int>(mx);
+		int mouseY = static_cast<int>(my);
+
+		if (mouseX >= 0 && mouseY >= 0 && mouseX < static_cast<int>(viewportSize.x) && mouseY < static_cast<int>(viewportSize.y))
+		{
+			int pixelData = m_Framebuffer->ReadPixel(1, mouseX, mouseY);
+			DME_CORE_WARNING("Pixel data = {0}", pixelData);
+		}
+
+
+		m_Framebuffer->UnBind(); 
 
 	}
 
@@ -84,6 +99,7 @@ namespace DME
 		ImGui::PushStyleVar(ImGuiStyleVar_WindowPadding, ImVec2(0, 0));
 		ImGui::Begin("Viewport", nullptr, ImGuiWindowFlags_NoCollapse);
 		ImGui::PopStyleVar();
+		auto viewportOffset = ImGui::GetCursorPos();
 
 		m_ViewportFocused = ImGui::IsWindowFocused();
 		m_ViewportHovered = ImGui::IsWindowHovered();
@@ -93,8 +109,17 @@ namespace DME
 		ImVec2 viewportPanelSize = ImGui::GetContentRegionAvail();
 		m_ViewportSize = { viewportPanelSize.x, viewportPanelSize.y };
 
-		uint64_t textureID = m_Framebuffer->GetColorAttachmentRendererID(1);
+		uint64_t textureID = m_Framebuffer->GetColorAttachmentRendererID();
 		ImGui::Image(reinterpret_cast<void*>(textureID), ImVec2(m_ViewportSize.x, m_ViewportSize.y), { 0, 1 }, { 1, 0 });
+
+		auto windowSize = ImGui::GetWindowSize();
+		ImVec2 minBound = ImGui::GetWindowPos();
+		minBound.x += viewportOffset.x;
+		minBound.y += viewportOffset.y;
+
+		ImVec2 maxBound = { minBound.x + windowSize.x, minBound.y + windowSize.y };
+		m_ViewportBounds[0] = { minBound.x, minBound.y };
+		m_ViewportBounds[1] = { maxBound.x, maxBound.y };
 
 		ImGui::PushStyleColor(ImGuiCol_FrameBg, ImVec4(0.11f, 0.11f, 0.11f, 0.5f));
 		ImGui::SetNextWindowPos(ImVec2(ImGui::GetWindowPos().x + 15, ImGui::GetWindowPos().y + 40));
@@ -170,6 +195,7 @@ namespace DME
 				tc.Rotation += deltaRotation;
 				tc.Scale = scale;
 			}
+			
 		}
 
 		ImGui::End();
@@ -303,21 +329,26 @@ namespace DME
 				break;
 			}
 
-			case Key::Q:
-				m_GizmoType = -1;
-				break;
+			if (m_ViewportFocused)
+			{
+				case Key::Q:
+					m_GizmoType = -1;
+					break;
 
-			case Key::W:
-				m_GizmoType = ImGuizmo::OPERATION::TRANSLATE;
-				break;
+				case Key::W:
+					m_GizmoType = ImGuizmo::OPERATION::TRANSLATE;
+					break;
 
-			case Key::E:
-				m_GizmoType = ImGuizmo::OPERATION::SCALE;
-				break;
+				case Key::E:
+					m_GizmoType = ImGuizmo::OPERATION::SCALE;
+					break;
 
-			case Key::R:
-				m_GizmoType = ImGuizmo::OPERATION::ROTATE;
-				break;
+				case Key::R:
+					m_GizmoType = ImGuizmo::OPERATION::ROTATE;
+					break;
+			}
+
+			
 
 		}
 

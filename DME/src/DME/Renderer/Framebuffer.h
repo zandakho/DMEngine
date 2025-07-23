@@ -11,6 +11,7 @@ namespace DME
 
 		// Color
 		RGBA8,
+		RED_INTEGER,
 
 		// Depth/stencil
 		DEPTH24STENCIL8,
@@ -55,7 +56,7 @@ namespace DME
 		virtual void UnBind() = 0;
 
 		virtual void Resize(uint32_t width = 0, uint32_t height = 0) = 0;
-
+		virtual int ReadPixel(uint32_t attachmentIndex, int x, int y) = 0;
 		virtual uint32_t GetColorAttachmentRendererID(uint32_t index = 0) const = 0;
 
 		virtual const FramebufferSpecification& GetSpecification() const = 0;
