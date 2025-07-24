@@ -81,7 +81,7 @@ namespace DME
 		if (mouseX >= 0 && mouseY >= 0 && mouseX < static_cast<int>(viewportSize.x) && mouseY < static_cast<int>(viewportSize.y))
 		{
 			int pixelData = m_Framebuffer->ReadPixel(1, mouseX, mouseY);
-			DME_CORE_WARNING("Pixel data = {0}", pixelData);
+			m_HoveredEntity = pixelData == -1 ? Entity() : Entity(static_cast<entt::entity>(pixelData), m_ActiveScene.get());
 		}
 
 
@@ -92,6 +92,13 @@ namespace DME
 	void EditorLayer::OnImGuiRender()
 	{
 		DME_PROFILE_FUNCTION();
+
+		ImGui::Begin("Renderer Stats");
+
+		std::string name = m_HoveredEntity && m_HoveredEntity.HasComponent<TagComponent>() ? m_HoveredEntity.GetComponent<TagComponent>().Tag : "None";
+		ImGui::Text("Hovered Entity: %s", name.c_str());
+
+		ImGui::End();
 
 		ImGui::ShowDemoWindow();
 		EditorLayer::OnDockspace();

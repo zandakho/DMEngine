@@ -47,6 +47,8 @@ namespace DME
 		EditorCamera m_EditorCamera;
 
 	private:
+
+		Entity m_HoveredEntity;
 		
 		bool m_BlockViewportEvents = false;
 		bool m_PrimaryCamera = true;

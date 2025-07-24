@@ -88,7 +88,7 @@ namespace DME
 		
 	}
 
-	void Scene::OnUpdateEditor(TimeStep ts, EditorCamera camera)
+	void Scene::OnUpdateEditor(TimeStep ts, EditorCamera& camera)
 	{
 		Renderer2D::BeginScene(camera);
 
@@ -96,7 +96,8 @@ namespace DME
 		for (auto entity : group)
 		{
 			auto [transform, sprite] = group.get<TransformComponent, SpriteRendererComponent>(entity);
-			Renderer2D::DrawQuad(transform.GetTransform(), sprite.Color);
+
+			Renderer2D::DrawSprite(transform.GetTransform(), sprite, static_cast<int>(entity));
 		}
 
 		Renderer2D::EndScene();
