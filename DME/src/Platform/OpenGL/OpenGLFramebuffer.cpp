@@ -79,7 +79,20 @@ namespace DME
 
 			return false;
 		}
-		
+
+		static GLenum DMEFBTextureFormatToGL(FramebufferTextureFormat format)
+		{
+			switch (format)
+			{
+				case FramebufferTextureFormat::RGBA8:			return GL_RGBA8;
+				case FramebufferTextureFormat::RED_INTEGER:		return GL_RED_INTEGER;
+			}
+
+			DME_CORE_ASSERT(false, "Unknown format");
+
+			return 0;
+		}
+
 	}
 
 	OpenGLFramebuffer::OpenGLFramebuffer(const FramebufferSpecification& specification) : m_Specification(specification)
@@ -180,10 +193,13 @@ namespace DME
 		glBindFramebuffer(GL_FRAMEBUFFER, 0);
 	}
 
+
+
 	void OpenGLFramebuffer::Bind()
 	{
 		glBindFramebuffer(GL_FRAMEBUFFER, m_RendererID);
 		glViewport(0, 0, m_Specification.Width, m_Specification.Height);
+
 	}
 
 	void OpenGLFramebuffer::UnBind()
@@ -214,6 +230,17 @@ namespace DME
 		int pixelData;
 		glReadPixels(x, y, 1, 1, GL_RED_INTEGER, GL_INT, &pixelData);
 		return pixelData;
+	}
+
+	void OpenGLFramebuffer::ClearAttachment(uint32_t attachmentIndex, int value)
+	{
+		DME_CORE_ASSERT(attachmentIndex < m_ColorAttachments.size());
+
+		auto& spec = m_ColorAttachmentSpecifications[attachmentIndex];
+		auto format = Utils::DMEFBTextureFormatToGL(spec.TextureFormat);
+
+		glClearTexImage(m_ColorAttachments[attachmentIndex], 0, format, GL_INT, &value);
+
 	}
 
 

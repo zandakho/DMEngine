@@ -4,7 +4,6 @@
 #include "DME/Renderer/Renderer2D.h"
 #include "DME/Renderer/VertexArray.h"
 #include "DME/Renderer/Shader.h"
-
 #include <glm/gtc/matrix_transform.hpp>
 
 namespace DME
@@ -90,7 +89,7 @@ namespace DME
 		for (uint32_t i = 0; i < s_Data.MaxTextureSlots; i++)
 			samplers[i] = i;
 
-		s_Data.TextureShader = Shader::Create("C:/Engine/DME/Common/assets/shaders/Texture.glsl");
+		s_Data.TextureShader = Shader::Create("C:/Engine/DME/DME/src/DME/Shaders/Texture.glsl");
 		s_Data.TextureShader->Bind();
 		s_Data.TextureShader->SetIntArray("u_Textures", samplers, s_Data.MaxTextureSlots);
 
@@ -164,7 +163,7 @@ namespace DME
 		if (s_Data.QuadIndexCount == 0)
 			return; // Nothing to draw
 
-		uint32_t dataSize = (uint32_t)((uint8_t*)s_Data.QuadVertexBufferPtr - (uint8_t*)s_Data.QuadVertexBufferBase);
+		uint32_t dataSize = static_cast<uint32_t>((uint8_t*)s_Data.QuadVertexBufferPtr - (uint8_t*)s_Data.QuadVertexBufferBase);
 		s_Data.QuadVertexBuffer->SetData(s_Data.QuadVertexBufferBase, dataSize);
 
 		// Bind textures

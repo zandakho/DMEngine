@@ -66,6 +66,8 @@ namespace DME
 		RenderCommand::SetClearColor({ 0.07f, 0.07f, 0.07f, 1.0f });
 		RenderCommand::Clear();
 
+		m_Framebuffer->ClearAttachment(1, -1);
+
 		m_ActiveScene->OnUpdateEditor(ts, m_EditorCamera);
 
 		auto [mx, my] = ImGui::GetMousePos();
