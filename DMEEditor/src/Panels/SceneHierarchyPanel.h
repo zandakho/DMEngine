@@ -22,6 +22,7 @@ namespace DME
 		static int SetFont(FontLibrary font) { return static_cast<int>(font); }
 
 		Entity GetSelectedEntity() const { return m_SelectionContext; }
+		void SetSelectedEntity(Entity entity);
 
 	private:
 		void DrawEntityNode(Entity entity);

@@ -32,6 +32,7 @@ namespace DME
 
 	private:
 		bool OnKeyPressed(KeyPressedEvent& event);
+		bool OnMouseButtonPressed(MouseButtonPressedEvent& e);
 
 	private:
 		OrthographicCameraController m_CameraController;

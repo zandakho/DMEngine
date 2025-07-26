@@ -95,6 +95,8 @@ namespace DME
 		}
 	}
 
+	
+
 	SceneHierarchyPanel::SceneHierarchyPanel(const Ref<Scene>& context)
 	{
 		SetContext(context);
@@ -194,6 +196,11 @@ namespace DME
 			if (m_SelectionContext == entity)
 				m_SelectionContext = {};
 		}
+	}
+
+	void SceneHierarchyPanel::SetSelectedEntity(Entity entity)
+	{
+		m_SelectionContext = entity;
 	}
 
 	void SceneHierarchyPanel::DrawComponents(Entity entity)
