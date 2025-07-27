@@ -1,12 +1,15 @@
 #include "dmepch.h"
 
 #include "EditorLayer.h"
+#include "DME/Renderer/DebugRendererMode.h"
 #include "DME/Scene/SceneSerializer.h"
 #include "DME/Utils/PlatformUtils.h"
 #include "DME/Math/Math.h"
 
 #include "ImGuizmo.h"
 #include <glm/gtc/type_ptr.hpp>
+
+#include "ImGui/imgui_internal.h"
 
 namespace DME
 {
@@ -21,7 +24,7 @@ namespace DME
 		FramebufferSpecification fbSpec;
 		fbSpec.Attachments = { FramebufferTextureFormat::RGBA8, FramebufferTextureFormat::RED_INTEGER, FramebufferTextureFormat::Depth };
 		fbSpec.Width = 1600;
-		fbSpec.Width = 900;
+		fbSpec.Height = 900;
 		m_Framebuffer = Framebuffer::Create(fbSpec);
 
 		m_ActiveScene = CreateRef<Scene>();
@@ -84,6 +87,19 @@ namespace DME
 			m_HoveredEntity = pixelData == -1 ? Entity() : Entity(static_cast<entt::entity>(pixelData), m_ActiveScene.get());
 		}
 
+		if (Input::IsKeyPressed(Key::F1))
+		{
+			s_DebugRendererMode = DebugRendererMode::Normal;
+		}
+		else if (Input::IsKeyPressed(Key::F2))
+		{
+			s_DebugRendererMode = DebugRendererMode::Wireframe;
+		}
+		else if (Input::IsKeyPressed(Key::F3))
+		{
+			s_DebugRendererMode = DebugRendererMode::Point;
+		}
+
 
 		m_Framebuffer->UnBind(); 
 
@@ -93,15 +109,29 @@ namespace DME
 	{
 		DME_PROFILE_FUNCTION();
 
+		ImGui::ShowDemoWindow();
+		EditorLayer::OnDockspace();
+
+		ImGui::Begin("Debug Window");
+
+		ImGui::Text("Debug mode: %s", DebugModeToString(s_DebugRendererMode).c_str());
+
+		ImGui::End();
+
 		ImGui::Begin("Renderer Stats");
+
+		ImGui::Text("Draw Calls: %d", Renderer2D::GetStats().DrawCalls);
+		ImGui::Text("Quads: %d", Renderer2D::GetStats().QuadCount);
+		ImGui::Text("Vertices: %d", Renderer2D::GetStats().GetTotalVertexCount());
+		ImGui::Text("Indices: %d", Renderer2D::GetStats().GetTotalIndexCount());
+		ImGui::Text("FPS: %d", static_cast<uint16_t>(ImGui::GetIO().Framerate));
+		ImGui::Text("Frame time: %.3f ms", static_cast<uint16_t>(ImGui::GetIO().Framerate) / 1000.0f);
+
 
 		std::string name = m_HoveredEntity && m_HoveredEntity.HasComponent<TagComponent>() ? m_HoveredEntity.GetComponent<TagComponent>().Tag : "None";
 		ImGui::Text("Hovered Entity: %s", name.c_str());
 
 		ImGui::End();
-
-		ImGui::ShowDemoWindow();
-		EditorLayer::OnDockspace();
 
 		m_SceneHierarchy.OnImGuiRender();
 

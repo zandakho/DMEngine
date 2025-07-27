@@ -141,18 +141,6 @@ namespace DME
 			DrawComponents(m_SelectionContext);
 		}
 		ImGui::End();
-
-		ImGui::Begin("Renderer Stats");
-
-		ImGui::Text("Draw Calls: %d", Renderer2D::GetStats().DrawCalls);
-		ImGui::Text("Quads: %d", Renderer2D::GetStats().QuadCount);
-		ImGui::Text("Vertices: %d", Renderer2D::GetStats().GetTotalVertexCount());
-		ImGui::Text("Indices: %d", Renderer2D::GetStats().GetTotalIndexCount());
-		ImGui::Text("FPS: %d", static_cast<uint16_t>(io.Framerate));
-		ImGui::Text("Frame time: %.3f ms", static_cast<uint16_t>(io.Framerate) / 1000.0f);
-
-		ImGui::End();
-
 	}
 
 	void SceneHierarchyPanel::DrawEntityNode(Entity entity)

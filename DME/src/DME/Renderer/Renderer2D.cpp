@@ -4,7 +4,10 @@
 #include "DME/Renderer/Renderer2D.h"
 #include "DME/Renderer/VertexArray.h"
 #include "DME/Renderer/Shader.h"
+#include "DME/Renderer/DebugRendererMode.h"
 #include <glm/gtc/matrix_transform.hpp>
+
+#include "glad/glad.h"
 
 namespace DME
 {
@@ -138,6 +141,19 @@ namespace DME
 	{
 		DME_PROFILE_FUNCTION();
 
+		if (s_DebugRendererMode == DebugRendererMode::Normal)
+			glPolygonMode(GL_FRONT_AND_BACK, GL_FILL);
+		else if (s_DebugRendererMode == DebugRendererMode::Wireframe)
+		{
+			glPolygonMode(GL_FRONT_AND_BACK, GL_LINE);
+			glLineWidth(2.0f);
+		}
+		else if (s_DebugRendererMode == DebugRendererMode::Point)
+		{
+			glPolygonMode(GL_FRONT_AND_BACK, GL_POINT);
+			glPointSize(3.0f);
+		}
+
 		glm::mat4 viewProj = camera.GetViewProjection();
 
 		s_Data.TextureShader->Bind();
@@ -166,7 +182,8 @@ namespace DME
 		if (s_Data.QuadIndexCount == 0)
 			return; // Nothing to draw
 
-		uint32_t dataSize = static_cast<uint32_t>((uint8_t*)s_Data.QuadVertexBufferPtr - (uint8_t*)s_Data.QuadVertexBufferBase);
+		size_t vertexCount = s_Data.QuadVertexBufferPtr - s_Data.QuadVertexBufferBase;
+		uint32_t dataSize = static_cast<uint32_t>(vertexCount * sizeof(QuadVertex));
 		s_Data.QuadVertexBuffer->SetData(s_Data.QuadVertexBufferBase, dataSize);
 
 		// Bind textures
@@ -221,6 +238,10 @@ namespace DME
 		const float textureIndex = 0.0f; // White Texture
 		constexpr glm::vec2 textureCoords[] = { { 0.0f, 0.0f }, { 1.0f, 0.0f }, { 1.0f, 1.0f }, { 0.0f, 1.0f } };
 		const float tilingFactor = 1.0f;
+		glm::vec4 finalColor = color;
+
+		if (s_DebugRendererMode == DebugRendererMode::Wireframe || s_DebugRendererMode == DebugRendererMode::Point)
+			finalColor = glm::vec4(0.0f, 1.0f, 0.0f, 1.0f);
 
 		if (s_Data.QuadIndexCount >= Renderer2DData::MaxIndices)
 			NextBatch();
@@ -228,7 +249,7 @@ namespace DME
 		for (size_t i = 0; i < quadVertexCount; i++)
 		{
 			s_Data.QuadVertexBufferPtr->Position = transform * s_Data.QuadVertexPositions[i];
-			s_Data.QuadVertexBufferPtr->Color = color;
+			s_Data.QuadVertexBufferPtr->Color = finalColor;
 			s_Data.QuadVertexBufferPtr->TexCoord = textureCoords[i];
 			s_Data.QuadVertexBufferPtr->TexIndex = textureIndex;
 			s_Data.QuadVertexBufferPtr->TilingFactor = tilingFactor;
@@ -247,6 +268,10 @@ namespace DME
 
 		constexpr size_t quadVertexCount = 4;
 		constexpr glm::vec2 textureCoords[] = { { 0.0f, 0.0f }, { 1.0f, 0.0f }, { 1.0f, 1.0f }, { 0.0f, 1.0f } };
+		glm::vec4 finalColor = tintColor;
+
+		if (s_DebugRendererMode == DebugRendererMode::Wireframe || s_DebugRendererMode == DebugRendererMode::Point)
+			finalColor = glm::vec4(0.0f, 1.0f, 0.0f, 1.0f);
 
 		if (s_Data.QuadIndexCount >= Renderer2DData::MaxIndices)
 			NextBatch();
@@ -256,7 +281,7 @@ namespace DME
 		{
 			if (*s_Data.TextureSlots[i] == *texture)
 			{
-				textureIndex = (float)i;
+				textureIndex = static_cast<float>(i);
 				break;
 			}
 		}
@@ -266,7 +291,7 @@ namespace DME
 			if (s_Data.TextureSlotIndex >= Renderer2DData::MaxTextureSlots)
 				NextBatch();
 
-			textureIndex = (float)s_Data.TextureSlotIndex;
+			textureIndex = static_cast<float>(s_Data.TextureSlotIndex);
 			s_Data.TextureSlots[s_Data.TextureSlotIndex] = texture;
 			s_Data.TextureSlotIndex++;
 		}
@@ -274,7 +299,7 @@ namespace DME
 		for (size_t i = 0; i < quadVertexCount; i++)
 		{
 			s_Data.QuadVertexBufferPtr->Position = transform * s_Data.QuadVertexPositions[i];
-			s_Data.QuadVertexBufferPtr->Color = tintColor;
+			s_Data.QuadVertexBufferPtr->Color = finalColor;
 			s_Data.QuadVertexBufferPtr->TexCoord = textureCoords[i];
 			s_Data.QuadVertexBufferPtr->TexIndex = textureIndex;
 			s_Data.QuadVertexBufferPtr->TilingFactor = tilingFactor;
