@@ -5,8 +5,6 @@
 #include "DME/Scene/Scene.h"
 #include "DME/Scene/Entity.h"
 
-#include "FontLibrary.h"
-
 namespace DME
 {
 	
@@ -19,7 +17,6 @@ namespace DME
 		void SetContext(const Ref<Scene>& context);
 
 		void OnImGuiRender();
-		static int SetFont(FontLibrary font) { return static_cast<int>(font); }
 
 		Entity GetSelectedEntity() const { return m_SelectionContext; }
 		void SetSelectedEntity(Entity entity);

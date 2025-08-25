@@ -11,6 +11,8 @@
 
 #include "DME/Renderer/Renderer2D.h"
 
+#include "FontLibrary.h"
+
 #ifdef _MSVC_LANG
 	#define _CRT_SECURE_NO_WARNINGS
 #endif
@@ -29,7 +31,7 @@ namespace DME
 		ImGui::PushMultiItemsWidths(3, ImGui::CalcItemWidth() + 50);
 		ImGui::PushStyleVar(ImGuiStyleVar_ItemSpacing, ImVec2(4, 5));
 
-		ImGui::PushFont(ImGui::GetIO().Fonts->Fonts[SceneHierarchyPanel::SetFont(OpenSansRegular_21)]);
+		ImGui::PushFont(ImGui::GetIO().Fonts->Fonts[static_cast<int>(FontLibrary::OpenSansBold_21)]);
 		ImGui::DragFloat("##X", &values.x, 0.05f, min, max, "%.3f", flags | ImGuiSliderFlags_AsVectorX);
 		ImGui::PopItemWidth();
 		ImGui::SameLine();

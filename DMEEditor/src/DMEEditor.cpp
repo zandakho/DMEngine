@@ -23,7 +23,7 @@ namespace DME
 	class DMEEditor : public Application
 	{
 	public:
-		DMEEditor() : Application("DMEEditor")
+		DMEEditor(ApplicationCommandLineArgs args) : Application("DMEEditor", args)
 		{
 			PushLayer(new EditorLayer());
 		}
@@ -34,9 +34,9 @@ namespace DME
 		}
 	};
 
-	Application* CreateApplication()
+	Application* CreateApplication(ApplicationCommandLineArgs args)
 	{
-		return new DMEEditor();
+		return new DMEEditor(args);
 	}
 }
 

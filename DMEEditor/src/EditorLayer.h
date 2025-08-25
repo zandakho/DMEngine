@@ -3,6 +3,7 @@
 #include <dme.h>
 #include <ImGui/imgui.h>
 #include "Panels/SceneHierarchyPanel.h"
+#include "Panels/ContentBrowserPanel.h"
 
 #include "DME/Renderer/EditorCamera.h"
 
@@ -45,6 +46,7 @@ namespace DME
 		
 	private:
 		SceneHierarchyPanel m_SceneHierarchy;
+		ContentBrowserPanel m_ContentBrowser;
 		EditorCamera m_EditorCamera;
 
 	private:
@@ -53,6 +55,7 @@ namespace DME
 		
 		bool m_BlockViewportEvents = false;
 		bool m_PrimaryCamera = true;
+		bool m_DemoWindow = false;
 
 		int m_GizmoType = -1;
 

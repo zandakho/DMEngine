@@ -31,29 +31,29 @@ namespace DME
 		//io.ConfigFlags |= ImGuiConfigFlags_ViewportsNoTaskBarIcons;
 		//io.ConfigFlags |= ImGuiConfigFlags_ViewportsNoMerge;
 
-		io.Fonts->AddFontFromFileTTF("C:/Engine/DME/Common/assets/fonts/opensans/OpenSans-Bold.ttf", 15);
-		io.Fonts->AddFontFromFileTTF("C:/Engine/DME/Common/assets/fonts/opensans/OpenSans-Bold.ttf", 18);
-		io.Fonts->AddFontFromFileTTF("C:/Engine/DME/Common/assets/fonts/opensans/OpenSans-Bold.ttf", 21);
-		io.Fonts->AddFontFromFileTTF("C:/Engine/DME/Common/assets/fonts/opensans/OpenSans-Regular.ttf", 15);
-		io.Fonts->AddFontFromFileTTF("C:/Engine/DME/Common/assets/fonts/opensans/OpenSans-Regular.ttf", 18);
-		io.Fonts->AddFontFromFileTTF("C:/Engine/DME/Common/assets/fonts/opensans/OpenSans-Regular.ttf", 21);
+		io.Fonts->AddFontFromFileTTF("C:/Engine/DME/Common/assets/fonts/opensans/OpenSans-Bold.ttf", 15, nullptr, io.Fonts->GetGlyphRangesCyrillic());
+		io.Fonts->AddFontFromFileTTF("C:/Engine/DME/Common/assets/fonts/opensans/OpenSans-Bold.ttf", 18, nullptr, io.Fonts->GetGlyphRangesCyrillic());
+		io.Fonts->AddFontFromFileTTF("C:/Engine/DME/Common/assets/fonts/opensans/OpenSans-Bold.ttf", 21, nullptr, io.Fonts->GetGlyphRangesCyrillic());
+		io.Fonts->AddFontFromFileTTF("C:/Engine/DME/Common/assets/fonts/opensans/OpenSans-Regular.ttf", 15, nullptr, io.Fonts->GetGlyphRangesCyrillic());
+		io.Fonts->AddFontFromFileTTF("C:/Engine/DME/Common/assets/fonts/opensans/OpenSans-Regular.ttf", 18, nullptr, io.Fonts->GetGlyphRangesCyrillic());
+		io.Fonts->AddFontFromFileTTF("C:/Engine/DME/Common/assets/fonts/opensans/OpenSans-Regular.ttf", 21, nullptr, io.Fonts->GetGlyphRangesCyrillic());
 
-		io.Fonts->AddFontFromFileTTF("C:/Engine/DME/Common/assets/fonts/Roboto/Roboto.ttf", 15);
-		io.Fonts->AddFontFromFileTTF("C:/Engine/DME/Common/assets/fonts/Roboto/Roboto.ttf", 18);
-		io.Fonts->AddFontFromFileTTF("C:/Engine/DME/Common/assets/fonts/Roboto/Roboto.ttf", 21);
-		io.Fonts->AddFontFromFileTTF("C:/Engine/DME/Common/assets/fonts/Roboto/Roboto-Italic.ttf", 15);
-		io.Fonts->AddFontFromFileTTF("C:/Engine/DME/Common/assets/fonts/Roboto/Roboto-Italic.ttf", 18);
-		io.Fonts->AddFontFromFileTTF("C:/Engine/DME/Common/assets/fonts/Roboto/Roboto-Italic.ttf", 21);
+		io.Fonts->AddFontFromFileTTF("C:/Engine/DME/Common/assets/fonts/Roboto/Roboto.ttf", 15, nullptr, io.Fonts->GetGlyphRangesCyrillic());
+		io.Fonts->AddFontFromFileTTF("C:/Engine/DME/Common/assets/fonts/Roboto/Roboto.ttf", 18, nullptr, io.Fonts->GetGlyphRangesCyrillic());
+		io.Fonts->AddFontFromFileTTF("C:/Engine/DME/Common/assets/fonts/Roboto/Roboto.ttf", 21, nullptr, io.Fonts->GetGlyphRangesCyrillic());
+		io.Fonts->AddFontFromFileTTF("C:/Engine/DME/Common/assets/fonts/Roboto/Roboto-Italic.ttf", 15, nullptr, io.Fonts->GetGlyphRangesCyrillic());
+		io.Fonts->AddFontFromFileTTF("C:/Engine/DME/Common/assets/fonts/Roboto/Roboto-Italic.ttf", 18, nullptr, io.Fonts->GetGlyphRangesCyrillic());
+		io.Fonts->AddFontFromFileTTF("C:/Engine/DME/Common/assets/fonts/Roboto/Roboto-Italic.ttf", 21, nullptr, io.Fonts->GetGlyphRangesCyrillic());
 
-		io.Fonts->AddFontFromFileTTF("C:/Engine/DME/Common/assets/fonts/Noto/NotoSansDevanagari-Regular.ttf", 15);
-		io.Fonts->AddFontFromFileTTF("C:/Engine/DME/Common/assets/fonts/Noto/NotoSansDevanagari-Regular.ttf", 18);
-		io.Fonts->AddFontFromFileTTF("C:/Engine/DME/Common/assets/fonts/Noto/NotoSansDevanagari-Regular.ttf", 21);
+		io.Fonts->AddFontFromFileTTF("C:/Engine/DME/Common/assets/fonts/Noto/NotoSansDevanagari-Regular.ttf", 15, nullptr, io.Fonts->GetGlyphRangesCyrillic());
+		io.Fonts->AddFontFromFileTTF("C:/Engine/DME/Common/assets/fonts/Noto/NotoSansDevanagari-Regular.ttf", 18, nullptr, io.Fonts->GetGlyphRangesCyrillic());
+		io.Fonts->AddFontFromFileTTF("C:/Engine/DME/Common/assets/fonts/Noto/NotoSansDevanagari-Regular.ttf", 21, nullptr, io.Fonts->GetGlyphRangesCyrillic());
 
-		io.Fonts->AddFontFromFileTTF("C:/Engine/DME/Common/assets/fonts/Droid/DroidSansFallback.ttf", 15);
-		io.Fonts->AddFontFromFileTTF("C:/Engine/DME/Common/assets/fonts/Droid/DroidSansFallback.ttf", 18);
-		io.Fonts->AddFontFromFileTTF("C:/Engine/DME/Common/assets/fonts/Droid/DroidSansFallback.ttf", 21);
+		io.Fonts->AddFontFromFileTTF("C:/Engine/DME/Common/assets/fonts/Droid/DroidSansFallback.ttf", 15, nullptr, io.Fonts->GetGlyphRangesCyrillic());
+		io.Fonts->AddFontFromFileTTF("C:/Engine/DME/Common/assets/fonts/Droid/DroidSansFallback.ttf", 18, nullptr, io.Fonts->GetGlyphRangesCyrillic());
+		io.Fonts->AddFontFromFileTTF("C:/Engine/DME/Common/assets/fonts/Droid/DroidSansFallback.ttf", 21, nullptr, io.Fonts->GetGlyphRangesCyrillic());
 
-		io.FontDefault = io.Fonts->AddFontFromFileTTF("C:/Engine/DME/Common/assets/fonts/Roboto/Roboto.ttf", 18);
+		io.FontDefault = io.Fonts->AddFontFromFileTTF("C:/Engine/DME/Common/assets/fonts/Roboto/Roboto.ttf", 18, nullptr, io.Fonts->GetGlyphRangesCyrillic());
 
 		ImGuiStyle& style = ImGui::GetStyle();
 		style.FrameRounding = 2.5f;

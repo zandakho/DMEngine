@@ -6,6 +6,8 @@
 #include "DME/Utils/PlatformUtils.h"
 #include "DME/Math/Math.h"
 
+#include "Panels/FontLibrary.h"
+
 #include "ImGuizmo.h"
 #include <glm/gtc/type_ptr.hpp>
 
@@ -28,6 +30,14 @@ namespace DME
 		m_Framebuffer = Framebuffer::Create(fbSpec);
 
 		m_ActiveScene = CreateRef<Scene>();
+
+		auto commandLineArgs = Application::Get().GetCommandLineArgs();
+		if (commandLineArgs.Count > 1)
+		{
+			auto sceneFilePath = commandLineArgs[1];
+			SceneSerializer serializer(m_ActiveScene);
+			serializer.Deserialize(sceneFilePath);
+		}
 
 		m_EditorCamera = EditorCamera(30.0f, 1.778f, 0.1f, 1000.0f);
 		
@@ -109,13 +119,22 @@ namespace DME
 	{
 		DME_PROFILE_FUNCTION();
 
-		ImGui::ShowDemoWindow();
+		if (m_DemoWindow)
+			ImGui::ShowDemoWindow();
+
 		EditorLayer::OnDockspace();
 
 		ImGui::Begin("Debug Window");
 
 		ImGui::Text("Debug mode: %s", DebugModeToString(s_DebugRendererMode).c_str());
 
+		ImGui::PushStyleColor(ImGuiCol_Button, m_DemoWindow ? IM_COL32(10, 190, 10, 255) : IM_COL32(190, 10, 10, 255));
+		ImGui::PushStyleColor(ImGuiCol_ButtonHovered, m_DemoWindow ? IM_COL32(10, 190, 10, 255) : IM_COL32(190, 10, 10, 255));
+		ImGui::PushStyleColor(ImGuiCol_ButtonActive, m_DemoWindow ? IM_COL32(10, 190, 10, 255) : IM_COL32(190, 10, 10, 255));
+		ImGui::PushFont(ImGui::GetIO().Fonts->Fonts[FontLibrary::OpenSansRegular_21]);
+		if (ImGui::Button("Демо Window")) m_DemoWindow = !m_DemoWindow;
+		ImGui::PopFont();
+		ImGui::PopStyleColor(3);
 		ImGui::End();
 
 		ImGui::Begin("Renderer Stats");
@@ -134,6 +153,7 @@ namespace DME
 		ImGui::End();
 
 		m_SceneHierarchy.OnImGuiRender();
+		m_ContentBrowser.OnImGuiRender();
 
 		ImGui::PushStyleVar(ImGuiStyleVar_WindowPadding, ImVec2(0, 0));
 		ImGui::Begin("Viewport", nullptr, ImGuiWindowFlags_NoCollapse);
@@ -162,7 +182,8 @@ namespace DME
 		{
 			ImGui::PopStyleColor();
 
-			ImGui::PushFont(ImGui::GetIO().Fonts->Fonts[SceneHierarchyPanel::SetFont(OpenSansBold_21)]);
+			ImGui::PushFont(ImGui::GetIO().Fonts->Fonts[static_cast<int>(FontLibrary::OpenSansBold_21)]);
+
 
 			ImGui::PushStyleColor(ImGuiCol_Button, ImVec4(0.2f, 0.2f, 0.2f, 0.5f));
 			ImGui::PushStyleColor(ImGuiCol_ButtonHovered, ImVec4(0.2f, 0.2f, 0.2f, 0.5f));

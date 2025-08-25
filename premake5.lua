@@ -1,4 +1,5 @@
 include "./vendor/premake/premake_customization/solution_items.lua"
+include "Dependencies.lua"
 
 workspace "DME"
     architecture "x86_64"
@@ -22,16 +23,6 @@ workspace "DME"
     }
 
 outputdir = "%{cfg.buildcfg}-%{cfg.system}-%{cfg.architecture}"
-
-IncludeDir = {}
-IncludeDir["GLFW"] = "%{wks.location}/DME/vendor/GLFW/include"
-IncludeDir["Glad"] = "%{wks.location}/DME/vendor/Glad/include"
-IncludeDir["ImGui"] = "%{wks.location}/DME/vendor/ImGui"
-IncludeDir["glm"] = "%{wks.location}/DME/vendor/glm"
-IncludeDir["stb"] = "%{wks.location}/DME/vendor/stb"
-IncludeDir["entt"] = "%{wks.location}/DME/vendor/entt/include"
-IncludeDir["yaml_cpp"] = "%{wks.location}/DME/vendor/yaml-cpp/include"
-IncludeDir["ImGuizmo"] = "%{wks.location}/DME/vendor/ImGuizmo"
 
 group "Vendor"
     include "vendor/premake"

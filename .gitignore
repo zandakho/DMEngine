@@ -4,6 +4,9 @@
 .vs/
 bin/
 bin-int/
+DME/vendor/VulkanSDK
+Common/assets/cache
+scripts/__pycache__
 
 #files
 **/*.log
@@ -16,3 +19,5 @@ bin-int/
 **/*.vcxproj.filters
 **/*.vcxproj.user
 **/*.csproj
+
+# Directories

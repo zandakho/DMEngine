@@ -14,11 +14,24 @@ int main(int argc, char** argv);
 
 namespace DME
 {
+
+	struct ApplicationCommandLineArgs
+	{
+		int Count = 0;
+		char** Args = nullptr;
+
+		const char* operator[](int index) const
+		{
+			DME_CORE_ASSERT(index < Count);
+			return Args[index];
+		}
+	};
+
 	class Application
 	{
 	public:
 
-		Application(const std::string& name = "DME App");
+		Application(const std::string& name = "DME App", ApplicationCommandLineArgs args = ApplicationCommandLineArgs());
 		virtual ~Application();
 		
 		void OnEvent(Event& event);
@@ -35,6 +48,7 @@ namespace DME
 		ImGuiLayer* GetImGuiLayer() { return m_ImGuiLayer; }
 
 		static Application& Get() { return *s_Instance; }
+		ApplicationCommandLineArgs GetCommandLineArgs() const { return m_CommandLineArgs; }
 
 	private:
 		void Run();
@@ -50,6 +64,7 @@ namespace DME
 		ImGuiLayer* m_ImGuiLayer;
 		LayerStack m_LayerStack;
 		float m_LastFrameTime = 0.0f;
+		ApplicationCommandLineArgs m_CommandLineArgs;
 
 
 
@@ -59,5 +74,5 @@ namespace DME
 		friend int ::main(int argc, char** argv);
 	};
 
-	Application* CreateApplication();
+	Application* CreateApplication(ApplicationCommandLineArgs args);
 }
