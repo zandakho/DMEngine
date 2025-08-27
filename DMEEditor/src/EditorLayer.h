@@ -28,7 +28,14 @@ namespace DME
 
 		void NewScene();
 		void OpenScene();
+		void OpenScene(const std::filesystem::path& path);
 		void SaveSceneAs();
+
+		void OnScenePlay();
+		void OnSceneStop();
+
+		void UIToolbar();
+		void GizmosToolbar();
 		
 
 	private:
@@ -59,6 +66,13 @@ namespace DME
 
 		int m_GizmoType = -1;
 
+		enum class SceneState
+		{
+			Edit = 0, Play = 1
+		};
+
+		SceneState m_SceneState = SceneState::Edit;
+
 		bool m_ViewportFocused = false, m_ViewportHovered = false, m_ViewportDocked = false;
 
 		glm::vec2 m_ViewportBounds[2];
@@ -66,6 +80,8 @@ namespace DME
 		glm::vec2 m_ViewportSize = { 0.0f, 0.0f };
 
 		glm::vec4 m_SquareColor{ 1.0f, 0.0f, 0.0f, 1.0f };
+
+		Ref<Texture2D> m_IconPlay, m_IconStop;
 
 	};
 

@@ -10,9 +10,9 @@ namespace DME
 		{
 			switch (mode)
 			{
-			case DebugRendererMode::Normal:			return "Normal";
-			case DebugRendererMode::Wireframe:		return "Wireframe";
-			case DebugRendererMode::Point:			return "Point";
+				case DebugRendererMode::Normal:			return "Normal";
+				case DebugRendererMode::Wireframe:		return "Wireframe (Lines)";
+				case DebugRendererMode::Point:			return "Point (Points)";
 			}
 
 			DME_CORE_ASSERT(false, "Unknown debug mode!");

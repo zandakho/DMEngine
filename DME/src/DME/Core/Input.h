@@ -14,6 +14,7 @@ namespace DME
 		static bool IsKeyReleasedMode(KeyCode keycode);
 
 		static bool IsMouseButtonPressed(MouseCode button);
+		static bool IsMouseButtonReleased(MouseCode button);
 		static std::pair<float, float> GetMousePosition();
 		static float GetMouseX();
 		static float GetMouseY();

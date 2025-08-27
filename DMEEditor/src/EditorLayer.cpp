@@ -16,12 +16,17 @@
 namespace DME
 {
 
+	extern const std::filesystem::path g_AssetPath;
+
 	EditorLayer::EditorLayer() : Layer("EditorLayer"), m_CameraController(1600.0f / 900.0f) { }
 
 	void EditorLayer::OnAttach()
 	{
 
 		DME_PROFILE_FUNCTION();
+
+		m_IconPlay = Texture2D::Create("Resources/Icons/Viewport/PlayButton.png");
+		m_IconStop = Texture2D::Create("Resources/Icons/Viewport/StopButton.png");
 
 		FramebufferSpecification fbSpec;
 		fbSpec.Attachments = { FramebufferTextureFormat::RGBA8, FramebufferTextureFormat::RED_INTEGER, FramebufferTextureFormat::Depth };
@@ -66,13 +71,6 @@ namespace DME
 
 		}
 		
-		if (m_ViewportFocused)
-		{
-			m_CameraController.OnUpdate(ts);
-		}
-
-		m_EditorCamera.OnUpdate(ts);
-
 		//Render
 		Renderer2D::ResetStats();
 		m_Framebuffer->Bind();
@@ -81,7 +79,24 @@ namespace DME
 
 		m_Framebuffer->ClearAttachment(1, -1);
 
-		m_ActiveScene->OnUpdateEditor(ts, m_EditorCamera);
+		switch (m_SceneState)
+		{
+			case SceneState::Edit:
+			{
+				if (m_ViewportFocused)
+					m_CameraController.OnUpdate(ts);
+
+				m_EditorCamera.OnUpdate(ts);
+
+				m_ActiveScene->OnUpdateEditor(ts, m_EditorCamera);
+				break;
+			}
+			case SceneState::Play:
+			{
+				m_ActiveScene->OnUpdateRuntime(ts);
+				break;
+			}
+		}
 
 		auto [mx, my] = ImGui::GetMousePos();
 		mx -= m_ViewportBounds[0].x;
@@ -115,6 +130,8 @@ namespace DME
 
 	}
 
+	static float test_button_size { 0.0f};
+
 	void EditorLayer::OnImGuiRender()
 	{
 		DME_PROFILE_FUNCTION();
@@ -126,13 +143,16 @@ namespace DME
 
 		ImGui::Begin("Debug Window");
 
+		ImGui::SliderFloat("Size", &test_button_size, 0.0f, 50.0f);
+
 		ImGui::Text("Debug mode: %s", DebugModeToString(s_DebugRendererMode).c_str());
 
-		ImGui::PushStyleColor(ImGuiCol_Button, m_DemoWindow ? IM_COL32(10, 190, 10, 255) : IM_COL32(190, 10, 10, 255));
-		ImGui::PushStyleColor(ImGuiCol_ButtonHovered, m_DemoWindow ? IM_COL32(10, 190, 10, 255) : IM_COL32(190, 10, 10, 255));
-		ImGui::PushStyleColor(ImGuiCol_ButtonActive, m_DemoWindow ? IM_COL32(10, 190, 10, 255) : IM_COL32(190, 10, 10, 255));
+		ImGui::PushStyleColor(ImGuiCol_Button, m_DemoWindow ? IM_COL32(10, 140, 10, 255) : IM_COL32(140, 10, 10, 255));
+		ImGui::PushStyleColor(ImGuiCol_ButtonHovered, m_DemoWindow ? IM_COL32(10, 140, 10, 255) : IM_COL32(140, 10, 10, 255));
+		ImGui::PushStyleColor(ImGuiCol_ButtonActive, m_DemoWindow ? IM_COL32(10, 140, 10, 255) : IM_COL32(140, 10, 10, 255));
+		//ImGui::PushStyleColor(ImGuiCol_Text, m_DemoWindow ? IM_COL32(10, 140, 10, 255) : IM_COL32(140, 10, 10, 255));
 		ImGui::PushFont(ImGui::GetIO().Fonts->Fonts[FontLibrary::OpenSansRegular_21]);
-		if (ImGui::Button("Демо Window")) m_DemoWindow = !m_DemoWindow;
+		if (ImGui::Button("Demo Window")) m_DemoWindow = !m_DemoWindow;
 		ImGui::PopFont();
 		ImGui::PopStyleColor(3);
 		ImGui::End();
@@ -155,7 +175,7 @@ namespace DME
 		m_SceneHierarchy.OnImGuiRender();
 		m_ContentBrowser.OnImGuiRender();
 
-		ImGui::PushStyleVar(ImGuiStyleVar_WindowPadding, ImVec2(0, 0));
+		ImGui::PushStyleVar(ImGuiStyleVar_WindowPadding, ImVec2(3.5f, 3.5f));
 		ImGui::Begin("Viewport", nullptr, ImGuiWindowFlags_NoCollapse);
 		ImGui::PopStyleVar();
 
@@ -176,34 +196,20 @@ namespace DME
 		uint64_t textureID = m_Framebuffer->GetColorAttachmentRendererID();
 		ImGui::Image(reinterpret_cast<void*>(textureID), ImVec2(m_ViewportSize.x, m_ViewportSize.y), { 0, 1 }, { 1, 0 });
 
-		ImGui::PushStyleColor(ImGuiCol_FrameBg, ImVec4(0.11f, 0.11f, 0.11f, 0.5f));
-		ImGui::SetNextWindowPos(ImVec2(ImGui::GetWindowPos().x + 15, ImGui::GetWindowPos().y + 40));
-		if (ImGui::BeginChild("Control panel", ImVec2(130, 35), ImGuiChildFlags_FrameStyle, ImGuiWindowFlags_NoDecoration | ImGuiWindowFlags_NoDocking | ImGuiWindowFlags_NoMove))
+		if (ImGui::BeginDragDropTarget())
 		{
-			ImGui::PopStyleColor();
-
-			ImGui::PushFont(ImGui::GetIO().Fonts->Fonts[static_cast<int>(FontLibrary::OpenSansBold_21)]);
-
-
-			ImGui::PushStyleColor(ImGuiCol_Button, ImVec4(0.2f, 0.2f, 0.2f, 0.5f));
-			ImGui::PushStyleColor(ImGuiCol_ButtonHovered, ImVec4(0.2f, 0.2f, 0.2f, 0.5f));
-			ImGui::PushStyleColor(ImGuiCol_ButtonActive, ImVec4(0.2f, 0.2f, 0.2f, 0.5f));
-			ImGui::PushStyleColor(ImGuiCol_Text, ImVec4(1.0f, 1.0f, 1.0f, 1.0f));
-			ImGui::PushStyleVar(ImGuiStyleVar_FramePadding, ImVec2(9, 5));
-			if (ImGui::Button("M", ImVec2(25, 25))) m_GizmoType = -1; ImGui::SameLine();
-			if (ImGui::Button("T", ImVec2(25, 25))) m_GizmoType = ImGuizmo::OPERATION::TRANSLATE; ImGui::SameLine();
-			if (ImGui::Button("R", ImVec2(25, 25))) m_GizmoType = ImGuizmo::OPERATION::ROTATE; ImGui::SameLine();
-			if (ImGui::Button("S", ImVec2(25, 25))) m_GizmoType = ImGuizmo::OPERATION::SCALE;
-			ImGui::PopStyleVar();
-			ImGui::PopStyleColor(4);
-
-			ImGui::PopFont();
-
-			ImGui::EndChild();
-
+			if (const ImGuiPayload* payload = ImGui::AcceptDragDropPayload("CONTENT_BROWSER_ITEM"))
+			{
+				const wchar_t* path = (const wchar_t*)payload->Data;
+				OpenScene(std::filesystem::path(g_AssetPath) / path);
+				DME_CORE_INFO("Deserialize");
+			}
+			ImGui::EndDragDropTarget();
 		}
 
-		// Gizmos
+		GizmosToolbar();
+		UIToolbar();
+
 		Entity selectedEntity = m_SceneHierarchy.GetSelectedEntity();
 		if (selectedEntity && m_GizmoType != -1)
 		{
@@ -246,7 +252,66 @@ namespace DME
 		}
 
 		ImGui::End();
-		
+	}
+
+	void EditorLayer::UIToolbar()
+	{
+		ImGui::PushStyleColor(ImGuiCol_FrameBg, ImVec4(0.11f, 0.11f, 0.11f, 0.5f));
+		ImGui::SetNextWindowPos(ImVec2(ImGui::GetWindowPos().x + (ImGui::GetWindowContentRegionMax().x * 0.5 - 70.0f), ImGui::GetWindowPos().y + 40));
+		ImGui::BeginChild("UI panel", ImVec2(130, 35), ImGuiChildFlags_FrameStyle, ImGuiWindowFlags_NoDecoration | ImGuiWindowFlags_NoDocking | ImGuiWindowFlags_NoMove | ImGuiWindowFlags_NoScrollbar | ImGuiWindowFlags_NoScrollWithMouse);
+		Ref<Texture2D> icon = m_SceneState == SceneState::Edit ? m_IconPlay : m_IconStop;
+		ImTextureID buttonID = static_cast<uintptr_t>(icon->GetRendererID());
+		ImGui::PushStyleVar(ImGuiStyleVar_FramePadding, ImVec2(1, 1));
+		ImGui::SetCursorPosY(ImGui::GetWindowContentRegionMax().y * 0.5f - 12);
+		if (ImGui::ImageButton("Image", buttonID, ImVec2(24, 24), ImVec2(0, 0), ImVec2(1, 1), ImVec4(0, 0, 0, 0)))
+		{
+			if (m_SceneState == SceneState::Edit)
+				OnScenePlay();
+			else if (m_SceneState == SceneState::Play)
+				OnSceneStop();
+		}
+		ImGui::PopStyleVar();
+		ImGui::PopStyleColor();
+		ImGui::EndChild();
+
+	}
+	void EditorLayer::GizmosToolbar()
+	{
+		ImGui::PushStyleColor(ImGuiCol_FrameBg, ImVec4(0.11f, 0.11f, 0.11f, 0.5f));
+		ImGui::SetNextWindowPos(ImVec2(ImGui::GetWindowPos().x + 15, ImGui::GetWindowPos().y + 40));
+		if (ImGui::BeginChild("Control panel", ImVec2(130, 35), ImGuiChildFlags_FrameStyle, ImGuiWindowFlags_NoDecoration | ImGuiWindowFlags_NoDocking | ImGuiWindowFlags_NoMove | ImGuiWindowFlags_NoScrollbar | ImGuiWindowFlags_NoScrollWithMouse))
+		{
+			ImGui::PopStyleColor();
+
+			ImGui::PushFont(ImGui::GetIO().Fonts->Fonts[FontLibrary::OpenSansBold_21]);
+
+			ImGui::PushStyleColor(ImGuiCol_Button, ImVec4(0.2f, 0.2f, 0.2f, 0.5f));
+			ImGui::PushStyleColor(ImGuiCol_ButtonHovered, ImVec4(0.2f, 0.2f, 0.2f, 0.5f));
+			ImGui::PushStyleColor(ImGuiCol_ButtonActive, ImVec4(0.2f, 0.2f, 0.2f, 0.5f));
+			ImGui::PushStyleColor(ImGuiCol_Text, ImVec4(1.0f, 1.0f, 1.0f, 1.0f));
+			ImGui::PushStyleVar(ImGuiStyleVar_FramePadding, ImVec2(9, 5));
+			if (ImGui::Button("M", ImVec2(25, 25))) m_GizmoType = -1; ImGui::SameLine();
+			if (ImGui::Button("T", ImVec2(25, 25))) m_GizmoType = ImGuizmo::OPERATION::TRANSLATE; ImGui::SameLine();
+			if (ImGui::Button("R", ImVec2(25, 25))) m_GizmoType = ImGuizmo::OPERATION::ROTATE; ImGui::SameLine();
+			if (ImGui::Button("S", ImVec2(25, 25))) m_GizmoType = ImGuizmo::OPERATION::SCALE;
+			ImGui::PopStyleVar();
+			ImGui::PopStyleColor(4);
+
+			ImGui::PopFont();
+
+			ImGui::EndChild();
+
+		}
+	}
+	void EditorLayer::OnScenePlay()
+	{
+		m_SceneState = SceneState::Play;
+	}
+
+	void EditorLayer::OnSceneStop()
+	{
+		m_SceneState = SceneState::Edit;
+
 	}
 
 	void EditorLayer::OnDockspace()
@@ -421,14 +486,24 @@ namespace DME
 	{
 		std::string filepath = FileDialogs::OpenFile("DME Scene (*.dme)\0*.dme\0");
 		if (!filepath.empty())
+			OpenScene(filepath);
+	}
+
+	void EditorLayer::OpenScene(const std::filesystem::path& path)
+	{
+		if (path.extension().string() != ".dme")
 		{
+			DME_WARNING("Could not load {0} - not a scene file", path.filename().string());
+			return;
+		}
 
-			m_ActiveScene = CreateRef<Scene>();
-			m_ActiveScene->OnViewportResize(static_cast<uint32_t>(m_ViewportSize.x), static_cast<uint32_t>(m_ViewportSize.y));
+		Ref<Scene> newScene = CreateRef<Scene>();
+		SceneSerializer serializer(newScene);
+		if (serializer.Deserialize(path.string()))
+		{
+			m_ActiveScene = newScene;
+			m_ActiveScene->OnViewportResize((uint32_t)m_ViewportSize.x, (uint32_t)m_ViewportSize.y);
 			m_SceneHierarchy.SetContext(m_ActiveScene);
-
-			SceneSerializer serializer(m_ActiveScene);
-			serializer.Deserialize(filepath);
 		}
 	}
 

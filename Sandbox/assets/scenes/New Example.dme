@@ -1,0 +1,74 @@
+Scene: Untitled
+Entities:
+  - Entity: 342534786893
+    TagComponent:
+      Tag: Camera
+    TransformComponent:
+      Position: [0.449999988, 2.0999999, 4]
+      Rotation: [-0.428478301, 0.139626339, 0]
+      Scale: [1, 1, 1]
+    CameraComponent:
+      Camera:
+        ProjectionType: 0
+        PerspectiveFOV: 0.52359879
+        PerspectiveNear: 0.00999999978
+        PerspectiveFar: 1000
+        OrthographicSize: 10
+        OrthographicNear: -1
+        OrthographicFar: 1
+      Primary: true
+      FixedAspectRatio: false
+  - Entity: 342534786893
+    TagComponent:
+      Tag: Top
+    TransformComponent:
+      Position: [1.48614401e-08, 0.5003829, -1.496411e-08]
+      Rotation: [1.57079613, 0.785398245, -4.21468513e-08]
+      Scale: [0.999999881, 0.999999285, 0.99983567]
+    SpriteRendererComponent:
+      Color: [0.850909114, 0.850909114, 0.850909114, 1]
+  - Entity: 342534786893
+    TagComponent:
+      Tag: Left
+    TransformComponent:
+      Position: [-0.356000006, 0, 0.349999994]
+      Rotation: [0, -0.785398185, 0.00174532924]
+      Scale: [1, 1, 1]
+    SpriteRendererComponent:
+      Color: [0.872727275, 0.872727275, 0.872727275, 1]
+  - Entity: 342534786893
+    TagComponent:
+      Tag: Right
+    TransformComponent:
+      Position: [0.349999994, -0.00259923935, 0.349999994]
+      Rotation: [0, 0.785398245, 0]
+      Scale: [1, 1, 1]
+    SpriteRendererComponent:
+      Color: [0.840000033, 0.840000033, 0.840000033, 1]
+  - Entity: 342534786893
+    TagComponent:
+      Tag: GroundRight
+    TransformComponent:
+      Position: [0.344065249, 0.00222375477, -0.354722589]
+      Rotation: [-0.0159008168, -0.784372747, 0]
+      Scale: [0.99999994, 0.999974906, 0.999999881]
+    SpriteRendererComponent:
+      Color: [1, 1, 1, 1]
+  - Entity: 342534786893
+    TagComponent:
+      Tag: Bottom
+    TransformComponent:
+      Position: [-0.00154483889, -0.49828279, -0.00433401903]
+      Rotation: [-1.5772773, 0.788822711, -0.0045999405]
+      Scale: [0.99999994, 0.999997079, 0.999462306]
+    SpriteRendererComponent:
+      Color: [1, 1, 1, 1]
+  - Entity: 342534786893
+    TagComponent:
+      Tag: GroundLeft
+    TransformComponent:
+      Position: [-0.349938065, 0.00642007589, -0.359135121]
+      Rotation: [0, 0.785398245, 0]
+      Scale: [0.999999881, 1, 0.999999881]
+    SpriteRendererComponent:
+      Color: [1, 1, 1, 1]

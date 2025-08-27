@@ -19,37 +19,7 @@
 
 namespace DME
 {
-	static void DrawVec3Control(const std::string& label, glm::vec3& values, float min = -FLT_MAX, float max = FLT_MAX, float columnWidth = 200.0f, ImGuiSliderFlags flags = ImGuiSliderFlags_ClampOnInput | ImGuiSliderFlags_WrapAround)
-	{
-		ImGui::PushID(label.c_str());
-
-		ImGui::Columns(2);
-		ImGui::SetColumnWidth(0, columnWidth - 110.0f);
-		ImGui::Text(label.c_str());
-		ImGui::NextColumn();
-
-		ImGui::PushMultiItemsWidths(3, ImGui::CalcItemWidth() + 50);
-		ImGui::PushStyleVar(ImGuiStyleVar_ItemSpacing, ImVec2(4, 5));
-
-		ImGui::PushFont(ImGui::GetIO().Fonts->Fonts[static_cast<int>(FontLibrary::OpenSansBold_21)]);
-		ImGui::DragFloat("##X", &values.x, 0.05f, min, max, "%.3f", flags | ImGuiSliderFlags_AsVectorX);
-		ImGui::PopItemWidth();
-		ImGui::SameLine();
-
-		ImGui::DragFloat("##Y", &values.y, 0.05f, min, max, "%.3f", flags | ImGuiSliderFlags_AsVectorY);
-		ImGui::PopItemWidth();
-		ImGui::SameLine();
-
-		ImGui::DragFloat("##Z", &values.z, 0.05f, min, max, "%.3f", flags | ImGuiSliderFlags_AsVectorZ);
-		ImGui::PopFont();
-		ImGui::PopStyleVar();
-		ImGui::PopItemWidth();
-
-		ImGui::Columns(1);
-		ImGui::PopID();
-
-
-	}
+	extern const std::filesystem::path g_AssetPath;
 
 	const ImGuiTreeNodeFlags treeNodeFlags = ImGuiTreeNodeFlags_DefaultOpen | ImGuiTreeNodeFlags_Framed | ImGuiTreeNodeFlags_SpanAvailWidth;
 	template<typename T, typename UFunction>
@@ -193,6 +163,37 @@ namespace DME
 		m_SelectionContext = entity;
 	}
 
+	static void DrawVec3Control(const std::string& label, glm::vec3& values, float min = -FLT_MAX, float max = FLT_MAX, float columnWidth = 200.0f, ImGuiSliderFlags flags = ImGuiSliderFlags_ClampOnInput | ImGuiSliderFlags_WrapAround)
+	{
+		ImGui::PushID(label.c_str());
+
+		ImGui::Columns(2);
+		ImGui::SetColumnWidth(0, columnWidth - 110.0f);
+		ImGui::Text(label.c_str());
+		ImGui::NextColumn();
+
+		ImGui::PushMultiItemsWidths(3, ImGui::CalcItemWidth() + 50);
+		ImGui::PushStyleVar(ImGuiStyleVar_ItemSpacing, ImVec2(4, 5));
+
+		ImGui::PushFont(ImGui::GetIO().Fonts->Fonts[static_cast<int>(FontLibrary::OpenSansBold_21)]);
+		ImGui::DragFloat("##X", &values.x, 0.05f, min, max, "%.3f", flags | ImGuiSliderFlags_AsVectorX);
+		ImGui::PopItemWidth();
+		ImGui::SameLine();
+
+		ImGui::DragFloat("##Y", &values.y, 0.05f, min, max, "%.3f", flags | ImGuiSliderFlags_AsVectorY);
+		ImGui::PopItemWidth();
+		ImGui::SameLine();
+
+		ImGui::DragFloat("##Z", &values.z, 0.05f, min, max, "%.3f", flags | ImGuiSliderFlags_AsVectorZ);
+		ImGui::PopFont();
+		ImGui::PopStyleVar();
+		ImGui::PopItemWidth();
+
+		ImGui::Columns(1);
+		ImGui::PopID();
+
+	}
+
 	void SceneHierarchyPanel::DrawComponents(Entity entity)
 	{
 		auto& tag = entity.GetComponent<TagComponent>().Tag;
@@ -331,6 +332,35 @@ namespace DME
 		DrawComponent<SpriteRendererComponent>("Sprite Renderer", entity, [](auto& component)
 		{
 			ImGui::ColorEdit4("Color", glm::value_ptr(component.Color), ImGuiColorEditFlags_NoInputs);
+
+			ImGui::Button("##Texture", ImVec2(50.0f, 50.0f));
+			if (ImGui::BeginDragDropTarget())
+			{
+				if (const ImGuiPayload* payload = ImGui::AcceptDragDropPayload("CONTENT_BROWSER_ITEM"))
+				{
+					const wchar_t* path = (const wchar_t*)payload->Data;
+					std::filesystem::path texturePath = std::filesystem::path(g_AssetPath) / path;
+					Ref<Texture2D> texture = Texture2D::Create(texturePath.string());
+					if (texture->IsLoaded())
+						component.Texture = texture;
+					else
+						DME_WARNING("Could not load texture {0}", texturePath.filename().string());
+				}
+				ImGui::EndDragDropTarget();
+			}
+			ImGui::SameLine();
+			ImGui::Text("Texture");
+			ImGui::SameLine();
+			if (ImGui::Button("N##Texture"))
+				ImGui::OpenPopup("##TextureWindow");
+			if (ImGui::BeginPopup("##TextureWindow"))
+			{
+				ImGui::DragFloat("Tiling Factor", &component.TilingFactor, 0.1f, 0.0f, 100.0f);
+
+				ImGui::EndPopup();
+			}
+			
+
 		});
 		
 		

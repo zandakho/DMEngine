@@ -2,6 +2,7 @@
 
 #include <filesystem>
 
+#include "DME/Renderer/Texture.h"
 
 namespace DME
 {
@@ -16,6 +17,10 @@ namespace DME
 	private:
 		
 		std::filesystem::path m_CurrentDirectory;
+	
+		Ref<Texture2D> m_FolderIcon;
+		Ref<Texture2D> m_FileIcon;
+
 	};
 
 }
