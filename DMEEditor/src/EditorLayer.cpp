@@ -1,17 +1,22 @@
 #include "dmepch.h"
 
 #include "EditorLayer.h"
-#include "DME/Renderer/DebugRendererMode.h"
+#include <ImGui/imgui.h>
+
+#include <glm/gtc/matrix_transform.hpp>
+#include <glm/gtc/type_ptr.hpp>
+
 #include "DME/Scene/SceneSerializer.h"
+
 #include "DME/Utils/PlatformUtils.h"
-#include "DME/Math/Math.h"
+
+#include "DME/Renderer/DebugRendererMode.h"
 
 #include "Panels/FontLibrary.h"
 
 #include "ImGuizmo.h"
-#include <glm/gtc/type_ptr.hpp>
 
-#include "ImGui/imgui_internal.h"
+#include "DME/Math/Math.h"
 
 namespace DME
 {
@@ -46,8 +51,6 @@ namespace DME
 
 		m_EditorCamera = EditorCamera(30.0f, 1.778f, 0.1f, 1000.0f);
 		
-		m_SceneHierarchy.SetContext(m_ActiveScene);
-
 	}
 
 	void EditorLayer::OnDetach()
@@ -125,12 +128,11 @@ namespace DME
 			s_DebugRendererMode = DebugRendererMode::Point;
 		}
 
+		OnOverlayRender();
 
 		m_Framebuffer->UnBind(); 
 
 	}
-
-	static float test_button_size { 0.0f};
 
 	void EditorLayer::OnImGuiRender()
 	{
@@ -142,8 +144,6 @@ namespace DME
 		EditorLayer::OnDockspace();
 
 		ImGui::Begin("Debug Window");
-
-		ImGui::SliderFloat("Size", &test_button_size, 0.0f, 50.0f);
 
 		ImGui::Text("Debug mode: %s", DebugModeToString(s_DebugRendererMode).c_str());
 
@@ -174,6 +174,10 @@ namespace DME
 
 		m_SceneHierarchy.OnImGuiRender();
 		m_ContentBrowser.OnImGuiRender();
+
+		ImGui::Begin("Settings");
+		ImGui::Checkbox("Show physics colliders", &m_ShowPhysicsColliders);
+		ImGui::End();
 
 		ImGui::PushStyleVar(ImGuiStyleVar_WindowPadding, ImVec2(3.5f, 3.5f));
 		ImGui::Begin("Viewport", nullptr, ImGuiWindowFlags_NoCollapse);
@@ -257,7 +261,7 @@ namespace DME
 	void EditorLayer::UIToolbar()
 	{
 		ImGui::PushStyleColor(ImGuiCol_FrameBg, ImVec4(0.11f, 0.11f, 0.11f, 0.5f));
-		ImGui::SetNextWindowPos(ImVec2(ImGui::GetWindowPos().x + (ImGui::GetWindowContentRegionMax().x * 0.5 - 70.0f), ImGui::GetWindowPos().y + 40));
+		ImGui::SetNextWindowPos(ImVec2(static_cast<float>(ImGui::GetWindowPos().x + (ImGui::GetWindowContentRegionMax().x * 0.5 - 70.0f)), static_cast<float>(ImGui::GetWindowPos().y + 40)));
 		ImGui::BeginChild("UI panel", ImVec2(130, 35), ImGuiChildFlags_FrameStyle, ImGuiWindowFlags_NoDecoration | ImGuiWindowFlags_NoDocking | ImGuiWindowFlags_NoMove | ImGuiWindowFlags_NoScrollbar | ImGuiWindowFlags_NoScrollWithMouse);
 		Ref<Texture2D> icon = m_SceneState == SceneState::Edit ? m_IconPlay : m_IconStop;
 		ImTextureID buttonID = static_cast<uintptr_t>(icon->GetRendererID());
@@ -303,15 +307,43 @@ namespace DME
 
 		}
 	}
+
+	void EditorLayer::SerializeScene(Ref<Scene> scene, const std::filesystem::path& path)
+	{
+		SceneSerializer serializer(scene);
+		serializer.Serialize(path.string());
+	}
+
 	void EditorLayer::OnScenePlay()
 	{
 		m_SceneState = SceneState::Play;
+
+		m_ActiveScene = Scene::Copy(m_EditorScene);
+		m_ActiveScene->OnRuntimeStart();
+
+		m_SceneHierarchy.SetContext(m_ActiveScene);
 	}
 
 	void EditorLayer::OnSceneStop()
 	{
 		m_SceneState = SceneState::Edit;
 
+		m_ActiveScene->OnRuntimeStop();
+
+		m_ActiveScene = m_EditorScene;
+
+		m_SceneHierarchy.SetContext(m_ActiveScene);
+
+	}
+
+	void EditorLayer::OnDuplicateEntity()
+	{
+		if (m_SceneState != SceneState::Edit)
+			return;
+
+		Entity selectedEntity = m_SceneHierarchy.GetSelectedEntity();
+		if (selectedEntity)
+			m_EditorScene->DuplicateEntity(selectedEntity);
 	}
 
 	void EditorLayer::OnDockspace()
@@ -425,7 +457,6 @@ namespace DME
 
 				break;
 			}
-
 			case Key::O:
 			{
 				if (control)
@@ -433,11 +464,24 @@ namespace DME
 
 				break;
 			}
-
-			case Key::A:
+			case Key::S:
 			{
-				if (control && shift)
-					SaveSceneAs();
+				if (control)
+				{
+					if (shift)
+						SaveSceneAs();
+					else
+						SaveScene();
+				}
+
+				break;
+			}
+
+			// Scene Commands
+			case Key::D:
+			{
+				if (control)
+					OnDuplicateEntity();
 
 				break;
 			}
@@ -445,20 +489,32 @@ namespace DME
 			if (m_ViewportFocused)
 			{
 				case Key::Q:
-					m_GizmoType = -1;
+				{
+					if (!ImGuizmo::IsUsing())
+						m_GizmoType = -1;
 					break;
-
+				}
+					
 				case Key::W:
-					m_GizmoType = ImGuizmo::OPERATION::TRANSLATE;
+				{
+					if (!ImGuizmo::IsUsing())
+						m_GizmoType = ImGuizmo::OPERATION::TRANSLATE;
 					break;
-
+				}
+				
 				case Key::E:
-					m_GizmoType = ImGuizmo::OPERATION::SCALE;
+				{
+					if (!ImGuizmo::IsUsing())
+						m_GizmoType = ImGuizmo::OPERATION::ROTATE;
 					break;
+				}
 
 				case Key::R:
-					m_GizmoType = ImGuizmo::OPERATION::ROTATE;
+				{
+					if (!ImGuizmo::IsUsing())
+						m_GizmoType = ImGuizmo::OPERATION::SCALE;
 					break;
+				}
 			}
 		}
 
@@ -475,11 +531,61 @@ namespace DME
 		return false;
 	}
 
+	void EditorLayer::OnOverlayRender()
+	{
+		if (m_SceneState == SceneState::Play)
+		{
+			Entity camera = m_ActiveScene->GetPrimaryCameraEntity();
+			Renderer2D::BeginScene(camera.GetComponent<CameraComponent>().Camera, camera.GetComponent<TransformComponent>().GetTransform());
+		}
+		else
+		{
+			Renderer2D::BeginScene(m_EditorCamera);
+		}
+
+		if (m_ShowPhysicsColliders)
+		{
+			{
+				auto view = m_ActiveScene->GetAllEntitiesWith<TransformComponent, BoxCollider2DComponent>();
+				for (auto [entity, tc, bc2d] : view.each())
+				{
+
+					glm::vec3 translation = tc.Position + glm::vec3(bc2d.Offset, 0.001f);
+					glm::vec3 scale = tc.Scale * glm::vec3(bc2d.Size * 2.0f, 1.0f);
+
+					glm::mat4 transform = glm::translate(glm::mat4(1.0f), translation)
+						* glm::rotate(glm::mat4(1.0f), tc.Rotation.z, glm::vec3(0.0f, 0.0f, 1.0f))
+						* glm::scale(glm::mat4(1.0f), scale);
+
+					Renderer2D::DrawRect(transform, glm::vec4(0, 1, 0, 1));
+				}
+			}
+
+			{
+				auto view = m_ActiveScene->GetAllEntitiesWith<TransformComponent, CircleCollider2DComponent>();
+				for (auto [entity, tc, cc2d]: view.each())
+				{
+					glm::vec3 translation = tc.Position + glm::vec3(cc2d.Offset, 0.001f);
+					glm::vec3 scale = tc.Scale * glm::vec3(cc2d.Radius * 2.0f);
+
+					glm::mat4 transform = glm::translate(glm::mat4(1.0f), translation)
+						* glm::scale(glm::mat4(1.0f), scale);
+
+					Renderer2D::DrawCircle(transform, glm::vec4(0, 1, 0, 1), 0.01f);
+				}
+			}
+		}
+
+		Renderer2D::EndScene();
+	}
+
 	void EditorLayer::NewScene()
 	{
 		m_ActiveScene = CreateRef<Scene>();
 		m_ActiveScene->OnViewportResize(static_cast<uint32_t>(m_ViewportSize.x), static_cast<uint32_t>(m_ViewportSize.y));
 		m_SceneHierarchy.SetContext(m_ActiveScene);
+
+		m_EditorScenePath = std::filesystem::path();
 	}
 
 	void EditorLayer::OpenScene()
@@ -491,6 +597,9 @@ namespace DME
 
 	void EditorLayer::OpenScene(const std::filesystem::path& path)
 	{
+		if (m_SceneState != SceneState::Edit)
+			OnSceneStop();
+
 		if (path.extension().string() != ".dme")
 		{
 			DME_WARNING("Could not load {0} - not a scene file", path.filename().string());
@@ -501,10 +610,21 @@ namespace DME
 		SceneSerializer serializer(newScene);
 		if (serializer.Deserialize(path.string()))
 		{
-			m_ActiveScene = newScene;
-			m_ActiveScene->OnViewportResize((uint32_t)m_ViewportSize.x, (uint32_t)m_ViewportSize.y);
-			m_SceneHierarchy.SetContext(m_ActiveScene);
+			m_EditorScene = newScene;
+			m_EditorScene->OnViewportResize(static_cast<uint32_t>(m_ViewportSize.x), static_cast<uint32_t>(m_ViewportSize.y));
+			m_SceneHierarchy.SetContext(m_EditorScene);
+
+			m_ActiveScene = m_EditorScene;
+			m_EditorScenePath = path;
 		}
+	}
+
+	void EditorLayer::SaveScene()
+	{
+		if (!m_EditorScenePath.empty())
+			SerializeScene(m_ActiveScene, m_EditorScenePath);
+		else
+			SaveSceneAs();
 	}
 
 	void EditorLayer::SaveSceneAs()
@@ -512,8 +632,8 @@ namespace DME
 		std::string filepath = FileDialogs::SaveFile("DME Scene (*.dme)\0*.dme\0");
 		if (!filepath.empty())
 		{
-			SceneSerializer serializer(m_ActiveScene);
-			serializer.Serialize(filepath);
+			SerializeScene(m_ActiveScene, filepath);
+			m_EditorScenePath = filepath;
 		}
 	}
 }

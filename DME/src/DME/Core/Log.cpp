@@ -16,8 +16,8 @@ namespace DME
 		logSinks.emplace_back(std::make_shared<spdlog::sinks::stdout_color_sink_mt>());
 		logSinks.emplace_back(std::make_shared<spdlog::sinks::basic_file_sink_mt>("DME.log", true));
 
-		logSinks[0]->set_pattern("[%T] [%l] %n: %v");
-		logSinks[1]->set_pattern("%^[%T] %n: %v%$");
+		logSinks[0]->set_pattern("%^[%T] %n: %v%$");
+		logSinks[1]->set_pattern("[%T] [%l] %n: %v");
 
 		s_Core = std::make_shared<spdlog::logger>("DME", begin(logSinks), end(logSinks));
 		spdlog::register_logger(s_Core);

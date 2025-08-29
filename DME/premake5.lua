@@ -36,13 +36,14 @@ project "DME"
     {
         "src",
         "vendor/spdlog/include",
-        "%{IncludeDir.GLFW}",
+        "%{IncludeDir.Box2D}",
         "%{IncludeDir.Glad}",
+        "%{IncludeDir.GLFW}",
         "%{IncludeDir.ImGui}",
+        "%{IncludeDir.yaml_cpp}",
         "%{IncludeDir.glm}",
         "%{IncludeDir.stb}",
         "%{IncludeDir.entt}",
-        "%{IncludeDir.yaml_cpp}",
         "%{IncludeDir.ImGuizmo}",
         "%{IncludeDir.VulkanSDK}"
 
@@ -50,8 +51,9 @@ project "DME"
 
     links
     {
-        "GLFW",
+        "Box2D",
         "Glad",
+        "GLFW",
         "ImGui",
         "yaml-cpp",
         "opengl32.lib"

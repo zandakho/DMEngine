@@ -29,11 +29,11 @@ group "Vendor"
 group ""
 
 group "Dependencies"
+    include "DME/vendor/Box2D"
     include "DME/vendor/GLFW"
     include "DME/vendor/Glad"
     include "DME/vendor/ImGui"
     include "DME/vendor/yaml-cpp"
-
 group ""
 
 group "Core"
@@ -42,6 +42,7 @@ group ""
 
 group "Tools"
     include "DMEEditor"
+    include "Sandbox"
 group ""
 
 group "Other"

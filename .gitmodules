@@ -16,3 +16,6 @@
 [submodule "DME/vendor/ImGuizmo"]
 	path = DME/vendor/ImGuizmo
 	url = https://github.com/CedricGuillemet/ImGuizmo.git
+[submodule "DME/vendor/Box2D"]
+	path = DME/vendor/Box2D
+	url = https://github.com/TheCherno/box2d

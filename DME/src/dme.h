@@ -1,6 +1,10 @@
 #pragma once
 
+
+
 // --- DME/Core/ -----------------------------------------------//
+#include "DME/Core/Base.h"										//
+#include "DME/Core/Assert.h"									//
 #include "DME/Core/Log.h"										//
 #include "DME/Core/Layer.h"										//
 #include "DME/Core/Input.h"										//
@@ -17,8 +21,8 @@
 // --- DME/Scene/ ----------------------------------------------//
 #include "DME/Scene/Scene.h"									//
 #include "DME/Scene/Entity.h"									//
-#include "DME/Scene/ScriptableEntity.h"							//
 #include "DME/Scene/Components.h"								//
+#include "DME/Scene/ScriptableEntity.h"							//
 // -------------------------------------------------------------//
 
 // --- DME/Renderer/ -------------------------------------------//

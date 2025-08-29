@@ -1,4 +1,4 @@
-# Basic Texture Shader
+// Basic Texture Shader
 
 #type vertex
 #version 450 core
@@ -19,39 +19,39 @@ struct VertexOutput
 {
 	vec4 Color;
 	vec2 TextCoord;
-	float TextIndex;
 	float TilingFactor;
 };
 
 layout (location = 0) out VertexOutput Output;
+layout (location = 3) out flat float v_TextIndex;
 layout (location = 4) out flat int v_EntityID;
 
 void main()
 {
 	Output.Color = a_Color;
 	Output.TextCoord = a_TextCoord;
-	Output.TextIndex = a_TextIndex;
 	Output.TilingFactor = a_TilingFactor;
-
+	v_TextIndex = a_TextIndex;
 	v_EntityID = a_EntityID;
+
 	gl_Position = u_ViewProjection * vec4(a_Position, 1.0);
 }
 
 #type fragment
 #version 450 core
-			
-layout(location = 0) out vec4 color;
-layout(location = 1) out int ID;
+
+layout(location = 0) out vec4 o_Color;
+layout(location = 1) out int o_EntityID;
 
 struct VertexOutput
 {
 	vec4 Color;
 	vec2 TextCoord;
-	float TextIndex;
 	float TilingFactor;
 };
 
 layout (location = 0) in VertexOutput Input;
+layout (location = 3) in flat float v_TextIndex;
 layout (location = 4) in flat int v_EntityID;
 
 layout (binding = 0) uniform sampler2D u_Textures[32];
@@ -59,18 +59,19 @@ layout (binding = 0) uniform sampler2D u_Textures[32];
 void main()
 {
 	vec4 textColor = Input.Color;
-	switch(int(Input.TextIndex))
+
+	switch(int(v_TextIndex))
 	{
-		case 0: textColor *= texture(u_Textures[  0], Input.TextCoord * Input.TilingFactor); break;
-		case 1: textColor *= texture(u_Textures[  1], Input.TextCoord * Input.TilingFactor); break;
-		case 2: textColor *= texture(u_Textures[  2], Input.TextCoord * Input.TilingFactor); break;
-		case 3: textColor *= texture(u_Textures[  3], Input.TextCoord * Input.TilingFactor); break;
-		case 4: textColor *= texture(u_Textures[  4], Input.TextCoord * Input.TilingFactor); break;
-		case 5: textColor *= texture(u_Textures[  5], Input.TextCoord * Input.TilingFactor); break;
-		case 6: textColor *= texture(u_Textures[  6], Input.TextCoord * Input.TilingFactor); break;
-		case 7: textColor *= texture(u_Textures[  7], Input.TextCoord * Input.TilingFactor); break;
-		case 8: textColor *= texture(u_Textures[  8], Input.TextCoord * Input.TilingFactor); break;
-		case 9: textColor *= texture(u_Textures[  9], Input.TextCoord * Input.TilingFactor); break;
+		case  0: textColor *= texture(u_Textures[ 0], Input.TextCoord * Input.TilingFactor); break;
+		case  1: textColor *= texture(u_Textures[ 1], Input.TextCoord * Input.TilingFactor); break;
+		case  2: textColor *= texture(u_Textures[ 2], Input.TextCoord * Input.TilingFactor); break;
+		case  3: textColor *= texture(u_Textures[ 3], Input.TextCoord * Input.TilingFactor); break;
+		case  4: textColor *= texture(u_Textures[ 4], Input.TextCoord * Input.TilingFactor); break;
+		case  5: textColor *= texture(u_Textures[ 5], Input.TextCoord * Input.TilingFactor); break;
+		case  6: textColor *= texture(u_Textures[ 6], Input.TextCoord * Input.TilingFactor); break;
+		case  7: textColor *= texture(u_Textures[ 7], Input.TextCoord * Input.TilingFactor); break;
+		case  8: textColor *= texture(u_Textures[ 8], Input.TextCoord * Input.TilingFactor); break;
+		case  9: textColor *= texture(u_Textures[ 9], Input.TextCoord * Input.TilingFactor); break;
 		case 10: textColor *= texture(u_Textures[10], Input.TextCoord * Input.TilingFactor); break;
 		case 11: textColor *= texture(u_Textures[11], Input.TextCoord * Input.TilingFactor); break;
 		case 12: textColor *= texture(u_Textures[12], Input.TextCoord * Input.TilingFactor); break;
@@ -94,7 +95,7 @@ void main()
 		case 30: textColor *= texture(u_Textures[30], Input.TextCoord * Input.TilingFactor); break;
 		case 31: textColor *= texture(u_Textures[31], Input.TextCoord * Input.TilingFactor); break;
 	}
-	color = textColor;
+	o_Color = textColor;
 
-	ID = v_EntityID;
+	o_EntityID = v_EntityID;
 }

@@ -83,36 +83,43 @@ namespace DME
 	void SceneHierarchyPanel::OnImGuiRender()
 	{
 		ImGui::Begin("Scene Hierarchy");
-		m_Context->m_Registry.view<entt::entity>().each([&](auto entityID)
-		{
-			Entity entity = { entityID, m_Context.get() };
-			DrawEntityNode(entity);
 
-		});
-
-		if (ImGui::IsMouseDown(0) && ImGui::IsWindowHovered())
+		if (m_Context)
 		{
-			m_SelectionContext = {};
+			m_Context->m_Registry.view<entt::entity>().each([&](auto entityID)
+			{
+				Entity entity{ entityID , m_Context.get() };
+				DrawEntityNode(entity);
+			});
+
+			if (ImGui::IsMouseDown(0) && ImGui::IsWindowHovered())
+				m_SelectionContext = {};
+
 		}
 
 		if (ImGui::BeginPopupContextWindow(0, 1 | ImGuiPopupFlags_NoOpenOverExistingPopup))
 		{
-			if (ImGui::MenuItem("Create Empty entity"))
-				m_Context->CreateEntity("Empty entity");
+			if (ImGui::MenuItem("Create Empty Entity"))
+				m_Context->CreateEntity("Empty Entity");
+
 			ImGui::EndPopup();
 		}
 
 		ImGui::End();
-
 		
-		ImGuiIO& io = ImGui::GetIO(); static_cast<void>(io);
 
-		ImGui::Begin("Properties", nullptr, ImGuiWindowFlags_NoCollapse | ImGuiWindowFlags_HorizontalScrollbar);
+		ImGui::Begin("Properties");
 		if (m_SelectionContext)
 		{
 			DrawComponents(m_SelectionContext);
 		}
+
 		ImGui::End();
+	}
+
+	void SceneHierarchyPanel::SetSelectedEntity(Entity entity)
+	{
+		m_SelectionContext = entity;
 	}
 
 	void SceneHierarchyPanel::DrawEntityNode(Entity entity)
@@ -158,10 +165,7 @@ namespace DME
 		}
 	}
 
-	void SceneHierarchyPanel::SetSelectedEntity(Entity entity)
-	{
-		m_SelectionContext = entity;
-	}
+	
 
 	static void DrawVec3Control(const std::string& label, glm::vec3& values, float min = -FLT_MAX, float max = FLT_MAX, float columnWidth = 200.0f, ImGuiSliderFlags flags = ImGuiSliderFlags_ClampOnInput | ImGuiSliderFlags_WrapAround)
 	{
@@ -217,10 +221,9 @@ namespace DME
 		ImGui::SetNextItemWidth(ImGui::GetWindowContentRegionMax().x);
 		if (ImGui::Button("+ADD"))
 			ImGui::OpenPopup("DialogWindow");
-
 		if (ImGui::BeginPopup("DialogWindow"))
 		{
-			if (!entity.HasComponent<CameraComponent>())
+			if (!m_SelectionContext.HasComponent<CameraComponent>())
 			{
 				if (ImGui::MenuItem("Camera"))
 				{
@@ -231,7 +234,7 @@ namespace DME
 			}
 			
 
-			if (!entity.HasComponent<SpriteRendererComponent>())
+			if (!m_SelectionContext.HasComponent<SpriteRendererComponent>())
 			{
 				if (ImGui::MenuItem("Sprite Renderer"))
 				{
@@ -241,9 +244,20 @@ namespace DME
 
 				}
 			}
+
+			if (!m_SelectionContext.HasComponent<CircleRendererComponent>())
+			{
+				if (ImGui::MenuItem("Circle Renderer"))
+				{
+					m_SelectionContext.AddComponent<CircleRendererComponent>();
+					DME_CORE_INFO("A 'Circle Renderer' component has been added to the '{0}' entity", tag);
+					ImGui::CloseCurrentPopup();
+
+				}
+			}
 			
 
-			if (!entity.HasComponent<TransformComponent>())
+			if (!m_SelectionContext.HasComponent<TransformComponent>())
 			{
 				if (ImGui::MenuItem("Transform"))
 				{
@@ -251,6 +265,35 @@ namespace DME
 					DME_CORE_INFO("A 'Transform' component has been added to the '{0}' entity", tag);
 					ImGui::CloseCurrentPopup();
 
+				}
+			}
+
+			if (!m_SelectionContext.HasComponent<Rigidbody2DComponent>())
+			{
+				if (ImGui::MenuItem("Rigidbody 2D"))
+				{
+					m_SelectionContext.AddComponent<Rigidbody2DComponent>();
+					DME_CORE_INFO("A 'Rigidbody 2D' component has been added to the '{0}' entity", tag);
+					ImGui::CloseCurrentPopup();
+				}
+			}
+
+			if (!m_SelectionContext.HasComponent<BoxCollider2DComponent>())
+			{
+				if (ImGui::MenuItem("Box Collider 2D"))
+				{
+					m_SelectionContext.AddComponent<BoxCollider2DComponent>();
+					DME_CORE_INFO("A 'Box Collider 2D' component has been added to the '{0}' entity", tag);
+					ImGui::CloseCurrentPopup();
+				}
+			}
+
+			if (!m_SelectionContext.HasComponent<CircleCollider2DComponent>())
+			{
+				if (ImGui::MenuItem("Circle Collider 2D"))
+				{
+					m_SelectionContext.AddComponent<CircleCollider2DComponent>();
+					ImGui::CloseCurrentPopup();
 				}
 			}
 			
@@ -362,7 +405,58 @@ namespace DME
 			
 
 		});
-		
+
+		DrawComponent<CircleRendererComponent>("Circle Renderer", entity, [](auto& component)
+			{
+				ImGui::ColorEdit4("Color", glm::value_ptr(component.Color));
+				ImGui::DragFloat("Thickness", &component.Thickness, 0.025f, 0.0f, 1.0f);
+				ImGui::DragFloat("Fade", &component.Fade, 0.00025f, 0.0f, 1.0f);
+			});
+
+		DrawComponent<Rigidbody2DComponent>("Rigidbody 2D", entity, [](auto& component)
+		{
+			const char* bodyTypeStrings[] = { "Static", "Dynamic", "Kinematic" };
+			const char* currentBodyTypeString = bodyTypeStrings[(int)component.Type];
+			if (ImGui::BeginCombo("Body Type", currentBodyTypeString))
+			{
+				for (int i = 0; i < 2; i++)
+				{
+					bool isSelected = currentBodyTypeString == bodyTypeStrings[i];
+					if (ImGui::Selectable(bodyTypeStrings[i], isSelected))
+					{
+						currentBodyTypeString = bodyTypeStrings[i];
+						component.Type = (Rigidbody2DComponent::BodyType)i;
+					}
+
+					if (isSelected)
+						ImGui::SetItemDefaultFocus();
+				}
+
+				ImGui::EndCombo();
+			}
+
+			ImGui::Checkbox("Fixed Rotation", &component.FixedRotation);
+		});
+
+		DrawComponent<BoxCollider2DComponent>("Box Collider 2D", entity, [](auto& component)
+		{
+			ImGui::DragFloat2("Offset", glm::value_ptr(component.Offset));
+			ImGui::DragFloat2("Size", glm::value_ptr(component.Size));
+			ImGui::DragFloat("Density", &component.Density, 0.01f, 0.0f, 1.0f);
+			ImGui::DragFloat("Friction", &component.Friction, 0.01f, 0.0f, 1.0f);
+			ImGui::DragFloat("Restitution", &component.Restitution, 0.01f, 0.0f, 1.0f);
+			ImGui::DragFloat("Restitution Threshold", &component.RestitutionThreshold, 0.01f, 0.0f);
+		});
+
+		DrawComponent<CircleCollider2DComponent>("Circle Collider 2D", entity, [](auto& component)
+		{
+			ImGui::DragFloat2("Offset", glm::value_ptr(component.Offset));
+			ImGui::DragFloat("Radius", &component.Radius);
+			ImGui::DragFloat("Density", &component.Density, 0.01f, 0.0f, 1.0f);
+			ImGui::DragFloat("Friction", &component.Friction, 0.01f, 0.0f, 1.0f);
+			ImGui::DragFloat("Restitution", &component.Restitution, 0.01f, 0.0f, 1.0f);
+			ImGui::DragFloat("Restitution Threshold", &component.RestitutionThreshold, 0.01f, 0.0f);
+		});
 		
 	}
 

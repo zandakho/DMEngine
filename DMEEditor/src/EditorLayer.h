@@ -1,7 +1,6 @@
 #pragma once
 
 #include <dme.h>
-#include <ImGui/imgui.h>
 #include "Panels/SceneHierarchyPanel.h"
 #include "Panels/ContentBrowserPanel.h"
 
@@ -23,13 +22,19 @@ namespace DME
 		virtual void OnImGuiRender() override;
 		void OnDockspace() override;
 		void OnEvent(Event& event) override;
+		void OnOverlayRender();
 
 	private:
 
 		void NewScene();
 		void OpenScene();
 		void OpenScene(const std::filesystem::path& path);
+		void SaveScene();
 		void SaveSceneAs();
+
+		void SerializeScene(Ref<Scene> scene, const std::filesystem::path& path);
+
+		void OnDuplicateEntity();
 
 		void OnScenePlay();
 		void OnSceneStop();
@@ -50,6 +55,8 @@ namespace DME
 		Ref<Shader> m_FlatColorShader;
 		Ref<Framebuffer> m_Framebuffer;
 		Ref<Scene> m_ActiveScene;
+		Ref<Scene> m_EditorScene;
+		std::filesystem::path m_EditorScenePath;
 		
 	private:
 		SceneHierarchyPanel m_SceneHierarchy;
@@ -63,6 +70,7 @@ namespace DME
 		bool m_BlockViewportEvents = false;
 		bool m_PrimaryCamera = true;
 		bool m_DemoWindow = false;
+		bool m_ShowPhysicsColliders = false;
 
 		int m_GizmoType = -1;
 
@@ -75,7 +83,7 @@ namespace DME
 
 		bool m_ViewportFocused = false, m_ViewportHovered = false, m_ViewportDocked = false;
 
-		glm::vec2 m_ViewportBounds[2];
+		glm::vec2 m_ViewportBounds[2]{ };
 
 		glm::vec2 m_ViewportSize = { 0.0f, 0.0f };
 
