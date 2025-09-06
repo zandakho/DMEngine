@@ -1,15 +1,21 @@
 ﻿#include "dmepch.h"
 #include "DME/Utils/PlatformUtils.h"
+#include "DME/Core/Application.h"
 
 #include <commdlg.h>
 #include <GLFW/glfw3.h>
 #define GLFW_EXPOSE_NATIVE_WIN32
 #include <GLFW/glfw3native.h>
 
-#include "DME/Core/Application.h"
 
 namespace DME
 {
+
+    float Time::GetTime()
+    {
+        return static_cast<float>(glfwGetTime());
+    }
+
     std::string FileDialogs::OpenFile(const char* filter)
     {
         OPENFILENAMEA ofn;

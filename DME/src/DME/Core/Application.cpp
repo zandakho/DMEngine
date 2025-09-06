@@ -6,7 +6,7 @@
 
 #include "DME/Renderer/Renderer.h"
 													   
-#include <GLFW/glfw3.h>
+#include "DME/Utils/PlatformUtils.h"
 
 namespace DME
 {
@@ -76,7 +76,7 @@ namespace DME
 		{
 			DME_PROFILE_SCOPE("RunLoop");
 		
-			float time = static_cast<float>(glfwGetTime());
+			float time = Time::GetTime();
 			TimeStep timestep = time - m_LastFrameTime;
 			m_LastFrameTime = time;
 

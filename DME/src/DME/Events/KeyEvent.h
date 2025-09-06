@@ -1,6 +1,7 @@
 #pragma once
 
 #include "DME/Events/Event.h"
+#include "DME/Core/KeyCodes.h"
 
 namespace DME
 {
@@ -13,28 +14,31 @@ namespace DME
 		EVENT_CLASS_CATEGORY(EventCategoryKeyboard | EventCategoryInput)
 
 	protected:
-		KeyEvent(int keycode) : m_KeyCode(keycode) {}
+		KeyEvent(const KeyCode keycode) : m_KeyCode(keycode) {}
 
-		int m_KeyCode;
+		KeyCode m_KeyCode;
 	};
 
 	class KeyPressedEvent : public KeyEvent 
 	{
 	public:
-		KeyPressedEvent(int keycode, int repeatcount) : KeyEvent(keycode), m_Repeatcount(repeatcount) {}
+		KeyPressedEvent(const KeyCode keycode, bool isRepeat = false)
+			: KeyEvent(keycode), m_IsRepeat(isRepeat) {
+		}
 
-		inline int GetRepeatCount() const { return m_Repeatcount; }
+		bool IsRepeat() const { return m_IsRepeat; }
 
 		std::string ToString() const override 
 		{
 			std::stringstream s_Stream;
-			s_Stream << "KeyPressedEvent: " << m_KeyCode << ", repeat: " << "( " << m_Repeatcount << " )";
+			s_Stream << "KeyPressedEvent: " << m_KeyCode << " (repeat = " << m_IsRepeat << ")";
 			return s_Stream.str();
 		}
 
 		EVENT_CLASS_TYPE(KeyPressed)
+
 	private:
-		int m_Repeatcount;
+		bool m_IsRepeat;
 	};
 
 	class KeyReleasedEvent : public KeyEvent

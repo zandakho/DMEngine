@@ -61,20 +61,23 @@ namespace DME
 
 	void EditorCamera::OnUpdate(TimeStep ts)
 	{
-		if (Input::IsKeyPressed(Key::LeftShift) || Input::IsKeyPressed(Key::RightShift))
+		if (IsViewportActive)
 		{
-			const glm::vec2& mouse{ Input::GetMouseX(), Input::GetMouseY() };
-			glm::vec2 delta = (mouse - m_InitialMousePosition) * 0.003f;
-			m_InitialMousePosition = mouse;
+			if (Input::IsKeyPressed(Key::LeftShift) || Input::IsKeyPressed(Key::RightShift))
+			{
+				const glm::vec2& mouse{ Input::GetMouseX(), Input::GetMouseY() };
+				glm::vec2 delta = (mouse - m_InitialMousePosition) * 0.003f;
+				m_InitialMousePosition = mouse;
 
-			if (Input::IsMouseButtonPressed(Mouse::ButtonMiddle))
-				MousePan(delta);
-			else if (Input::IsMouseButtonPressed(Mouse::ButtonLeft))
-				MouseRotate(delta);
-			else if (Input::IsMouseButtonPressed(Mouse::ButtonRight))
-				MouseZoom(delta.y);
+				if (Input::IsMouseButtonPressed(Mouse::ButtonMiddle))
+					MousePan(delta);
+				else if (Input::IsMouseButtonPressed(Mouse::ButtonLeft))
+					MouseRotate(delta);
+				else if (Input::IsMouseButtonPressed(Mouse::ButtonRight))
+					MouseZoom(delta.y);
+			}
 		}
-
+		
 		UpdateView();
 	}
 
@@ -86,9 +89,13 @@ namespace DME
 
 	bool EditorCamera::OnMouseScroll(MouseScrolledEvent& e)
 	{
-		float delta = e.GetOffsetY() * 0.1f;
-		MouseZoom(delta);
-		UpdateView();
+		if (Input::IsKeyPressed(Key::LeftShift) || Input::IsKeyPressed(Key::RightShift))
+		{
+			float delta = e.GetOffsetY() * 0.1f;
+			MouseZoom(delta);
+			UpdateView();
+		}
+			
 		return false;
 	}
 

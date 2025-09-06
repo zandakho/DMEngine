@@ -106,7 +106,6 @@ namespace DME
 		}
 
 		ImGui::End();
-		
 
 		ImGui::Begin("Properties");
 		if (m_SelectionContext)
@@ -223,80 +222,13 @@ namespace DME
 			ImGui::OpenPopup("DialogWindow");
 		if (ImGui::BeginPopup("DialogWindow"))
 		{
-			if (!m_SelectionContext.HasComponent<CameraComponent>())
-			{
-				if (ImGui::MenuItem("Camera"))
-				{
-					m_SelectionContext.AddComponent<CameraComponent>();
-					DME_CORE_INFO("A 'Camera' component has been added to the '{0}' entity", tag);
-					ImGui::CloseCurrentPopup();
-				}
-			}
 			
-
-			if (!m_SelectionContext.HasComponent<SpriteRendererComponent>())
-			{
-				if (ImGui::MenuItem("Sprite Renderer"))
-				{
-					m_SelectionContext.AddComponent<SpriteRendererComponent>();
-					DME_CORE_INFO("A 'Sprite Renderer' component has been added to the '{0}' entity", tag);
-					ImGui::CloseCurrentPopup();
-
-				}
-			}
-
-			if (!m_SelectionContext.HasComponent<CircleRendererComponent>())
-			{
-				if (ImGui::MenuItem("Circle Renderer"))
-				{
-					m_SelectionContext.AddComponent<CircleRendererComponent>();
-					DME_CORE_INFO("A 'Circle Renderer' component has been added to the '{0}' entity", tag);
-					ImGui::CloseCurrentPopup();
-
-				}
-			}
-			
-
-			if (!m_SelectionContext.HasComponent<TransformComponent>())
-			{
-				if (ImGui::MenuItem("Transform"))
-				{
-					m_SelectionContext.AddComponent<TransformComponent>();
-					DME_CORE_INFO("A 'Transform' component has been added to the '{0}' entity", tag);
-					ImGui::CloseCurrentPopup();
-
-				}
-			}
-
-			if (!m_SelectionContext.HasComponent<Rigidbody2DComponent>())
-			{
-				if (ImGui::MenuItem("Rigidbody 2D"))
-				{
-					m_SelectionContext.AddComponent<Rigidbody2DComponent>();
-					DME_CORE_INFO("A 'Rigidbody 2D' component has been added to the '{0}' entity", tag);
-					ImGui::CloseCurrentPopup();
-				}
-			}
-
-			if (!m_SelectionContext.HasComponent<BoxCollider2DComponent>())
-			{
-				if (ImGui::MenuItem("Box Collider 2D"))
-				{
-					m_SelectionContext.AddComponent<BoxCollider2DComponent>();
-					DME_CORE_INFO("A 'Box Collider 2D' component has been added to the '{0}' entity", tag);
-					ImGui::CloseCurrentPopup();
-				}
-			}
-
-			if (!m_SelectionContext.HasComponent<CircleCollider2DComponent>())
-			{
-				if (ImGui::MenuItem("Circle Collider 2D"))
-				{
-					m_SelectionContext.AddComponent<CircleCollider2DComponent>();
-					ImGui::CloseCurrentPopup();
-				}
-			}
-			
+			DisplayAddComponentEntry<CameraComponent>("Camera");
+			DisplayAddComponentEntry<SpriteRendererComponent>("Sprite Renderer");
+			DisplayAddComponentEntry<CircleRendererComponent>("Circle Renderer");
+			DisplayAddComponentEntry<Rigidbody2DComponent>("Rigidbody 2D");
+			DisplayAddComponentEntry<BoxCollider2DComponent>("Box Collider 2D");
+			DisplayAddComponentEntry<CircleCollider2DComponent>("Circle Collider 2D");
 
 			ImGui::EndPopup();
 		}
@@ -458,6 +390,18 @@ namespace DME
 			ImGui::DragFloat("Restitution Threshold", &component.RestitutionThreshold, 0.01f, 0.0f);
 		});
 		
+	}
+
+	template<typename T>
+	void SceneHierarchyPanel::DisplayAddComponentEntry(const std::string& entryName) {
+		if (!m_SelectionContext.HasComponent<T>())
+		{
+			if (ImGui::MenuItem(entryName.c_str()))
+			{
+				m_SelectionContext.AddComponent<T>();
+				ImGui::CloseCurrentPopup();
+			}
+		}
 	}
 
 

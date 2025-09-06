@@ -38,7 +38,7 @@ namespace DME
 
 	Scene::~Scene()
 	{
-
+		delete m_PhysicsWorld;
 	}
 
 	template<typename Component>
@@ -133,6 +133,16 @@ namespace DME
 
 	void Scene::OnRuntimeStart()
 	{
+		OnPhysics2DStart();
+	}
+
+	void Scene::OnRuntimeStop()
+	{
+		OnPhysics2DStop();
+	}
+
+	void Scene::OnPhysics2DStart()
+	{
 		m_PhysicsWorld = new b2World({ 0.0f, -9.8f });
 
 		auto view = m_Registry.view<Rigidbody2DComponent>();
@@ -186,7 +196,7 @@ namespace DME
 		}
 	}
 
-	void Scene::OnRuntimeStop()
+	void Scene::OnPhysics2DStop()
 	{
 		delete m_PhysicsWorld;
 		m_PhysicsWorld = nullptr;
@@ -277,7 +287,49 @@ namespace DME
 		
 	}
 
+	void Scene::OnSimulationStart()
+	{
+		OnPhysics2DStart();
+	}
+
+	void Scene::OnSimulationStop()
+	{
+		OnPhysics2DStop();
+	}
+
+	void Scene::OnUpdateSimulation(TimeStep ts, EditorCamera& camera)
+	{
+		{
+			const int32_t velocityIterations = 6;
+			const int32_t positionIterations = 2;
+			m_PhysicsWorld->Step(ts, velocityIterations, positionIterations);
+
+			// Retrieve transform from Box2D
+			auto view = m_Registry.view<Rigidbody2DComponent>();
+			for (auto e : view)
+			{
+				Entity entity = { e, this };
+				auto& transform = entity.GetComponent<TransformComponent>();
+				auto& rb2d = entity.GetComponent<Rigidbody2DComponent>();
+
+				b2Body* body = (b2Body*)rb2d.RuntimeBody;
+				const auto& position = body->GetPosition();
+				transform.Position.x = position.x;
+				transform.Position.y = position.y;
+				transform.Rotation.z = body->GetAngle();
+			}
+		}
+
+		// Render
+		RenderScene(camera);
+	}
+
 	void Scene::OnUpdateEditor(TimeStep ts, EditorCamera& camera)
+	{
+		RenderScene(camera);
+	}
+
+	void Scene::RenderScene(EditorCamera& camera)
 	{
 		Renderer2D::BeginScene(camera);
 
@@ -335,7 +387,7 @@ namespace DME
 	template<typename T>
 	void Scene::OnComponentAdded(Entity entity, T& component)
 	{
-		//static_assert(false);
+		static_assert(sizeof(T) == 0);
 	}
 
 	template<>

@@ -1,6 +1,10 @@
 #pragma once
 
+#include "DME/Core/Base.h"
+#include "DME/Core/Log.h"
 #include "DME/Core/PlatformDetection.h"
+
+#include "DME/Debug/Instrumentator.h"
 
 #ifdef DME_PLATFORM_WINDOWS
 	#ifndef NOMINMAX
@@ -19,11 +23,6 @@
 #include <functional>											
 #include <unordered_map>										
 #include <unordered_set>										
-
-#include "DME/Core/Base.h"
-#include "DME/Core/Log.h"
-
-#include "DME/Debug/Instrumentator.h"
 
 #ifdef DME_PLATFORM_WINDOWS										
 	#include <Windows.h>										
