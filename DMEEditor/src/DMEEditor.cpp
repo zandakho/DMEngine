@@ -23,20 +23,19 @@ namespace DME
 	class DMEEditor : public Application
 	{
 	public:
-		DMEEditor(ApplicationCommandLineArgs args) : Application("DMEEditor", args)
+		DMEEditor(const ApplicationSpecification& spec) : Application(spec)
 		{
 			PushLayer(new EditorLayer());
-		}
-
-		~DMEEditor()
-		{
-
 		}
 	};
 
 	Application* CreateApplication(ApplicationCommandLineArgs args)
 	{
-		return new DMEEditor(args);
+		ApplicationSpecification spec;
+		spec.Name = "DMEEditor";
+		spec.CommandLineArgs = args;
+
+		return new DMEEditor(spec);
 	}
 }
 

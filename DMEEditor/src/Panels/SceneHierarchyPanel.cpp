@@ -72,6 +72,7 @@ namespace DME
 	SceneHierarchyPanel::SceneHierarchyPanel(const Ref<Scene>& context)
 	{
 		SetContext(context);
+		m_PlusButtonSmall = Texture2D::Create("C:/Engine/DME/DMEEditor/Resources/Icons/Editor/Plus_Small_Img.png");
 	}
 
 	void SceneHierarchyPanel::SetContext(const Ref<Scene>& context)
@@ -199,6 +200,7 @@ namespace DME
 
 	void SceneHierarchyPanel::DrawComponents(Entity entity)
 	{
+		
 		auto& tag = entity.GetComponent<TagComponent>().Tag;
 
 		if (entity.HasComponent<TagComponent>())
@@ -218,8 +220,12 @@ namespace DME
 		ImGui::PushItemWidth(-1);
 
 		ImGui::SetNextItemWidth(ImGui::GetWindowContentRegionMax().x);
+		ImGui::PushFont(ImGui::GetIO().Fonts->Fonts[static_cast<int>(FontLibrary::OpenSansBold_21)]);
 		if (ImGui::Button("+ADD"))
+		{
 			ImGui::OpenPopup("DialogWindow");
+		}
+		ImGui::PopFont();
 		if (ImGui::BeginPopup("DialogWindow"))
 		{
 			

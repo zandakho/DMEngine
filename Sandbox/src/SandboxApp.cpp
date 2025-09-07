@@ -6,7 +6,8 @@ namespace DME
 	class SandboxApp : public Application
 	{
 	public:
-		SandboxApp()
+		SandboxApp(const ApplicationSpecification& specification)
+			: Application(specification)
 		{
 			PushLayer(new Sandbox2D());
 		}
@@ -17,8 +18,13 @@ namespace DME
 		}
 	};
 
-	Application* CreateApplication()
+	Application* CreateApplication(ApplicationCommandLineArgs args)
 	{
-		return new SandboxApp();
+		ApplicationSpecification spec;
+		spec.Name = "SandboxApp";
+		spec.WorkingDirectory = "../DMEEditor";
+		spec.CommandLineArgs = args;
+
+		return new SandboxApp(spec);
 	}
 }

@@ -95,6 +95,10 @@ void main()
 		case 30: textColor *= texture(u_Textures[30], Input.TextCoord * Input.TilingFactor); break;
 		case 31: textColor *= texture(u_Textures[31], Input.TextCoord * Input.TilingFactor); break;
 	}
+
+	if (texColor.a == 0.0)
+		discard;
+
 	o_Color = textColor;
 
 	o_EntityID = v_EntityID;

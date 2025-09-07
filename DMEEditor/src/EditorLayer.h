@@ -5,7 +5,7 @@
 #include "Panels/ContentBrowserPanel.h"
 
 #include "DME/Renderer/EditorCamera.h"
-
+#include "DME/ImGui/ImGuiDMEEditor.h"
 
 namespace DME
 {
@@ -42,6 +42,7 @@ namespace DME
 
 		void UIToolbar();
 		void GizmosToolbar();
+		void UITabBar();
 		
 		void ViewportWindow();
 
@@ -71,7 +72,6 @@ namespace DME
 		
 		bool m_BlockViewportEvents = false;
 		bool m_PrimaryCamera = true;
-		bool m_ShowPhysicsColliders = false;
 
 		int m_GizmoType = -1;
 
@@ -101,6 +101,7 @@ namespace DME
 
 		bool m_DebugWindow;
 		bool m_DemoWindow;
+	
 	};
 
 }

@@ -43,7 +43,7 @@ namespace DME
 		m_EditorScene = CreateRef<Scene>();
 		m_ActiveScene = m_EditorScene;
 
-		auto commandLineArgs = Application::Get().GetCommandLineArgs();
+		auto commandLineArgs = Application::Get().GetSpecification().CommandLineArgs;
 		if (commandLineArgs.Count > 1)
 		{
 			auto sceneFilePath = commandLineArgs[1];
@@ -196,10 +196,6 @@ namespace DME
 		if (m_ContentBrowserWindow)
 			m_ContentBrowser.OnImGuiRender();
 
-		ImGui::Begin("Settings");
-		ImGui::Checkbox("Show physics colliders", &m_ShowPhysicsColliders);
-		ImGui::End();
-
 		if (m_ViewportWindow)
 			ViewportWindow();
 	}
@@ -269,20 +265,89 @@ namespace DME
 
 			ImGui::PushStyleColor(ImGuiCol_Button, ImVec4(0.2f, 0.2f, 0.2f, 0.5f));
 			ImGui::PushStyleColor(ImGuiCol_ButtonHovered, ImVec4(0.2f, 0.2f, 0.2f, 0.5f));
-			ImGui::PushStyleColor(ImGuiCol_ButtonActive, ImVec4(0.2f, 0.2f, 0.2f, 0.5f));
 			ImGui::PushStyleColor(ImGuiCol_Text, ImVec4(1.0f, 1.0f, 1.0f, 1.0f));
 			ImGui::PushStyleVar(ImGuiStyleVar_FramePadding, ImVec2(9, 5));
+			ImGui::PushStyleColor(ImGuiCol_Button, m_GizmoType == -1 ? ImVec4(0.2f, 0.6f, 0.9f, 0.5f) : ImVec4(0.2f, 0.2f, 0.2f, 0.5f));
 			if (ImGui::Button("M", ImVec2(25, 25))) m_GizmoType = -1; ImGui::SameLine();
+			ImGui::PopStyleColor();
+			ImGui::PushStyleColor(ImGuiCol_Button, m_GizmoType == ImGuizmo::OPERATION::TRANSLATE ? ImVec4(0.2f, 0.6f, 0.9f, 0.5f) : ImVec4(0.2f, 0.2f, 0.2f, 0.5f));
 			if (ImGui::Button("T", ImVec2(25, 25))) m_GizmoType = ImGuizmo::OPERATION::TRANSLATE; ImGui::SameLine();
+			ImGui::PopStyleColor();
+			ImGui::PushStyleColor(ImGuiCol_Button, m_GizmoType == ImGuizmo::OPERATION::ROTATE ? ImVec4(0.2f, 0.6f, 0.9f, 0.5f) : ImVec4(0.2f, 0.2f, 0.2f, 0.5f));
 			if (ImGui::Button("R", ImVec2(25, 25))) m_GizmoType = ImGuizmo::OPERATION::ROTATE; ImGui::SameLine();
+			ImGui::PopStyleColor();
+			ImGui::PushStyleColor(ImGuiCol_Button, m_GizmoType == ImGuizmo::OPERATION::SCALE ? ImVec4(0.2f, 0.6f, 0.9f, 0.5f) : ImVec4(0.2f, 0.2f, 0.2f, 0.5f));
 			if (ImGui::Button("S", ImVec2(25, 25))) m_GizmoType = ImGuizmo::OPERATION::SCALE;
+			ImGui::PopStyleColor();
 			ImGui::PopStyleVar();
-			ImGui::PopStyleColor(4);
+			ImGui::PopStyleColor(3);
 
 			ImGui::PopFont();
 
 			ImGui::EndChild();
 
+		}
+	}
+	void EditorLayer::UITabBar()
+	{
+		ImGui::PushStyleColor(ImGuiCol_HeaderHovered, ImVec4(0.2f, 0.5f, 0.8f, 0.7f));
+		if (ImGui::BeginMenuBar())
+		{
+			if (ImGui::BeginMenu("File"))
+			{
+				if (ImGui::MenuItem("New", "Ctrl+N"))
+					NewScene();
+
+				ImGui::Separator();
+
+				if (ImGui::MenuItem("Open...", "Ctrl+O"))
+					OpenScene();
+
+				ImGui::Separator();
+
+
+				if (ImGui::MenuItem("Save", "Ctrl+S"))
+					SaveScene();
+
+				if (ImGui::MenuItem("Save as...", "Ctrl+Shift+A"))
+					SaveSceneAs();
+
+				ImGui::EndMenu();
+			}
+
+			if (ImGui::BeginMenu("Edit"))
+			{
+
+				if (ImGui::MenuItem("Exit")) Application::Get().Close();
+
+				ImGui::EndMenu();
+			}
+
+			if (ImGui::BeginMenu("Window"))
+			{
+				ImGui::SeparatorText("Main");
+				if (ImGui::MenuItem("Viewport", nullptr, &m_ViewportWindow));
+				if (ImGui::MenuItem("Scene Hierarchy", nullptr, &m_SceneHierarchyWindow));
+
+				ImGui::SeparatorText("Other");
+				if (ImGui::MenuItem("Settings", nullptr, &m_SettingsWindow));
+				if (ImGui::MenuItem("Debug", nullptr, &m_DebugWindow));
+
+				ImGui::EndMenu();
+			}
+
+			if (ImGui::BeginMenu("Mode"))
+			{
+				ImGui::SeparatorText("View mode");
+				if (ImGuiDMEEditor::MenuItemEx("Default", nullptr, nullptr, s_DebugRendererMode == DebugRendererMode::Normal)) s_DebugRendererMode = DebugRendererMode::Normal;
+				if (ImGuiDMEEditor::MenuItemEx("Wireframe", nullptr, nullptr, s_DebugRendererMode == DebugRendererMode::Wireframe)) s_DebugRendererMode = DebugRendererMode::Wireframe;
+				if (ImGuiDMEEditor::MenuItemEx("Point", nullptr, nullptr, s_DebugRendererMode == DebugRendererMode::Point)) s_DebugRendererMode = DebugRendererMode::Point;
+
+				ImGui::EndMenu();
+			}
+
+			ImGui::EndMenuBar();
+			ImGui::PopStyleColor();
 		}
 	}
 
@@ -395,49 +460,7 @@ namespace DME
 		style.WindowMinSize.x = minWindowSizeX;
 		style.WindowMinSize.y = minWindowSizeY;
 
-		if (ImGui::BeginMenuBar())
-		{
-			if (ImGui::BeginMenu("File"))
-			{
-				if (ImGui::MenuItem("New", "Ctrl+N"))
-					NewScene();
-
-				ImGui::Separator();
-
-				if (ImGui::MenuItem("Open...", "Ctrl+O"))
-					OpenScene();
-
-				ImGui::Separator();
-
-				if (ImGui::MenuItem("Save as...", "Ctrl+Shift+A"))
-					SaveSceneAs();
-
-				ImGui::EndMenu();
-			}
-
-			if (ImGui::BeginMenu("Edit"))
-			{
-
-				if (ImGui::MenuItem("Exit")) Application::Get().Close();
-
-				ImGui::EndMenu();
-			}
-
-			if (ImGui::BeginMenu("Window"))
-			{
-				ImGui::SeparatorText("Main");
-				if (ImGui::MenuItem("Viewport", nullptr, &m_ViewportWindow));
-				if (ImGui::MenuItem("Scene Hierarchy", nullptr, &m_SceneHierarchyWindow));
-
-				ImGui::SeparatorText("Other");
-				if (ImGui::MenuItem("Settings", nullptr, &m_SettingsWindow));
-				if (ImGui::MenuItem("Debug", nullptr, &m_DebugWindow));
-
-				ImGui::EndMenu();
-			}
-
-			ImGui::EndMenuBar();
-		}
+		UITabBar();
 
 		ImGui::End();
 	}
@@ -508,7 +531,7 @@ namespace DME
 				break;
 			}
 
-			if (m_ViewportFocused)
+			if (m_ViewportFocused && m_SceneState == SceneState::Edit)
 			{
 				case Key::Q:
 				{
@@ -567,43 +590,38 @@ namespace DME
 			Renderer2D::BeginScene(m_EditorCamera);
 		}
 
-		if (m_ShowPhysicsColliders)
-		{
-			{
-				auto view = m_ActiveScene->GetAllEntitiesWith<TransformComponent, BoxCollider2DComponent>();
-				for (auto [entity, tc, bc2d] : view.each())
-				{
-
-					glm::vec3 translation = tc.Position + glm::vec3(bc2d.Offset, 0.001f);
-					glm::vec3 scale = tc.Scale * glm::vec3(bc2d.Size * 2.0f, 1.0f);
-
-					glm::mat4 transform = glm::translate(glm::mat4(1.0f), translation)
-						* glm::rotate(glm::mat4(1.0f), tc.Rotation.z, glm::vec3(0.0f, 0.0f, 1.0f))
-						* glm::scale(glm::mat4(1.0f), scale);
-
-					Renderer2D::DrawRect(transform, glm::vec4(0, 1, 0, 1));
-				}
-			}
-
-			{
-				auto view = m_ActiveScene->GetAllEntitiesWith<TransformComponent, CircleCollider2DComponent>();
-				for (auto [entity, tc, cc2d]: view.each())
-				{
-					glm::vec3 translation = tc.Position + glm::vec3(cc2d.Offset, 0.001f);
-					glm::vec3 scale = tc.Scale * glm::vec3(cc2d.Radius * 2.0f);
-
-					glm::mat4 transform = glm::translate(glm::mat4(1.0f), translation)
-						* glm::scale(glm::mat4(1.0f), scale);
-
-					Renderer2D::DrawCircle(transform, glm::vec4(0, 1, 0, 1), 0.01f);
-				}
-			}
-		}
-
 		if (Entity selectedEntity = m_SceneHierarchy.GetSelectedEntity())
 		{
-			const TransformComponent& transform = selectedEntity.GetComponent<TransformComponent>();
-			Renderer2D::DrawRect(transform.GetTransform(), glm::vec4(1.0f, 0.5f, 0.0f, 1.0f));
+
+			if (selectedEntity.HasComponent<BoxCollider2DComponent>())
+			{
+				const TransformComponent& transform = selectedEntity.GetComponent<TransformComponent>();
+				const BoxCollider2DComponent& bc2d = selectedEntity.GetComponent<BoxCollider2DComponent>();
+
+				glm::vec3 translation = transform.Position + glm::vec3(bc2d.Offset, 0.001f);
+				glm::vec3 scale = transform.Scale * glm::vec3(bc2d.Size * 2.0f, 1.0f);
+
+				glm::mat4 position = glm::translate(glm::mat4(1.0f), translation)
+					* glm::rotate(glm::mat4(1.0f), transform.Rotation.z, glm::vec3(0.0f, 0.0f, 1.0f))
+					* glm::scale(glm::mat4(1.0f), scale);
+
+				Renderer2D::DrawRect(position, glm::vec4(1.0f, 0.5f, 0.0f, 1.0f));
+			}
+
+			if (selectedEntity.HasComponent<CircleCollider2DComponent>())
+			{
+				const TransformComponent& transform = selectedEntity.GetComponent<TransformComponent>();
+				const CircleCollider2DComponent& cc2d = selectedEntity.GetComponent<CircleCollider2DComponent>();
+
+
+				glm::vec3 translation = transform.Position + glm::vec3(cc2d.Offset, 0.001f);
+				glm::vec3 scale = transform.Scale * glm::vec3(cc2d.Radius * 2.5f);
+
+				glm::mat4 position = glm::translate(glm::mat4(1.0f), translation) * glm::scale(glm::mat4(1.0f), scale);
+
+				Renderer2D::DrawCircle(position, glm::vec4(1.0f, 0.5f, 0.0f, 1.0f), 0.15f);
+
+			}
 		}
 
 		Renderer2D::EndScene();
@@ -749,4 +767,6 @@ namespace DME
 
 		ImGui::End();
 	}
+
+
 }

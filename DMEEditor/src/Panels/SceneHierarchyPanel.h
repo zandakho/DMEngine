@@ -4,6 +4,8 @@
 #include "DME/Core/Log.h"
 #include "DME/Scene/Scene.h"
 #include "DME/Scene/Entity.h"
+#include "DME/Renderer/Texture.h"
+#include "DME/ImGui/ImGuiDMEEditor.h"
 
 namespace DME
 {
@@ -32,5 +34,7 @@ namespace DME
 	private:
 		Ref<Scene> m_Context;
 		Entity m_SelectionContext;
+
+		Ref<Texture2D> m_PlusButtonSmall;
 	};
 }

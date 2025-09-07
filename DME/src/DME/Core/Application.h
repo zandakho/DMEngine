@@ -14,7 +14,6 @@ int main(int argc, char** argv);
 
 namespace DME
 {
-
 	struct ApplicationCommandLineArgs
 	{
 		int Count = 0;
@@ -27,11 +26,18 @@ namespace DME
 		}
 	};
 
+	struct ApplicationSpecification
+	{
+		std::string Name = "DME Application";
+		std::string WorkingDirectory;
+		ApplicationCommandLineArgs CommandLineArgs;
+	};
+
 	class Application
 	{
 	public:
 
-		Application(const std::string& name = "DME App", ApplicationCommandLineArgs args = ApplicationCommandLineArgs());
+		Application(const ApplicationSpecification& specification);
 		virtual ~Application();
 		
 		void OnEvent(Event& event);
@@ -48,7 +54,7 @@ namespace DME
 		ImGuiLayer* GetImGuiLayer() { return m_ImGuiLayer; }
 
 		static Application& Get() { return *s_Instance; }
-		ApplicationCommandLineArgs GetCommandLineArgs() const { return m_CommandLineArgs; }
+		const ApplicationSpecification& GetSpecification() const { return m_Specification; }
 
 	private:
 		void Run();
@@ -64,7 +70,7 @@ namespace DME
 		ImGuiLayer* m_ImGuiLayer;
 		LayerStack m_LayerStack;
 		float m_LastFrameTime = 0.0f;
-		ApplicationCommandLineArgs m_CommandLineArgs;
+		ApplicationSpecification m_Specification;
 
 
 

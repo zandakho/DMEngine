@@ -21,17 +21,19 @@ namespace DME
 	{
 		m_FolderIcon = Texture2D::Create("Resources/Icons/ContentBrowser/FolderIcon.png");
 		m_FileIcon = Texture2D::Create("Resources/Icons/ContentBrowser/FileIcon.png");
+		m_BackButtonIcon = Texture2D::Create("Resources/Icons/ContentBrowser/Back_Img.png");
 	}
 
 	void ContentBrowserPanel::OnImGuiRender()
 	{
+		ImTextureID textureID = static_cast<uintptr_t>(m_BackButtonIcon->GetRendererID());
 		ImGui::Begin("Content Browser");
 
 		ImGui::BeginChild("##ContentChildBrowser", ImVec2(ImGui::GetContentRegionAvail().x - 30, 29));
 
 		if (m_CurrentDirectory != std::filesystem::path(g_AssetPath))
 		{
-			if (ImGui::Button("<-"))
+			if (ImGuiDMEEditor::IconButton("##Back button", reinterpret_cast<ImTextureID*>(textureID)))
 			{
 				m_CurrentDirectory = m_CurrentDirectory.parent_path();
 			}
