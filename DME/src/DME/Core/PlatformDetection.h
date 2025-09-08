@@ -1,29 +1,41 @@
 ﻿#pragma once
-#ifdef _WIN32
-	#ifdef _WIN64
-		#define DME_PLATFORM_WINDOWS
-	#else
-		#error "x86 Builds are not supported!"
-	#endif
-#elif defined(__APPLE__) || defined(__MACH__)
-	#include <TargetConditionals.h>
-	#if TARGET_IPHONE_SIMULATOR == 1
-		#error "IOS simulator is not supported!"	
-	#elif TARGET_OS_IPHONE == 1
-		#define DME_PLATFORM_IOS
-		#error "IOS is not supported!"
-	#elif TARGET_OS_MAC == 1
-		#define DME_PLATFORM_MACOS
-		#error "MacOS is not supported!"
-	#else
-		#error "Unknown Apple platform!"
-	#endif
-#elif defined(__ANDROID__)
-	#define DME_PLATFORM_ANDROID
-	#error "Android is not supported!"
+
+// Basic platform detection for DME
+#if defined(_WIN32) || defined(_WIN64)
+    #define DME_PLATFORM_WINDOWS
+#elif defined(__APPLE__) && defined(__MACH__)
+    #include <TargetConditionals.h>
+    #if TARGET_OS_IPHONE || TARGET_IPHONE_SIMULATOR
+        #define DME_PLATFORM_IOS
+    #else
+        #define DME_PLATFORM_MACOS
+    #endif
 #elif defined(__linux__)
-	#define DME_PLATFORM_LINUX
-	#error "Linux is not supported!"
+    #define DME_PLATFORM_LINUX
+#elif defined(__ANDROID__)
+    #define DME_PLATFORM_ANDROID
 #else
-	#error "Unknown platform!"
+    #warning "Unknown platform: building with generic defaults"
+#endif
+
+// Build config
+#if !defined(NDEBUG)
+    #define DME_DEBUG
+#else
+    #define DME_RELEASE
+#endif
+
+// Helpers for exports
+#if defined(DME_PLATFORM_WINDOWS)
+    #ifdef DME_DYNAMIC_LINK
+        #ifdef DME_BUILD_DLL
+            #define DME_API __declspec(dllexport)
+        #else
+            #define DME_API __declspec(dllimport)
+        #endif
+    #else
+        #define DME_API
+    #endif
+#else
+    #define DME_API
 #endif

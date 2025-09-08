@@ -73,7 +73,6 @@ namespace DME
 
 		DME_CORE_INFO("Creating window {0} ({1}, {2})", props.Title, props.Width, props.Height);
 
-
 		if (s_GLFWWindowCount == 0)
 		{
 			DME_PROFILE_SCOPE("glfwInit");

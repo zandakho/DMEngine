@@ -15,7 +15,7 @@ namespace DME
 	extern const std::filesystem::path g_AssetPath = "assets";
 
 	static float padding = 16.0f;
-	static float thumbnailSize = 128.0f;
+	static float thumbnailSize = 100.0f;
 
 	ContentBrowserPanel::ContentBrowserPanel() : m_CurrentDirectory(g_AssetPath)
 	{
@@ -33,10 +33,12 @@ namespace DME
 
 		if (m_CurrentDirectory != std::filesystem::path(g_AssetPath))
 		{
-			if (ImGuiDMEEditor::IconButton("##Back button", reinterpret_cast<ImTextureID*>(textureID)))
+			ImGui::PushStyleColor(ImGuiCol_Button, { 0.0f, 0.0f, 0.0f, 0.0f });
+			if (ImGuiDMEEditor::IconButton("##Back button", reinterpret_cast<ImTextureID*>(textureID), { 30, 30 }, {2.0f, 2.0f}, { 1.0f, 1.0f, 1.0f, 1.0f }))
 			{
 				m_CurrentDirectory = m_CurrentDirectory.parent_path();
 			}
+			ImGui::PopStyleColor();
 		}
 
 		ImGui::EndChild();
@@ -47,8 +49,8 @@ namespace DME
 			ImGui::OpenPopup("##SettingsWindow");
 		if (ImGui::BeginPopup("##SettingsWindow"))
 		{
-			ImGui::SliderFloat("Thumbnail Size", &thumbnailSize, 16, 512);
-			ImGui::SliderFloat("Padding", &padding, 0, 32);
+			ImGui::DragFloat("Thumbnail Size", &thumbnailSize, 0.1f, 0.0f);
+			ImGui::DragFloat("Padding", &padding, 0.1f, 32);
 
 			ImGui::EndPopup();
 		}
@@ -76,10 +78,19 @@ namespace DME
 			std::string filenameString = path.filename().string();
 
 			ImGui::PushID(filenameString.c_str());
-			Ref<Texture2D> icon = directoryEntry.is_directory() ? m_FolderIcon : m_FileIcon;
-			ImTextureID textureID = static_cast<uintptr_t>(icon->GetRendererID());
-			ImGui::PushStyleColor(ImGuiCol_Button, ImVec4(0, 0, 0, 0));
-			ImGui::ImageButton("Image", textureID, {thumbnailSize, thumbnailSize}, {0, 1}, {1, 0});
+			Ref<Texture2D> folder_icon = m_FolderIcon;
+			Ref<Texture2D> file_icon = m_FileIcon;
+			ImTextureID FolderTextureID = static_cast<uintptr_t>(folder_icon->GetRendererID());
+			ImTextureID FileTextureID = static_cast<uintptr_t>(file_icon->GetRendererID());
+
+			if (directoryEntry.is_directory())
+			{
+				ImGuiDMEEditor::FolderCard(filenameString.c_str(), reinterpret_cast<void*>(FolderTextureID), nullptr, nullptr, { 0, 1 }, {1, 0}, ImGuiButtonFlags_None);
+			}
+			else
+			{
+				ImGuiDMEEditor::CardWithAssetType(filenameString.c_str(), reinterpret_cast<void*>(FileTextureID), "Texture", "Not hint", {0, 1}, {1, 0}, glm::vec4(0.25f, 0.25f, 0.25f, 1.0f), ImGuiButtonFlags_None);
+			}
 
 			if (ImGui::BeginDragDropSource())
 			{
@@ -89,20 +100,18 @@ namespace DME
 				ImGui::EndDragDropSource();
 			}
 
-			ImGui::PopStyleColor();
-
 			if (ImGui::IsItemHovered() && ImGui::IsMouseDoubleClicked(ImGuiMouseButton_Left))
 			{
 				if (directoryEntry.is_directory())
 					m_CurrentDirectory /= path.filename();
 
 			}
-			ImGui::TextWrapped(filenameString.c_str());
-
+			
 			ImGui::NextColumn();
 
 			ImGui::PopID();
 		}
+		
 
 		ImGui::EndChild();
 

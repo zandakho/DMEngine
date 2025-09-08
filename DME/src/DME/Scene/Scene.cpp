@@ -280,7 +280,7 @@ namespace DME
 						circle.Thickness, circle.Fade, static_cast<int>(entity));
 				}
 			}
-
+			
 			Renderer2D::EndScene();
 
 		}
@@ -350,6 +350,16 @@ namespace DME
 				Renderer2D::DrawCircle(transform.GetTransform(), circle.Color,
 					circle.Thickness, circle.Fade, static_cast<int>(entity));
 			}
+
+		}
+
+		{
+			auto view = m_Registry.view<TransformComponent, CameraComponent>();
+			for (auto [entity, transform, camera] : view.each())
+			{
+				Renderer2D::DrawQuad(transform.GetTransform(), camera.Camera.GetCameraTexture(), { 1.0f }, camera.Camera.GetCameraTextureColor(), static_cast<int>(entity));
+			}
+
 		}
 
 		Renderer2D::EndScene();

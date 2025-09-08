@@ -1,6 +1,7 @@
 #pragma once
 
 #include "DME/Renderer/Camera.h"
+#include "DME/Renderer/Texture.h"
 
 namespace DME
 {
@@ -34,6 +35,11 @@ namespace DME
 		float GetOrthographicFarClip() const { return m_OrthographicFar; }
 		void SetOrthographicFarClip(float farClip) { m_OrthographicFar = farClip; RecalculateProjection(); }
 
+		glm::vec4 GetCameraTextureColor() const { return m_CameraTextureColor; }
+		void SetCameraTextureColor(glm::vec4 color) { m_CameraTextureColor = color; }
+
+		Ref<Texture2D> GetCameraTexture() const { return m_CameraTexture; }
+
 		ProjectionType GetProjectionType() const { return m_ProjectionType; }
 		void SetProjectionType(ProjectionType type) { m_ProjectionType = type; RecalculateProjection(); }
 	private:
@@ -48,7 +54,8 @@ namespace DME
 		float m_OrthographicSize = 10.0f;
 		float m_OrthographicNear = -1.0f, m_OrthographicFar = 1.0f;
 
-		
+		Ref<Texture2D> m_CameraTexture;
+		glm::vec4 m_CameraTextureColor = { 1.0f, 1.0f, 1.0f, 1.0f };
 
 		float m_AspectRatio = 0.0f;
 	};

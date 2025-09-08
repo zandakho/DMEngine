@@ -1,7 +1,10 @@
 #include "dmepch.h"
 
+
+
 #include "EditorLayer.h"
 #include <ImGui/imgui.h>
+#include <ImGui/imgui_internal.h>
 
 #include <glm/gtc/matrix_transform.hpp>
 #include <glm/gtc/type_ptr.hpp>
@@ -155,41 +158,7 @@ namespace DME
 	{
 		DME_PROFILE_FUNCTION();
 
-		if (m_DemoWindow)
-			ImGui::ShowDemoWindow();
-
 		EditorLayer::OnDockspace();
-
-		ImGui::Begin("Debug Window");
-
-		ImGui::Text("Focus: %s\nHover: %s\nDock: %s", m_ViewportFocused ? "Focused" : "No", m_ViewportHovered ? "Hovered" : "No", m_ViewportDocked ? "Docked" : "No");
-
-		ImGui::Text("Debug mode: %s", DebugModeToString(s_DebugRendererMode).c_str());
-
-		ImGui::Text("Viewport for EC: %s", m_EditorCamera.GetViewportStatusAsString().c_str());
-
-		ImGui::PushStyleColor(ImGuiCol_Button, m_DemoWindow ? IM_COL32(10, 140, 10, 255) : IM_COL32(140, 10, 10, 255));
-		ImGui::PushStyleColor(ImGuiCol_ButtonHovered, m_DemoWindow ? IM_COL32(10, 140, 10, 255) : IM_COL32(140, 10, 10, 255));
-		ImGui::PushStyleColor(ImGuiCol_ButtonActive, m_DemoWindow ? IM_COL32(10, 140, 10, 255) : IM_COL32(140, 10, 10, 255));
-		ImGui::PushFont(ImGui::GetIO().Fonts->Fonts[FontLibrary::OpenSansRegular_21]);
-		if (ImGui::Button("Demo Window")) m_DemoWindow = !m_DemoWindow;
-		ImGui::PopFont();
-		ImGui::PopStyleColor(3);
-		ImGui::End();
-
-		ImGui::Begin("Renderer Stats");
-
-		ImGui::Text("Draw Calls: %d", Renderer2D::GetStats().DrawCalls);
-		ImGui::Text("Quads: %d", Renderer2D::GetStats().QuadCount);
-		ImGui::Text("Vertices: %d", Renderer2D::GetStats().GetTotalVertexCount());
-		ImGui::Text("Indices: %d", Renderer2D::GetStats().GetTotalIndexCount());
-		ImGui::Text("FPS: %d", static_cast<uint16_t>(ImGui::GetIO().Framerate));
-		ImGui::Text("Frame time: %.3f ms", static_cast<uint16_t>(ImGui::GetIO().Framerate) / 1000.0f);
-
-		std::string name = m_HoveredEntity && m_HoveredEntity.HasComponent<TagComponent>() ? m_HoveredEntity.GetComponent<TagComponent>().Tag : "None";
-		ImGui::Text("Hovered Entity: %s", name.c_str());
-
-		ImGui::End();
 
 		if (m_SceneHierarchyWindow)
 			m_SceneHierarchy.OnImGuiRender();
@@ -198,6 +167,13 @@ namespace DME
 
 		if (m_ViewportWindow)
 			ViewportWindow();
+		if (m_DebugWindow)
+			DebugWindow();
+		if (m_DemoWindow)
+			ImGui::ShowDemoWindow();
+		if (m_RendererStatsWindow)
+			RendererStatsWindow();
+
 	}
 
 	void EditorLayer::UIToolbar()
@@ -332,6 +308,8 @@ namespace DME
 				ImGui::SeparatorText("Other");
 				if (ImGui::MenuItem("Settings", nullptr, &m_SettingsWindow));
 				if (ImGui::MenuItem("Debug", nullptr, &m_DebugWindow));
+				if (ImGui::MenuItem("Demo", nullptr, &m_DemoWindow));
+				if (ImGui::MenuItem("Renderer Stats", nullptr, &m_RendererStatsWindow));
 
 				ImGui::EndMenu();
 			}
@@ -768,5 +746,32 @@ namespace DME
 		ImGui::End();
 	}
 
+	void EditorLayer::DebugWindow()
+	{
+		ImGui::Begin("Debug Window");
+
+		ImGui::Text("Focus: %s\nHover: %s\nDock: %s", m_ViewportFocused ? "Focused" : "No", m_ViewportHovered ? "Hovered" : "No", m_ViewportDocked ? "Docked" : "No");
+		ImGui::Text("Debug mode: %s", DebugModeToString(s_DebugRendererMode).c_str());
+		ImGui::Text("Viewport for EC: %s", m_EditorCamera.GetViewportStatusAsString().c_str());
+
+		ImGui::End();
+	}
+
+	void EditorLayer::RendererStatsWindow()
+	{
+		ImGui::Begin("Renderer Stats");
+
+		ImGui::Text("Draw Calls: %d", Renderer2D::GetStats().DrawCalls);
+		ImGui::Text("Quads: %d", Renderer2D::GetStats().QuadCount);
+		ImGui::Text("Vertices: %d", Renderer2D::GetStats().GetTotalVertexCount());
+		ImGui::Text("Indices: %d", Renderer2D::GetStats().GetTotalIndexCount());
+		ImGui::Text("FPS: %d", static_cast<uint16_t>(ImGui::GetIO().Framerate));
+		ImGui::Text("Frame time: %.3f ms", static_cast<uint16_t>(ImGui::GetIO().Framerate) / 1000.0f);
+
+		std::string name = m_HoveredEntity && m_HoveredEntity.HasComponent<TagComponent>() ? m_HoveredEntity.GetComponent<TagComponent>().Tag : "None";
+		ImGui::Text("Hovered Entity: %s", name.c_str());
+
+		ImGui::End();
+	}
 
 }

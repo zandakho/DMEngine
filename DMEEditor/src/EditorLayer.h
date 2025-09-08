@@ -45,6 +45,8 @@ namespace DME
 		void UITabBar();
 		
 		void ViewportWindow();
+		void DebugWindow();
+		void RendererStatsWindow();
 
 	private:
 		bool OnKeyPressed(KeyPressedEvent& event);
@@ -65,6 +67,7 @@ namespace DME
 		SceneHierarchyPanel m_SceneHierarchy;
 		ContentBrowserPanel m_ContentBrowser;
 		EditorCamera m_EditorCamera;
+		SceneCamera m_SceneCamera;
 
 	private:
 
@@ -93,14 +96,15 @@ namespace DME
 
 	private: // Window variables
 
-		bool m_ViewportWindow;
-		bool m_SettingsWindow;
-		bool m_PropertiesWindow;
-		bool m_SceneHierarchyWindow;
-		bool m_ContentBrowserWindow;
+		bool m_ViewportWindow = true;
+		bool m_SettingsWindow = true;
+		bool m_PropertiesWindow = true;
+		bool m_SceneHierarchyWindow = true;
+		bool m_ContentBrowserWindow = true;
 
-		bool m_DebugWindow;
-		bool m_DemoWindow;
+		bool m_DebugWindow = false;
+		bool m_DemoWindow = false;
+		bool m_RendererStatsWindow = false;
 	
 	};
 

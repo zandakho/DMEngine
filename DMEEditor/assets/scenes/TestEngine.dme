@@ -1,6 +1,6 @@
 Scene: Untitled
 Entities:
-  - Entity: 1559508058224312058
+  - Entity: 7835035858881746721
     TagComponent:
       Tag: Floor
     TransformComponent:
@@ -9,6 +9,7 @@ Entities:
       Scale: [5.01824427, 0.28097564, 1]
     SpriteRendererComponent:
       Color: [1, 1, 1, 1]
+      TilingFactor: 1
     Rigidbody2DComponent:
       BodyType: Static
       FixedRotation: false
@@ -19,15 +20,16 @@ Entities:
       Friction: 0.5
       Restitution: 0
       RestitutionThreshold: 0.5
-  - Entity: 15177824835043114785
+  - Entity: 16496601369755841116
     TagComponent:
       Tag: SizeOf
     TransformComponent:
-      Position: [-0.112016357, 2.06952286, 3.7252903e-09]
-      Rotation: [0, 0, 0]
+      Position: [-0.11201635, 7.78516769, 7.4505806e-09]
+      Rotation: [0, 0, 0.638156056]
       Scale: [0.480000019, 0.480000019, 0.480000019]
     SpriteRendererComponent:
       Color: [1, 1, 1, 1]
+      TilingFactor: 1
     Rigidbody2DComponent:
       BodyType: Dynamic
       FixedRotation: false
@@ -36,13 +38,13 @@ Entities:
       Size: [0.5, 0.5]
       Density: 1
       Friction: 0.5
-      Restitution: 0
-      RestitutionThreshold: 0.5
-  - Entity: 13661539415108420771
+      Restitution: 0.639999986
+      RestitutionThreshold: 0.449999988
+  - Entity: 5238434787337909358
     TagComponent:
       Tag: Camera
     TransformComponent:
-      Position: [0.0535941124, 0.95346725, 10.9172029]
+      Position: [0.0535941124, 2.03963923, 19.8552799]
       Rotation: [0, 0, 0]
       Scale: [1, 1, 1]
     CameraComponent:
@@ -56,7 +58,7 @@ Entities:
         OrthographicFar: 1
       Primary: true
       FixedAspectRatio: false
-  - Entity: 282791063568321266
+  - Entity: 6255511197723413878
     TagComponent:
       Tag: Top
     TransformComponent:
@@ -65,7 +67,8 @@ Entities:
       Scale: [1, 1, 1]
     SpriteRendererComponent:
       Color: [0.436363637, 0, 0, 1]
-  - Entity: 8232413002468211589
+      TilingFactor: 1
+  - Entity: 11659746965920503723
     TagComponent:
       Tag: Left
     TransformComponent:
@@ -74,7 +77,8 @@ Entities:
       Scale: [1, 1, 1]
     SpriteRendererComponent:
       Color: [0.665454507, 0, 0, 1]
-  - Entity: 16176062530664921581
+      TilingFactor: 1
+  - Entity: 7417011585294009861
     TagComponent:
       Tag: Right
     TransformComponent:
@@ -83,7 +87,8 @@ Entities:
       Scale: [1, 1, 1]
     SpriteRendererComponent:
       Color: [0.418181837, 0, 0, 1]
-  - Entity: 8671132140009567797
+      TilingFactor: 1
+  - Entity: 11790688304200112785
     TagComponent:
       Tag: TopLeft
     TransformComponent:
@@ -92,7 +97,8 @@ Entities:
       Scale: [0.49999994, 0.49999994, 0.99999994]
     SpriteRendererComponent:
       Color: [0.221223131, 0.225934878, 0.869090915, 1]
-  - Entity: 13283835414021323405
+      TilingFactor: 1
+  - Entity: 5700137702627711534
     TagComponent:
       Tag: TopRight
     TransformComponent:
@@ -101,7 +107,8 @@ Entities:
       Scale: [0.5, 0.5, 1]
     SpriteRendererComponent:
       Color: [0.0130644497, 0, 0.898181796, 1]
-  - Entity: 328807198501785997
+      TilingFactor: 1
+  - Entity: 7641099449497884882
     TagComponent:
       Tag: TopTop
     TransformComponent:
@@ -110,6 +117,7 @@ Entities:
       Scale: [0.49999994, 0.499999642, 0.999708235]
     SpriteRendererComponent:
       Color: [0.130644619, 0.130644783, 0.945454538, 1]
+      TilingFactor: 1
     Rigidbody2DComponent:
       BodyType: Static
       FixedRotation: false

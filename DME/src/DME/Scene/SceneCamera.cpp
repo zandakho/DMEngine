@@ -10,6 +10,7 @@ namespace DME
 	SceneCamera::SceneCamera()
 	{
 		RecalculateProjection();
+		m_CameraTexture = Texture2D::Create("Resources/Icons/Viewport/ViewportCamera_Img.png");
 	}
 
 	void SceneCamera::SetPerspective(float verticalFOV, float nearClip, float farClip)

@@ -1,6 +1,6 @@
 #pragma once
 
-
+#include <glm/glm.hpp>
 
 namespace DME
 {
@@ -10,8 +10,14 @@ namespace DME
 		bool CheckboxAsRadio(const char* label, bool* value, unsigned long long* iconTexture = nullptr);
 		bool RadioButton(const char* label, bool active);
 		bool MenuItemEx(const char* label, const char* icon, const char* shortcut = NULL, bool selected = false, bool enabled = true);
-		bool IconButton(const char* label, unsigned long long* texture_id = nullptr, const float& size_x = { 0.0f }, const float& size_y = { 0.0f });
+		bool IconButton(const char* label, unsigned long long* texture_id = nullptr, glm::vec2 size = { 0.0f, 0.0f }, glm::vec2 image_size = { 0.0f, 0.0f }, glm::vec4 color = { 1.0f, 1.0f, 1.0f, 1.0f });
+		bool CardWithAssetType(const char* name_id, void* image, const char* type, const char* hint, const glm::vec2& uv0, const glm::vec2& uv1, const glm::vec4& tint_col, int flags);
+		bool FolderCard(const char* name_id, void* image, const char* type, const char* hint, const glm::vec2& uv0, const glm::vec2& uv1, int flags);
+		
 	}
+
+
+
 }
 
 
