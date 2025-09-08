@@ -3,7 +3,6 @@
 #include <filesystem>
 
 #include "DME/Renderer/Texture.h"
-#include "DME/ImGui/ImGuiDMEEditor.h"
 
 namespace DME
 {
@@ -22,7 +21,7 @@ namespace DME
 		Ref<Texture2D> m_FolderIcon;
 		Ref<Texture2D> m_FileIcon;
 		Ref<Texture2D> m_BackButtonIcon;
-
+		Ref<Texture2D> m_SettingsButtonIcon;
 	};
 
 }

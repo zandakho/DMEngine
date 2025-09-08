@@ -5,6 +5,8 @@
 
 #include "FontLibrary.h"
 
+#include "DME/ImGui/ImGuiDMEEditor.h"
+
 #include <ImGui/imgui.h>
 
 
@@ -15,37 +17,38 @@ namespace DME
 	extern const std::filesystem::path g_AssetPath = "assets";
 
 	static float padding = 16.0f;
-	static float thumbnailSize = 100.0f;
+	static float thumbnailSize = 101.0f;
 
 	ContentBrowserPanel::ContentBrowserPanel() : m_CurrentDirectory(g_AssetPath)
 	{
 		m_FolderIcon = Texture2D::Create("Resources/Icons/ContentBrowser/FolderIcon.png");
 		m_FileIcon = Texture2D::Create("Resources/Icons/ContentBrowser/FileIcon.png");
 		m_BackButtonIcon = Texture2D::Create("Resources/Icons/ContentBrowser/Back_Img.png");
+		m_SettingsButtonIcon = Texture2D::Create("Resources/Icons/ContentBrowser/Settings_Img.png");
 	}
 
 	void ContentBrowserPanel::OnImGuiRender()
 	{
 		ImTextureID textureID = static_cast<uintptr_t>(m_BackButtonIcon->GetRendererID());
+		ImTextureID SettingsButtonID = static_cast<uintptr_t>(m_SettingsButtonIcon->GetRendererID());
+
 		ImGui::Begin("Content Browser");
 
-		ImGui::BeginChild("##ContentChildBrowser", ImVec2(ImGui::GetContentRegionAvail().x - 30, 29));
+		ImGui::BeginChild("##ContentChildBrowser", ImVec2(ImGui::GetContentRegionAvail().x - 30, 31));
 
 		if (m_CurrentDirectory != std::filesystem::path(g_AssetPath))
 		{
-			ImGui::PushStyleColor(ImGuiCol_Button, { 0.0f, 0.0f, 0.0f, 0.0f });
-			if (ImGuiDMEEditor::IconButton("##Back button", reinterpret_cast<ImTextureID*>(textureID), { 30, 30 }, {2.0f, 2.0f}, { 1.0f, 1.0f, 1.0f, 1.0f }))
+			if (ImGuiDMEEditor::IconButton("##Back button", reinterpret_cast<ImTextureID*>(textureID), { 30, 30 }, { 1.0f, 1.0f, 1.0f, 1.0f }))
 			{
 				m_CurrentDirectory = m_CurrentDirectory.parent_path();
 			}
-			ImGui::PopStyleColor();
 		}
 
 		ImGui::EndChild();
 
 		ImGui::SameLine();
 
-		if (ImGui::Button("N##Settings"))
+		if (ImGuiDMEEditor::IconButton("##Settings", reinterpret_cast<ImTextureID*>(SettingsButtonID), { 30, 30 }))
 			ImGui::OpenPopup("##SettingsWindow");
 		if (ImGui::BeginPopup("##SettingsWindow"))
 		{

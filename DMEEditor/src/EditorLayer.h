@@ -36,6 +36,8 @@ namespace DME
 
 		void OnDuplicateEntity();
 
+		void DeleteSelectedEntity();
+
 		void OnScenePlay();
 		void OnSceneSimulate();
 		void OnSceneStop();
@@ -93,6 +95,7 @@ namespace DME
 	private: // Textures
 		
 		Ref<Texture2D> m_IconPlay, m_IconSimulate, m_IconStop;
+		Ref<Texture2D> m_IconCursor, m_IconMove, m_IconRotate, m_IconScale;
 
 	private: // Window variables
 

@@ -1,17 +1,19 @@
 ﻿#include "dmepch.h"
 
 #include "SceneHierarchyPanel.h"
+#include "DME/Scene/Components.h"
+
+#include "DME/ImGui/ImGuiDMEEditor.h"
+#include "DME/Renderer/Renderer2D.h"
+
+#include "FontLibrary.h"
 
 #include <ImGui/imgui.h>
 #include <ImGui/imgui_internal.h>
 
-
-#include "DME/Scene/Components.h"
 #include <glm/gtc/type_ptr.hpp>
 
-#include "DME/Renderer/Renderer2D.h"
 
-#include "FontLibrary.h"
 
 #ifdef _MSVC_LANG
 	#define _CRT_SECURE_NO_WARNINGS
@@ -72,7 +74,7 @@ namespace DME
 	SceneHierarchyPanel::SceneHierarchyPanel(const Ref<Scene>& context)
 	{
 		SetContext(context);
-		m_PlusButtonSmall = Texture2D::Create("C:/Engine/DME/DMEEditor/Resources/Icons/Editor/Plus_Small_Img.png");
+		m_PlusButtonSmall = Texture2D::Create("Resources/Icons/SceneHieararchy/Plus_Small_Green_Img.png");
 	}
 
 	void SceneHierarchyPanel::SetContext(const Ref<Scene>& context)
@@ -83,6 +85,7 @@ namespace DME
 
 	void SceneHierarchyPanel::OnImGuiRender()
 	{
+
 		ImGui::Begin("Scene Hierarchy");
 
 		if (m_Context)
@@ -109,8 +112,45 @@ namespace DME
 		ImGui::End();
 
 		ImGui::Begin("Properties");
+
 		if (m_SelectionContext)
 		{
+			auto& tag = m_SelectionContext.GetComponent<TagComponent>().Tag;
+			std::string cast_name = std::format("{0}##{0}", tag);
+
+			if (m_SelectionContext.HasComponent<TagComponent>())
+			{
+
+				char buffer[256];
+				memset(buffer, 0, sizeof(buffer));
+				strcpy_s(buffer, sizeof(buffer), tag.c_str());
+
+				if (ImGui::InputText("##Label", buffer, sizeof(buffer)))
+				{
+					tag = std::string(buffer);
+				}
+			}
+
+			ImGui::SameLine();
+
+			if (ImGui::Button("+ADD"))
+			{
+				ImGui::OpenPopup("DialogWindow");
+			}
+			if (ImGui::BeginPopup("DialogWindow"))
+			{
+
+				DisplayAddComponentEntry<CameraComponent>("Camera");
+				DisplayAddComponentEntry<SpriteRendererComponent>("Sprite Renderer");
+				DisplayAddComponentEntry<CircleRendererComponent>("Circle Renderer");
+				DisplayAddComponentEntry<Rigidbody2DComponent>("Rigidbody 2D");
+				DisplayAddComponentEntry<BoxCollider2DComponent>("Box Collider 2D");
+				DisplayAddComponentEntry<CircleCollider2DComponent>("Circle Collider 2D");
+
+				ImGui::EndPopup();
+			}
+
+			ImGui::SeparatorEx(ImGuiSeparatorFlags_Horizontal, 3);
 			DrawComponents(m_SelectionContext);
 		}
 
@@ -158,10 +198,9 @@ namespace DME
 
 		if (entityDeleted)
 		{
-
-			m_Context->DestroyEntity(entity);
-			if (m_SelectionContext == entity)
-				m_SelectionContext = {};
+			GetContext()->DestroyEntity(entity);
+			if (GetSelectedEntity() == entity)
+				ClearSelectedContext();
 		}
 	}
 
@@ -201,46 +240,6 @@ namespace DME
 	void SceneHierarchyPanel::DrawComponents(Entity entity)
 	{
 		
-		auto& tag = entity.GetComponent<TagComponent>().Tag;
-
-		if (entity.HasComponent<TagComponent>())
-		{
-
-			char buffer[256];
-			memset(buffer, 0, sizeof(buffer));
-			strcpy_s(buffer, sizeof(buffer), tag.c_str());
-
-			if (ImGui::InputText("##Label", buffer, sizeof(buffer)))
-			{
-				tag = std::string(buffer);
-			}
-		}
-
-		ImGui::SameLine();
-		ImGui::PushItemWidth(-1);
-
-		ImGui::SetNextItemWidth(ImGui::GetWindowContentRegionMax().x);
-		ImGui::PushFont(ImGui::GetIO().Fonts->Fonts[static_cast<int>(FontLibrary::OpenSansBold_21)]);
-		if (ImGui::Button("+ADD"))
-		{
-			ImGui::OpenPopup("DialogWindow");
-		}
-		ImGui::PopFont();
-		if (ImGui::BeginPopup("DialogWindow"))
-		{
-			
-			DisplayAddComponentEntry<CameraComponent>("Camera");
-			DisplayAddComponentEntry<SpriteRendererComponent>("Sprite Renderer");
-			DisplayAddComponentEntry<CircleRendererComponent>("Circle Renderer");
-			DisplayAddComponentEntry<Rigidbody2DComponent>("Rigidbody 2D");
-			DisplayAddComponentEntry<BoxCollider2DComponent>("Box Collider 2D");
-			DisplayAddComponentEntry<CircleCollider2DComponent>("Circle Collider 2D");
-
-			ImGui::EndPopup();
-		}
-
-		ImGui::PopItemWidth();
-
 		DrawComponent<TransformComponent>("Transform", entity, [](auto& component)
 		{
 			DrawVec3Control("Position", component.Position, -FLT_MAX, FLT_MAX);

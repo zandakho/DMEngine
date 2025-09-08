@@ -1,5 +1,8 @@
 #pragma once
 
+#include <string>
+#include <format>
+
 namespace DME {
 
 	class UUID
@@ -10,6 +13,14 @@ namespace DME {
 		UUID(const UUID&) = default;
 
 		operator uint64_t() const { return m_UUID; }
+
+		uint64_t GetUUID() const { return m_UUID; }
+		std::string PrintUUIDAsString()
+		{
+			std::string id = std::format("{0}", GetUUID());
+			return id;
+		}
+
 	private:
 		uint64_t m_UUID;
 	};

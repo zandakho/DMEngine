@@ -37,6 +37,11 @@ namespace DME
 		m_IconSimulate = Texture2D::Create("Resources/Icons/Viewport/SimulateButton.png");
 		m_IconStop = Texture2D::Create("Resources/Icons/Viewport/StopButton.png");
 
+		m_IconCursor = Texture2D::Create("Resources/Icons/Viewport/Viewport_Cursor_Img.png");
+		m_IconMove = Texture2D::Create("Resources/Icons/Viewport/Viewport_Move_Img.png");
+		m_IconRotate = Texture2D::Create("Resources/Icons/Viewport/Viewport_Rotate_Img.png");
+		m_IconScale = Texture2D::Create("Resources/Icons/Viewport/Viewport_Resize_Img.png");
+
 		FramebufferSpecification fbSpec;
 		fbSpec.Attachments = { FramebufferTextureFormat::RGBA8, FramebufferTextureFormat::RED_INTEGER, FramebufferTextureFormat::Depth };
 		fbSpec.Width = 1600;
@@ -237,23 +242,28 @@ namespace DME
 		{
 			ImGui::PopStyleColor();
 
+			ImTextureID CursorButtonID = static_cast<uintptr_t>(m_IconCursor->GetRendererID());
+			ImTextureID MoveButtonID = static_cast<uintptr_t>(m_IconMove->GetRendererID());
+			ImTextureID RotateButtonID = static_cast<uintptr_t>(m_IconRotate->GetRendererID());
+			ImTextureID ScaleButtonID = static_cast<uintptr_t>(m_IconScale->GetRendererID());
+
 			ImGui::PushFont(ImGui::GetIO().Fonts->Fonts[FontLibrary::OpenSansBold_21]);
 
 			ImGui::PushStyleColor(ImGuiCol_Button, ImVec4(0.2f, 0.2f, 0.2f, 0.5f));
-			ImGui::PushStyleColor(ImGuiCol_ButtonHovered, ImVec4(0.2f, 0.2f, 0.2f, 0.5f));
+			ImGui::PushStyleColor(ImGuiCol_ButtonHovered, ImVec4(0.7f, 0.7f, 0.7f, 0.5f));
 			ImGui::PushStyleColor(ImGuiCol_Text, ImVec4(1.0f, 1.0f, 1.0f, 1.0f));
 			ImGui::PushStyleVar(ImGuiStyleVar_FramePadding, ImVec2(9, 5));
 			ImGui::PushStyleColor(ImGuiCol_Button, m_GizmoType == -1 ? ImVec4(0.2f, 0.6f, 0.9f, 0.5f) : ImVec4(0.2f, 0.2f, 0.2f, 0.5f));
-			if (ImGui::Button("M", ImVec2(25, 25))) m_GizmoType = -1; ImGui::SameLine();
+			if (ImGuiDMEEditor::IconButton("##Cursor", reinterpret_cast<ImTextureID*>(CursorButtonID), { 25, 25 })) m_GizmoType = -1; ImGui::SameLine();
 			ImGui::PopStyleColor();
 			ImGui::PushStyleColor(ImGuiCol_Button, m_GizmoType == ImGuizmo::OPERATION::TRANSLATE ? ImVec4(0.2f, 0.6f, 0.9f, 0.5f) : ImVec4(0.2f, 0.2f, 0.2f, 0.5f));
-			if (ImGui::Button("T", ImVec2(25, 25))) m_GizmoType = ImGuizmo::OPERATION::TRANSLATE; ImGui::SameLine();
+			if (ImGuiDMEEditor::IconButton("##Move", reinterpret_cast<ImTextureID*>(MoveButtonID), { 25, 25 })) m_GizmoType = ImGuizmo::OPERATION::TRANSLATE; ImGui::SameLine();
 			ImGui::PopStyleColor();
 			ImGui::PushStyleColor(ImGuiCol_Button, m_GizmoType == ImGuizmo::OPERATION::ROTATE ? ImVec4(0.2f, 0.6f, 0.9f, 0.5f) : ImVec4(0.2f, 0.2f, 0.2f, 0.5f));
-			if (ImGui::Button("R", ImVec2(25, 25))) m_GizmoType = ImGuizmo::OPERATION::ROTATE; ImGui::SameLine();
+			if (ImGuiDMEEditor::IconButton("##Rotate", reinterpret_cast<ImTextureID*>(RotateButtonID), { 25, 25 })) m_GizmoType = ImGuizmo::OPERATION::ROTATE; ImGui::SameLine();
 			ImGui::PopStyleColor();
 			ImGui::PushStyleColor(ImGuiCol_Button, m_GizmoType == ImGuizmo::OPERATION::SCALE ? ImVec4(0.2f, 0.6f, 0.9f, 0.5f) : ImVec4(0.2f, 0.2f, 0.2f, 0.5f));
-			if (ImGui::Button("S", ImVec2(25, 25))) m_GizmoType = ImGuizmo::OPERATION::SCALE;
+			if (ImGuiDMEEditor::IconButton("##Scale", reinterpret_cast<ImTextureID*>(ScaleButtonID), { 25, 25 })) m_GizmoType = ImGuizmo::OPERATION::SCALE;
 			ImGui::PopStyleColor();
 			ImGui::PopStyleVar();
 			ImGui::PopStyleColor(3);
@@ -386,6 +396,16 @@ namespace DME
 		Entity selectedEntity = m_SceneHierarchy.GetSelectedEntity();
 		if (selectedEntity)
 			m_EditorScene->DuplicateEntity(selectedEntity);
+	}
+
+	void EditorLayer::DeleteSelectedEntity()
+	{
+		if (m_SceneHierarchy.GetSelectedEntity().HasComponent<IDComponent>() && m_SceneHierarchy.GetSelectedEntity().HasComponent<TagComponent>())
+		{
+			m_SceneHierarchy.GetContext()->DestroyEntity(m_SceneHierarchy.GetSelectedEntity());
+			if (m_SceneHierarchy.GetSelectedEntity() == m_SceneHierarchy.GetSelectedEntity())
+				m_SceneHierarchy.ClearSelectedContext();
+		}
 	}
 
 	void EditorLayer::OnDockspace()
@@ -538,6 +558,13 @@ namespace DME
 						m_GizmoType = ImGuizmo::OPERATION::SCALE;
 					break;
 				}
+
+				
+				case Key::Delete:
+				{	
+					DeleteSelectedEntity();		
+				}			
+				
 			}
 		}
 
@@ -769,6 +796,7 @@ namespace DME
 		ImGui::Text("Frame time: %.3f ms", static_cast<uint16_t>(ImGui::GetIO().Framerate) / 1000.0f);
 
 		std::string name = m_HoveredEntity && m_HoveredEntity.HasComponent<TagComponent>() ? m_HoveredEntity.GetComponent<TagComponent>().Tag : "None";
+
 		ImGui::Text("Hovered Entity: %s", name.c_str());
 
 		ImGui::End();

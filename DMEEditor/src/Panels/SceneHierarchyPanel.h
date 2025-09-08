@@ -5,7 +5,6 @@
 #include "DME/Scene/Scene.h"
 #include "DME/Scene/Entity.h"
 #include "DME/Renderer/Texture.h"
-#include "DME/ImGui/ImGuiDMEEditor.h"
 
 namespace DME
 {
@@ -18,9 +17,12 @@ namespace DME
 
 		void SetContext(const Ref<Scene>& context);
 
+		Ref<Scene> GetContext() { return m_Context; };
+
 		void OnImGuiRender();
 
 		Entity GetSelectedEntity() const { return m_SelectionContext; }
+		void ClearSelectedContext() { m_SelectionContext = {}; }
 		void SetSelectedEntity(Entity entity);
 
 	private:

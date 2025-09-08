@@ -321,7 +321,7 @@ namespace DME
             return pressed;
         }
 
-        bool IconButton(const char* label, unsigned long long* texture_id, glm::vec2 size, glm::vec2 image_size, glm::vec4 color) {
+        bool IconButton(const char* label, unsigned long long* texture_id, glm::vec2 size, glm::vec4 color) {
             ImGuiWindow* window = ImGui::GetCurrentWindow();
             if (window->SkipItems)
                 return false;
@@ -331,8 +331,7 @@ namespace DME
             const ImGuiStyle& style = g.Style;
 
             const ImVec2 label_size = ImGui::CalcTextSize(label, NULL, true);
-            ImVec2 actual_size = ImGui::CalcItemSize(ImVec2(size.x, size.y), label_size.x + style.FramePadding.x * 2.0f + 20.0f,
-                label_size.y + style.FramePadding.y * 2.0f);
+            ImVec2 actual_size = ImGui::CalcItemSize(ImVec2(size.x, size.y), label_size.x + 10, label_size.y + 10);
 
             const ImRect bb(window->DC.CursorPos, window->DC.CursorPos + actual_size);
             ImGui::ItemSize(bb, style.FramePadding.y);
@@ -345,16 +344,15 @@ namespace DME
             const ImU32 col = ImGui::GetColorU32((held && hovered) ? ImGuiCol_ButtonActive :
                 hovered ? ImGuiCol_ButtonHovered : ImGuiCol_Button);
             ImGui::RenderNavHighlight(bb, ImGui::GetID(label));
-            ImGui::RenderFrame(bb.Min, bb.Max, col, true, style.FrameRounding);
+            ImGui::RenderFrame(bb.Min, bb.Max, col, true, 3.0f);
 
-            if (texture_id) {
-                ImGui::RenderText(ImVec2(bb.Min.x + style.FramePadding.x + 20,
-                    bb.Min.y + style.FramePadding.y), label);
-                ImGui::GetWindowDrawList()->AddImage(texture_id, ImVec2(bb.Min.x + image_size.x + 5, bb.Min.y + image_size.y + 5), ImVec2(bb.Max.x - image_size.x - 5, bb.Max.y - image_size.y - 5), { 0, 1 }, { 1, 0 }, ImColor(color.r, color.g, color.b, color.a));
+            if (texture_id) 
+            {
+                window->DrawList->AddImage(texture_id, ImVec2(bb.Min.x + 5, bb.Min.y + 5), ImVec2(bb.Min.x + size.x - 5, bb.Max.y - 5), { 0, 1 }, { 1, 0 }, ImColor(color.r, color.g, color.b, color.a));
+                ImGui::RenderText(ImVec2(bb.Min.x, bb.Min.y), label);
             }
             else {
-                ImGui::RenderText(ImVec2(bb.Min.x + style.FramePadding.x,
-                    bb.Min.y + style.FramePadding.y), label);
+                ImGui::RenderText(ImVec2(bb.Min.x, bb.Min.y), label);
             }
 
             return pressed;
