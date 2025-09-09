@@ -29,16 +29,13 @@ namespace DME
 
 	void ContentBrowserPanel::OnImGuiRender()
 	{
-		ImTextureID textureID = static_cast<uintptr_t>(m_BackButtonIcon->GetRendererID());
-		ImTextureID SettingsButtonID = static_cast<uintptr_t>(m_SettingsButtonIcon->GetRendererID());
-
 		ImGui::Begin("Content Browser");
 
 		ImGui::BeginChild("##ContentChildBrowser", ImVec2(ImGui::GetContentRegionAvail().x - 30, 31));
 
 		if (m_CurrentDirectory != std::filesystem::path(g_AssetPath))
 		{
-			if (ImGuiDMEEditor::IconButton("##Back button", reinterpret_cast<ImTextureID*>(textureID), { 30, 30 }, { 1.0f, 1.0f, 1.0f, 1.0f }))
+			if (ImGuiDMEEditor::IconButton("##Back button", reinterpret_cast<ImTextureID*>(static_cast<uintptr_t>(m_BackButtonIcon->GetRendererID())), { 30, 30 }, { 1.0f, 1.0f, 1.0f, 1.0f }))
 			{
 				m_CurrentDirectory = m_CurrentDirectory.parent_path();
 			}
@@ -48,12 +45,12 @@ namespace DME
 
 		ImGui::SameLine();
 
-		if (ImGuiDMEEditor::IconButton("##Settings", reinterpret_cast<ImTextureID*>(SettingsButtonID), { 30, 30 }))
+		if (ImGuiDMEEditor::IconButton("##Settings", reinterpret_cast<ImTextureID*>(static_cast<uintptr_t>(m_SettingsButtonIcon->GetRendererID())), { 30, 30 }))
 			ImGui::OpenPopup("##SettingsWindow");
 		if (ImGui::BeginPopup("##SettingsWindow"))
 		{
-			ImGui::DragFloat("Thumbnail Size", &thumbnailSize, 0.1f, 0.0f);
-			ImGui::DragFloat("Padding", &padding, 0.1f, 32);
+			ImGui::DragFloat("Thumbnail Size", &thumbnailSize, 0.1f, 80.0f, 120.0f, "%.1f", ImGuiSliderFlags_WrapAround);
+			ImGui::DragFloat("Padding", &padding, 0.1f, 14.0f, 20.0f, "%.1f", ImGuiSliderFlags_WrapAround);
 
 			ImGui::EndPopup();
 		}
@@ -81,18 +78,14 @@ namespace DME
 			std::string filenameString = path.filename().string();
 
 			ImGui::PushID(filenameString.c_str());
-			Ref<Texture2D> folder_icon = m_FolderIcon;
-			Ref<Texture2D> file_icon = m_FileIcon;
-			ImTextureID FolderTextureID = static_cast<uintptr_t>(folder_icon->GetRendererID());
-			ImTextureID FileTextureID = static_cast<uintptr_t>(file_icon->GetRendererID());
 
 			if (directoryEntry.is_directory())
 			{
-				ImGuiDMEEditor::FolderCard(filenameString.c_str(), reinterpret_cast<void*>(FolderTextureID), nullptr, nullptr, { 0, 1 }, {1, 0}, ImGuiButtonFlags_None);
+				ImGuiDMEEditor::FolderCard(filenameString.c_str(), reinterpret_cast<void*>(static_cast<uintptr_t>(m_FolderIcon->GetRendererID())), nullptr, nullptr, { 0, 1 }, {1, 0}, ImGuiButtonFlags_None);
 			}
 			else
 			{
-				ImGuiDMEEditor::CardWithAssetType(filenameString.c_str(), reinterpret_cast<void*>(FileTextureID), "Texture", "Not hint", {0, 1}, {1, 0}, glm::vec4(0.25f, 0.25f, 0.25f, 1.0f), ImGuiButtonFlags_None);
+				ImGuiDMEEditor::CardWithAssetType(filenameString.c_str(), reinterpret_cast<void*>(static_cast<uintptr_t>(m_FileIcon->GetRendererID())), "Texture", "Not hint", {0, 1}, {1, 0}, glm::vec4(0.25f, 0.25f, 0.25f, 1.0f), ImGuiButtonFlags_None);
 			}
 
 			if (ImGui::BeginDragDropSource())
@@ -109,7 +102,7 @@ namespace DME
 					m_CurrentDirectory /= path.filename();
 
 			}
-			
+
 			ImGui::NextColumn();
 
 			ImGui::PopID();
@@ -119,5 +112,48 @@ namespace DME
 		ImGui::EndChild();
 
 		ImGui::End();
+	}
+
+	void ContentBrowserPanel::OnEvent(Event& event)
+	{
+		EventDispatcher dispatcher(event);
+		dispatcher.Dispatch<KeyPressedEvent>(DME_BIND_EVENT_FN(ContentBrowserPanel::OnKeyPressed));
+		dispatcher.Dispatch<MouseButtonPressedEvent>(DME_BIND_EVENT_FN(ContentBrowserPanel::OnMouseButtonPressed));
+	}
+
+	void ContentBrowserPanel::OnUpdate(TimeStep ts)
+	{
+
+	}
+
+	bool ContentBrowserPanel::OnKeyPressed(KeyPressedEvent& event)
+	{
+		if (event.IsRepeat())
+			return false;
+
+		bool control = Input::IsKeyPressed(Key::LeftControl) || Input::IsKeyPressed(Key::RightControl);
+		bool super = Input::IsKeyPressed(Key::LeftSuper) || Input::IsKeyPressed(Key::RightSuper);
+		bool shift = Input::IsKeyPressed(Key::LeftShift) || Input::IsKeyPressed(Key::RightShift);
+		bool alt = Input::IsKeyPressed(Key::LeftAlt) || Input::IsKeyPressed(Key::RightAlt);
+
+		switch (event.GetKeyCode())
+		{
+
+		}
+
+		return false;
+	}
+
+	bool ContentBrowserPanel::OnMouseButtonPressed(MouseButtonPressedEvent& event)
+	{
+		switch (event.GetMouseButton())
+		{
+			case Mouse::ButtonRight:
+			{
+				DME_CORE_INFO("Pressed: {0}", event.GetName());
+			}
+		}
+
+		return false;
 	}
 }

@@ -348,11 +348,7 @@ namespace DME
 
             if (texture_id) 
             {
-                window->DrawList->AddImage(texture_id, ImVec2(bb.Min.x + 5, bb.Min.y + 5), ImVec2(bb.Min.x + size.x - 5, bb.Max.y - 5), { 0, 1 }, { 1, 0 }, ImColor(color.r, color.g, color.b, color.a));
-                ImGui::RenderText(ImVec2(bb.Min.x, bb.Min.y), label);
-            }
-            else {
-                ImGui::RenderText(ImVec2(bb.Min.x, bb.Min.y), label);
+                window->DrawList->AddImage(texture_id, ImVec2(bb.Min.x + 5, bb.Min.y + 5), ImVec2(bb.Max.x - 5, bb.Max.y - 5), { 0, 1 }, { 1, 0 }, ImColor(color.r, color.g, color.b, color.a));
             }
 
             return pressed;
@@ -443,7 +439,4 @@ namespace DME
         }
 
     }
-
-	
-
 }

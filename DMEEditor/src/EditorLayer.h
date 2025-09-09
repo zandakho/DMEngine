@@ -87,7 +87,7 @@ namespace DME
 
 		SceneState m_SceneState = SceneState::Edit;
 
-		bool m_ViewportFocused = false, m_ViewportHovered = false, m_ViewportHoveredAndFocused, m_ViewportDocked = false;
+		bool m_ViewportFocused = false, m_ViewportHovered = false, m_ViewportHoveredAndFocused = false, m_ViewportDocked = false;
 
 		glm::vec2 m_ViewportBounds[2]{ };
 		glm::vec2 m_ViewportSize = { 0.0f, 0.0f };

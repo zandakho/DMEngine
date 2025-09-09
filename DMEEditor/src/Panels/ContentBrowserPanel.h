@@ -1,18 +1,28 @@
 #pragma once
 
+#include <dme.h>
 #include <filesystem>
 
 #include "DME/Renderer/Texture.h"
+#include "DME/Events/Event.h"
+#include "DME/Events/KeyEvent.h"
+#include "DME/Events/MouseEvent.h"
 
 namespace DME
 {
-	class ContentBrowserPanel
+	class ContentBrowserPanel : Layer
 	{
 	public:
 
 		ContentBrowserPanel();
 
-		void OnImGuiRender();
+		void OnEvent(Event& event) override;
+		void OnUpdate(TimeStep ts) override;
+		void OnImGuiRender() override;
+
+	private:
+		bool OnKeyPressed(KeyPressedEvent& event);
+		bool OnMouseButtonPressed(MouseButtonPressedEvent& event);
 
 	private:
 		

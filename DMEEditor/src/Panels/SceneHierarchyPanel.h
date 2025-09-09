@@ -1,5 +1,7 @@
 #pragma once
 
+#include <dme.h>
+
 #include "DME/Core/Base.h"
 #include "DME/Core/Log.h"
 #include "DME/Scene/Scene.h"
@@ -8,8 +10,8 @@
 
 namespace DME
 {
-	
-	class SceneHierarchyPanel
+
+	class SceneHierarchyPanel : Layer
 	{
 	public:
 		SceneHierarchyPanel() = default;
@@ -19,13 +21,23 @@ namespace DME
 
 		Ref<Scene> GetContext() { return m_Context; };
 
-		void OnImGuiRender();
+		bool SelectionContextIsNull() { return !m_SelectionContext.HasComponent<IDComponent>() && !m_SelectionContext.HasComponent<TagComponent>() ? true : false; }
+
+		void OnImGuiRender() override;
 
 		Entity GetSelectedEntity() const { return m_SelectionContext; }
 		void ClearSelectedContext() { m_SelectionContext = {}; }
 		void SetSelectedEntity(Entity entity);
 
+		unsigned long long GetTextureID(const Ref<Texture2D>& texture) const;
+
+		void OnEvent(Event& event) override;
+		void OnUpdate(TimeStep ts) override;
+
 	private:
+
+		bool OnKeyPressed(KeyPressedEvent& event);
+		bool OnMouseButtonPressed(MouseButtonPressedEvent& event);
 
 		template<typename T>
 		void DisplayAddComponentEntry(const std::string& entryName);
@@ -37,6 +49,8 @@ namespace DME
 		Ref<Scene> m_Context;
 		Entity m_SelectionContext;
 
-		Ref<Texture2D> m_PlusButtonSmall;
+
+		Ref<Texture2D> m_SettingsButton;
+		uint64_t m_SettingsButtonTextureID;
 	};
 }

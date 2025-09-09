@@ -1,7 +1,5 @@
 #include "dmepch.h"
 
-
-
 #include "EditorLayer.h"
 #include <ImGui/imgui.h>
 #include <ImGui/imgui_internal.h>
@@ -207,13 +205,11 @@ namespace DME
 		ImGui::SameLine();
 
 		{
-			
 			Ref<Texture2D> icon = (m_SceneState == SceneState::Edit || m_SceneState == SceneState::Play) ? m_IconSimulate : m_IconStop;
-			ImTextureID buttonID = static_cast<uintptr_t>(icon->GetRendererID());
 			ImGui::PushStyleVar(ImGuiStyleVar_FramePadding, ImVec2(1, 1));
 			ImGui::SetCursorPosY(ImGui::GetWindowContentRegionMax().y * 0.5f - 12);
-			std::string ButtonID = std::format("Image | {0}", buttonID);
-			if (ImGui::ImageButton(ButtonID.c_str(), buttonID, ImVec2(24, 24), ImVec2(0, 0), ImVec2(1, 1), ImVec4(0, 0, 0, 0)))
+			std::string ButtonID = std::format("Image | {0}", static_cast<uintptr_t>(icon->GetRendererID()));
+			if (ImGui::ImageButton(ButtonID.c_str(), static_cast<uintptr_t>(icon->GetRendererID()), ImVec2(24, 24), ImVec2(0, 0), ImVec2(1, 1), ImVec4(0, 0, 0, 0)))
 			{
 				if (m_SceneState == SceneState::Edit || m_SceneState == SceneState::Play)
 					OnSceneSimulate();
@@ -242,11 +238,6 @@ namespace DME
 		{
 			ImGui::PopStyleColor();
 
-			ImTextureID CursorButtonID = static_cast<uintptr_t>(m_IconCursor->GetRendererID());
-			ImTextureID MoveButtonID = static_cast<uintptr_t>(m_IconMove->GetRendererID());
-			ImTextureID RotateButtonID = static_cast<uintptr_t>(m_IconRotate->GetRendererID());
-			ImTextureID ScaleButtonID = static_cast<uintptr_t>(m_IconScale->GetRendererID());
-
 			ImGui::PushFont(ImGui::GetIO().Fonts->Fonts[FontLibrary::OpenSansBold_21]);
 
 			ImGui::PushStyleColor(ImGuiCol_Button, ImVec4(0.2f, 0.2f, 0.2f, 0.5f));
@@ -254,16 +245,16 @@ namespace DME
 			ImGui::PushStyleColor(ImGuiCol_Text, ImVec4(1.0f, 1.0f, 1.0f, 1.0f));
 			ImGui::PushStyleVar(ImGuiStyleVar_FramePadding, ImVec2(9, 5));
 			ImGui::PushStyleColor(ImGuiCol_Button, m_GizmoType == -1 ? ImVec4(0.2f, 0.6f, 0.9f, 0.5f) : ImVec4(0.2f, 0.2f, 0.2f, 0.5f));
-			if (ImGuiDMEEditor::IconButton("##Cursor", reinterpret_cast<ImTextureID*>(CursorButtonID), { 25, 25 })) m_GizmoType = -1; ImGui::SameLine();
+			if (ImGuiDMEEditor::IconButton("##Cursor", reinterpret_cast<ImTextureID*>(static_cast<uintptr_t>(m_IconCursor->GetRendererID())), { 25, 25 })) m_GizmoType = -1; ImGui::SameLine();
 			ImGui::PopStyleColor();
 			ImGui::PushStyleColor(ImGuiCol_Button, m_GizmoType == ImGuizmo::OPERATION::TRANSLATE ? ImVec4(0.2f, 0.6f, 0.9f, 0.5f) : ImVec4(0.2f, 0.2f, 0.2f, 0.5f));
-			if (ImGuiDMEEditor::IconButton("##Move", reinterpret_cast<ImTextureID*>(MoveButtonID), { 25, 25 })) m_GizmoType = ImGuizmo::OPERATION::TRANSLATE; ImGui::SameLine();
+			if (ImGuiDMEEditor::IconButton("##Move", reinterpret_cast<ImTextureID*>(static_cast<uintptr_t>(m_IconMove->GetRendererID())), { 25, 25 })) m_GizmoType = ImGuizmo::OPERATION::TRANSLATE; ImGui::SameLine();
 			ImGui::PopStyleColor();
 			ImGui::PushStyleColor(ImGuiCol_Button, m_GizmoType == ImGuizmo::OPERATION::ROTATE ? ImVec4(0.2f, 0.6f, 0.9f, 0.5f) : ImVec4(0.2f, 0.2f, 0.2f, 0.5f));
-			if (ImGuiDMEEditor::IconButton("##Rotate", reinterpret_cast<ImTextureID*>(RotateButtonID), { 25, 25 })) m_GizmoType = ImGuizmo::OPERATION::ROTATE; ImGui::SameLine();
+			if (ImGuiDMEEditor::IconButton("##Rotate", reinterpret_cast<ImTextureID*>(static_cast<uintptr_t>(m_IconRotate->GetRendererID())), { 25, 25 })) m_GizmoType = ImGuizmo::OPERATION::ROTATE; ImGui::SameLine();
 			ImGui::PopStyleColor();
 			ImGui::PushStyleColor(ImGuiCol_Button, m_GizmoType == ImGuizmo::OPERATION::SCALE ? ImVec4(0.2f, 0.6f, 0.9f, 0.5f) : ImVec4(0.2f, 0.2f, 0.2f, 0.5f));
-			if (ImGuiDMEEditor::IconButton("##Scale", reinterpret_cast<ImTextureID*>(ScaleButtonID), { 25, 25 })) m_GizmoType = ImGuizmo::OPERATION::SCALE;
+			if (ImGuiDMEEditor::IconButton("##Scale", reinterpret_cast<ImTextureID*>(static_cast<uintptr_t>(m_IconScale->GetRendererID())), { 25, 25 })) m_GizmoType = ImGuizmo::OPERATION::SCALE;
 			ImGui::PopStyleColor();
 			ImGui::PopStyleVar();
 			ImGui::PopStyleColor(3);
@@ -400,12 +391,9 @@ namespace DME
 
 	void EditorLayer::DeleteSelectedEntity()
 	{
-		if (m_SceneHierarchy.GetSelectedEntity().HasComponent<IDComponent>() && m_SceneHierarchy.GetSelectedEntity().HasComponent<TagComponent>())
-		{
-			m_SceneHierarchy.GetContext()->DestroyEntity(m_SceneHierarchy.GetSelectedEntity());
-			if (m_SceneHierarchy.GetSelectedEntity() == m_SceneHierarchy.GetSelectedEntity())
-				m_SceneHierarchy.ClearSelectedContext();
-		}
+		m_SceneHierarchy.GetContext()->DestroyEntity(m_SceneHierarchy.GetSelectedEntity());
+		if (m_SceneHierarchy.GetSelectedEntity() == m_SceneHierarchy.GetSelectedEntity())
+			m_SceneHierarchy.ClearSelectedContext();
 	}
 
 	void EditorLayer::OnDockspace()
@@ -520,7 +508,6 @@ namespace DME
 				break;
 			}
 
-			// Scene Commands
 			case Key::D:
 			{
 				if (control)
@@ -557,14 +544,12 @@ namespace DME
 					if (!ImGuizmo::IsUsing())
 						m_GizmoType = ImGuizmo::OPERATION::SCALE;
 					break;
-				}
+				}		
+			}
 
-				
-				case Key::Delete:
-				{	
-					DeleteSelectedEntity();		
-				}			
-				
+			case Key::Delete:
+			{
+				DeleteSelectedEntity();
 			}
 		}
 
@@ -573,10 +558,13 @@ namespace DME
 
 	bool EditorLayer::OnMouseButtonPressed(MouseButtonPressedEvent& e)
 	{
-		if (e.GetMouseButton() == Mouse::ButtonLeft)
+		switch (e.GetMouseButton())
 		{
-			if (m_ViewportHovered && !ImGuizmo::IsOver() && !Input::IsKeyPressed(Key::LeftShift))
-				m_SceneHierarchy.SetSelectedEntity(m_HoveredEntity);
+			case Mouse::ButtonLeft:
+			{
+				if (m_ViewportHovered && !ImGuizmo::IsOver() && !Input::IsKeyPressed(Key::LeftShift))
+					m_SceneHierarchy.SetSelectedEntity(m_HoveredEntity);
+			}
 		}
 		return false;
 	}
