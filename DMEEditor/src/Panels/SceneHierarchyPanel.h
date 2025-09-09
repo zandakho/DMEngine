@@ -34,6 +34,9 @@ namespace DME
 		void OnEvent(Event& event) override;
 		void OnUpdate(TimeStep ts) override;
 
+		template<typename T, typename UFunction>
+		void DrawComponent(const std::string& name, Entity entity, UFunction uifunction);
+
 	private:
 
 		bool OnKeyPressed(KeyPressedEvent& event);
@@ -50,7 +53,8 @@ namespace DME
 		Entity m_SelectionContext;
 
 
-		Ref<Texture2D> m_SettingsButton;
-		uint64_t m_SettingsButtonTextureID;
+		Ref<Texture2D> m_PlusSmallButton;
+
+		std::string m_Search;
 	};
 }

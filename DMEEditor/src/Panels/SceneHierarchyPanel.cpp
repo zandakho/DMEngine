@@ -16,6 +16,8 @@
 #ifdef _MSVC_LANG
 #define _CRT_SECURE_NO_WARNINGS
 #endif
+ 
+// TODO: MOVE PROPERTIES PANEL IN NEW CLASS PropertiesPanel
 
 namespace DME
 {
@@ -23,8 +25,14 @@ namespace DME
 
 	const ImGuiTreeNodeFlags treeNodeFlags = ImGuiTreeNodeFlags_DefaultOpen | ImGuiTreeNodeFlags_Framed | ImGuiTreeNodeFlags_SpanAvailWidth;
 
+	SceneHierarchyPanel::SceneHierarchyPanel(const Ref<Scene>& context)
+	{
+		SetContext(context);
+		m_PlusSmallButton = Texture2D::Create("Resource/Icons/SceneHierarchy/Plus_Small_Green_Img.png");
+	}
+
 	template<typename T, typename UFunction>
-	static void DrawComponent(const std::string& name, Entity entity, UFunction uifunction)
+	void SceneHierarchyPanel::DrawComponent(const std::string& name, Entity entity, UFunction uifunction)
 	{
 		std::string AddButton = std::format("+##{}", name.c_str());
 		std::string DeleteButton = std::format("Delete##{}", name.c_str());
@@ -70,12 +78,6 @@ namespace DME
 		}
 	}
 
-	SceneHierarchyPanel::SceneHierarchyPanel(const Ref<Scene>& context)
-	{
-		SetContext(context);
-		m_SettingsButton = Texture2D::Create("Resource/Icons/SceneHierarchy/Settings_Img.png");
-	}
-
 	void SceneHierarchyPanel::SetContext(const Ref<Scene>& context)
 	{
 		m_Context = context;
@@ -89,11 +91,16 @@ namespace DME
 
 		ImGui::Begin("Scene Hierarchy");
 
+		static char buffer[256]{};
+		ImGui::SetNextItemWidth(ImGui::GetContentRegionAvail().x);
+		if (ImGui::InputTextWithHint("##Search", "Search ...", buffer, sizeof(buffer)))
+			m_Search = buffer;
+
 		m_Context->m_Registry.view<entt::entity>().each([&](auto entityID)
-			{
-				Entity entity{ entityID , m_Context.get() };
-				DrawEntityNode(entity);
-			});
+		{
+			Entity entity{ entityID , m_Context.get() };
+			DrawEntityNode(entity);
+		});
 
 		if (ImGui::IsMouseDown(0) && ImGui::IsWindowHovered())
 			m_SelectionContext = {};
@@ -196,16 +203,16 @@ namespace DME
 	void SceneHierarchyPanel::DrawEntityNode(Entity entity)
 	{
 		auto& tag = entity.GetComponent<TagComponent>().Tag;
-		if (entity.HasComponent<TagComponent>())
-		{
-			tag = tag.empty() ? "Entity" : tag;
-		}
+		if (!m_Search.empty() && tag.find(m_Search) == std::string::npos)
+			return;
 
 		ImGui::PushStyleVar(ImGuiStyleVar_FramePadding, ImVec2(9, 3));
+		ImGui::PushStyleColor(ImGuiCol_Header, (m_SelectionContext == entity) ? ImGui::GetColorU32(ImVec4(0.2f, 0.6f, 0.9f, 0.5f)) : ImGui::GetColorU32(ImGuiCol_Header));
 		ImGuiTreeNodeFlags flags = ((m_SelectionContext == entity) ? ImGuiTreeNodeFlags_Selected : 0) | ImGuiTreeNodeFlags_SpanAvailWidth | ImGuiTreeNodeFlags_DrawLinesToNodes | ImGuiTreeNodeFlags_OpenOnDoubleClick | ImGuiTreeNodeFlags_Framed;
 
 		bool opened = ImGui::TreeNodeEx(reinterpret_cast<const void*>(static_cast<uint64_t>(entity.GetUUID())), flags, tag.c_str());
 
+		ImGui::PopStyleColor();
 		ImGui::PopStyleVar();
 
 		if (ImGui::IsItemClicked())
