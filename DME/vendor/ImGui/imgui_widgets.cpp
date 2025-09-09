@@ -5731,7 +5731,7 @@ bool ImGui::ColorEdit4(const char* label, float col[4], ImGuiColorEditFlags flag
         window->DC.CursorPos = ImVec2(pos.x + button_offset_x, pos.y);
 
         const ImVec4 col_v4(col[0], col[1], col[2], alpha ? col[3] : 1.0f);
-        if (ColorButton("##ColorButton", col_v4, flags))
+        if (ColorButton("##ColorButton", col_v4, flags, flags & ImGuiColorEditFlags_ButtonResizeWidth ? ImVec2(100, 30) : ImVec2(0, 0)))
         {
             if (!(flags & ImGuiColorEditFlags_NoPicker))
             {

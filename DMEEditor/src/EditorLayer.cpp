@@ -164,7 +164,14 @@ namespace DME
 		EditorLayer::OnDockspace();
 
 		if (m_SceneHierarchyWindow)
-			m_SceneHierarchy.OnImGuiRender();
+			m_SceneHierarchyPanel.OnImGuiRender();
+
+		if (m_PropertiesPanelWindow)
+		{
+			m_PropertiesPanel.SetContext(m_SceneHierarchyPanel.GetSelectedEntity());
+			m_PropertiesPanel.OnImGuiRender();
+		}
+		
 		if (m_ContentBrowserWindow)
 			m_ContentBrowser.OnImGuiRender();
 
@@ -346,7 +353,8 @@ namespace DME
 		m_ActiveScene = Scene::Copy(m_EditorScene);
 		m_ActiveScene->OnRuntimeStart();
 
-		m_SceneHierarchy.SetContext(m_ActiveScene);
+		m_SceneHierarchyPanel.SetContext(m_ActiveScene);
+		m_PropertiesPanel.SetContext(m_SceneHierarchyPanel.GetSelectedEntity());
 	}
 
 	void EditorLayer::OnSceneSimulate()
@@ -359,7 +367,8 @@ namespace DME
 		m_ActiveScene = Scene::Copy(m_EditorScene);
 		m_ActiveScene->OnSimulationStart();
 
-		m_SceneHierarchy.SetContext(m_ActiveScene);
+		m_SceneHierarchyPanel.SetContext(m_ActiveScene);
+		m_PropertiesPanel.SetContext(m_SceneHierarchyPanel.GetSelectedEntity());
 	}
 
 	void EditorLayer::OnSceneStop()
@@ -375,7 +384,8 @@ namespace DME
 
 		m_ActiveScene = m_EditorScene;
 
-		m_SceneHierarchy.SetContext(m_ActiveScene);
+		m_SceneHierarchyPanel.SetContext(m_ActiveScene);
+		m_PropertiesPanel.SetContext(m_SceneHierarchyPanel.GetSelectedEntity());
 
 	}
 
@@ -384,16 +394,16 @@ namespace DME
 		if (m_SceneState != SceneState::Edit)
 			return;
 
-		Entity selectedEntity = m_SceneHierarchy.GetSelectedEntity();
+		Entity selectedEntity = m_SceneHierarchyPanel.GetSelectedEntity();
 		if (selectedEntity)
 			m_EditorScene->DuplicateEntity(selectedEntity);
 	}
 
 	void EditorLayer::DeleteSelectedEntity()
 	{
-		m_SceneHierarchy.GetContext()->DestroyEntity(m_SceneHierarchy.GetSelectedEntity());
-		if (m_SceneHierarchy.GetSelectedEntity() == m_SceneHierarchy.GetSelectedEntity())
-			m_SceneHierarchy.ClearSelectedContext();
+		m_SceneHierarchyPanel.GetContext()->DestroyEntity(m_SceneHierarchyPanel.GetSelectedEntity());
+		if (m_SceneHierarchyPanel.GetSelectedEntity() == m_SceneHierarchyPanel.GetSelectedEntity())
+			m_SceneHierarchyPanel.ClearSelectedContext();
 	}
 
 	void EditorLayer::OnDockspace()
@@ -563,7 +573,7 @@ namespace DME
 			case Mouse::ButtonLeft:
 			{
 				if (m_ViewportHovered && !ImGuizmo::IsOver() && !Input::IsKeyPressed(Key::LeftShift))
-					m_SceneHierarchy.SetSelectedEntity(m_HoveredEntity);
+					m_SceneHierarchyPanel.SetSelectedEntity(m_HoveredEntity);
 			}
 		}
 		return false;
@@ -583,7 +593,7 @@ namespace DME
 			Renderer2D::BeginScene(m_EditorCamera);
 		}
 
-		if (Entity selectedEntity = m_SceneHierarchy.GetSelectedEntity())
+		if (Entity selectedEntity = m_SceneHierarchyPanel.GetSelectedEntity())
 		{
 
 			if (selectedEntity.HasComponent<BoxCollider2DComponent>())
@@ -624,7 +634,8 @@ namespace DME
 	{
 		m_ActiveScene = CreateRef<Scene>();
 		m_ActiveScene->OnViewportResize(static_cast<uint32_t>(m_ViewportSize.x), static_cast<uint32_t>(m_ViewportSize.y));
-		m_SceneHierarchy.SetContext(m_ActiveScene);
+		m_SceneHierarchyPanel.SetContext(m_ActiveScene);
+		m_PropertiesPanel.SetContext(m_SceneHierarchyPanel.GetSelectedEntity());
 
 		m_EditorScenePath = std::filesystem::path();
 	}
@@ -653,7 +664,7 @@ namespace DME
 		{
 			m_EditorScene = newScene;
 			m_EditorScene->OnViewportResize(static_cast<uint32_t>(m_ViewportSize.x), static_cast<uint32_t>(m_ViewportSize.y));
-			m_SceneHierarchy.SetContext(m_EditorScene);
+			m_SceneHierarchyPanel.SetContext(m_EditorScene);
 
 			m_ActiveScene = m_EditorScene;
 			m_EditorScenePath = path;
@@ -717,25 +728,22 @@ namespace DME
 		GizmosToolbar();
 		UIToolbar();
 
-		Entity selectedEntity = m_SceneHierarchy.GetSelectedEntity();
+		Entity selectedEntity = m_SceneHierarchyPanel.GetSelectedEntity();
 		if (selectedEntity && m_GizmoType != -1)
 		{
 			ImGuizmo::SetOrthographic(false);
 			ImGuizmo::SetDrawlist();
 			ImGuizmo::SetRect(m_ViewportBounds[0].x, m_ViewportBounds[0].y, m_ViewportBounds[1].x - m_ViewportBounds[0].x, m_ViewportBounds[1].y - m_ViewportBounds[0].y);
 
-			// Editor Camera
 			const glm::mat4& cameraProjection = m_EditorCamera.GetProjection();
 			glm::mat4 cameraView = m_EditorCamera.GetViewMatrix();
 
-			// Entity transform
 			auto& tc = selectedEntity.GetComponent<TransformComponent>();
 			glm::mat4 transform = tc.GetTransform();
 
-			// Snapping
+			
 			bool snap = Input::IsKeyPressed(Key::LeftControl);
-			float snapValue = 0.5f; // Snap to 0.5m for translation/scale
-			// Snap to 45 degrees for rotation
+			float snapValue = 0.5f;
 			if (m_GizmoType == ImGuizmo::OPERATION::ROTATE)
 				snapValue = 45.0f;
 

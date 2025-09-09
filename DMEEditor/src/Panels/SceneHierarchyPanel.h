@@ -1,60 +1,44 @@
 #pragma once
 
-#include <dme.h>
-
 #include "DME/Core/Base.h"
-#include "DME/Core/Log.h"
 #include "DME/Scene/Scene.h"
 #include "DME/Scene/Entity.h"
 #include "DME/Renderer/Texture.h"
 
-namespace DME
-{
+#include "DME/Core/Layer.h"
+#include "DME/Events/KeyEvent.h"
 
-	class SceneHierarchyPanel : Layer
-	{
-	public:
-		SceneHierarchyPanel() = default;
-		SceneHierarchyPanel(const Ref<Scene>& context);
+namespace DME {
 
-		void SetContext(const Ref<Scene>& context);
+    class SceneHierarchyPanel : public Layer {
+    public:
+        SceneHierarchyPanel() = default;
+        SceneHierarchyPanel(const Ref<Scene>& context);
 
-		Ref<Scene> GetContext() { return m_Context; };
+        void SetContext(const Ref<Scene>& context);
+        Ref<Scene> GetContext() { return m_Context; }
 
-		bool SelectionContextIsNull() { return !m_SelectionContext.HasComponent<IDComponent>() && !m_SelectionContext.HasComponent<TagComponent>() ? true : false; }
+        void OnImGuiRender() override;
+        void OnEvent(Event& event) override;
+        void OnUpdate(TimeStep ts) override;
 
-		void OnImGuiRender() override;
+        Entity GetSelectedEntity() const { return m_SelectionContext; }
+        void ClearSelectedContext() { m_SelectionContext = {}; }
+        void SetSelectedEntity(Entity entity);
 
-		Entity GetSelectedEntity() const { return m_SelectionContext; }
-		void ClearSelectedContext() { m_SelectionContext = {}; }
-		void SetSelectedEntity(Entity entity);
+        bool SelectionContextIsNull() { return !m_SelectionContext; }
 
-		unsigned long long GetTextureID(const Ref<Texture2D>& texture) const;
+    private:
+        void DrawEntityNode(Entity entity);
+        bool OnKeyPressed(KeyPressedEvent& event);
+        bool OnMouseButtonPressed(MouseButtonPressedEvent& event);
 
-		void OnEvent(Event& event) override;
-		void OnUpdate(TimeStep ts) override;
+    private:
+        Ref<Scene> m_Context;
+        Entity m_SelectionContext;
 
-		template<typename T, typename UFunction>
-		void DrawComponent(const std::string& name, Entity entity, UFunction uifunction);
+        Ref<Texture2D> m_PlusSmallButton;
+        std::string m_Search;
+    };
 
-	private:
-
-		bool OnKeyPressed(KeyPressedEvent& event);
-		bool OnMouseButtonPressed(MouseButtonPressedEvent& event);
-
-		template<typename T>
-		void DisplayAddComponentEntry(const std::string& entryName);
-
-		void DrawEntityNode(Entity entity);
-		void DrawComponents(Entity entity);
-
-	private:
-		Ref<Scene> m_Context;
-		Entity m_SelectionContext;
-
-
-		Ref<Texture2D> m_PlusSmallButton;
-
-		std::string m_Search;
-	};
 }

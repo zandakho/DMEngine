@@ -2,6 +2,7 @@
 
 #include <dme.h>
 #include "Panels/SceneHierarchyPanel.h"
+#include "Panels/PropertiesPanel.h"
 #include "Panels/ContentBrowserPanel.h"
 
 #include "DME/Renderer/EditorCamera.h"
@@ -66,7 +67,8 @@ namespace DME
 		std::filesystem::path m_EditorScenePath;
 		
 	private:
-		SceneHierarchyPanel m_SceneHierarchy;
+		SceneHierarchyPanel m_SceneHierarchyPanel;
+		PropertiesPanel m_PropertiesPanel;
 		ContentBrowserPanel m_ContentBrowser;
 		EditorCamera m_EditorCamera;
 		SceneCamera m_SceneCamera;
@@ -103,6 +105,7 @@ namespace DME
 		bool m_SettingsWindow = true;
 		bool m_PropertiesWindow = true;
 		bool m_SceneHierarchyWindow = true;
+		bool m_PropertiesPanelWindow = true;
 		bool m_ContentBrowserWindow = true;
 
 		bool m_DebugWindow = false;
