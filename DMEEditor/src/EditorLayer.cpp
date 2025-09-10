@@ -402,8 +402,7 @@ namespace DME
 	void EditorLayer::DeleteSelectedEntity()
 	{
 		m_SceneHierarchyPanel.GetContext()->DestroyEntity(m_SceneHierarchyPanel.GetSelectedEntity());
-		if (m_SceneHierarchyPanel.GetSelectedEntity() == m_SceneHierarchyPanel.GetSelectedEntity())
-			m_SceneHierarchyPanel.ClearSelectedContext();
+		m_SceneHierarchyPanel.ClearSelectedContext();
 	}
 
 	void EditorLayer::OnDockspace()
@@ -554,13 +553,15 @@ namespace DME
 					if (!ImGuizmo::IsUsing())
 						m_GizmoType = ImGuizmo::OPERATION::SCALE;
 					break;
-				}		
+				}
+
+				case Key::Delete:
+				{
+					DeleteSelectedEntity();
+				}
 			}
 
-			case Key::Delete:
-			{
-				DeleteSelectedEntity();
-			}
+			
 		}
 
 		return false;

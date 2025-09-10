@@ -27,6 +27,15 @@ namespace DME
 		m_SettingsButtonIcon = Texture2D::Create("Resources/Icons/ContentBrowser/Settings_Img.png");
 	}
 
+	void ContentBrowserPanel::OnAttach()
+	{
+	}
+
+	void ContentBrowserPanel::OnDetach()
+	{
+
+	}
+
 	void ContentBrowserPanel::OnImGuiRender()
 	{
 		ImGui::Begin("Content Browser");

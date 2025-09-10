@@ -288,7 +288,6 @@ namespace DME
 
             if (g.LastItemData.StatusFlags & ImGuiItemStatusFlags_Visible)
             {
-                // Центр кружка
                 ImVec2 center = pos + ImVec2(circle_size * 0.5f, label_size.y * 0.5f + g.FontSize * 0.05f);
 
                 if (selected)
@@ -354,7 +353,43 @@ namespace DME
             return pressed;
         }
 
-        bool CardWithAssetType(const char* name_id, void* image, const char* type, const char* hint, const glm::vec2& uv0, const glm::vec2& uv1, const glm::vec4& tint_col, int flags)
+		bool AddButton(const char* label, unsigned long long* texture_id)
+		{
+			ImGuiWindow* window = ImGui::GetCurrentWindow();
+			if (window->SkipItems)
+				return false;
+
+			ImGuiContext& g = *GImGui;
+			ImGuiID id = window->GetID(label);
+			const ImGuiStyle& style = g.Style;
+
+			const ImVec2 label_size = ImGui::CalcTextSize(label, NULL, true);
+			ImVec2 actual_size = ImGui::CalcItemSize(ImVec2(60, 28), 60, 28);
+
+			const ImRect bb(window->DC.CursorPos, window->DC.CursorPos + actual_size);
+			ImGui::ItemSize(bb, style.FramePadding.y);
+			if (!ImGui::ItemAdd(bb, id))
+				return false;
+
+			bool hovered, held;
+			bool pressed = ImGui::ButtonBehavior(bb, id, &hovered, &held, 0);
+
+			const ImU32 col = ImGui::GetColorU32((held && hovered) ? ImGuiCol_ButtonActive :
+				hovered ? ImGuiCol_ButtonHovered : ImGuiCol_Button);
+			ImGui::RenderNavHighlight(bb, id);
+			ImGui::RenderFrame(bb.Min, bb.Max, col, true, 3.0f);
+
+			if (texture_id)
+			{
+				window->DrawList->AddImage(texture_id, ImVec2(bb.Min.x + 6, bb.Min.y + 6), ImVec2(bb.Min.x + 24, bb.Max.y - 6), { 0, 1 }, { 1, 0 });
+                ImGui::RenderText(ImVec2(bb.Min.x + 28, bb.Min.y + actual_size.y / 2 - (label_size.y / 2)), label);
+
+			}
+
+			return pressed;
+		}
+
+		bool CardWithAssetType(const char* name_id, void* image, const char* type, const char* hint, const glm::vec2& uv0, const glm::vec2& uv1, const glm::vec4& tint_col, int flags)
         {
             ImGuiContext& g = *GImGui;
             ImGuiWindow* window = ImGui::GetCurrentWindow();

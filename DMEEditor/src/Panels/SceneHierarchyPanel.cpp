@@ -9,12 +9,22 @@ namespace DME {
 
     extern const std::filesystem::path g_AssetPath;
 
-    SceneHierarchyPanel::SceneHierarchyPanel(const Ref<Scene>& context) {
+    SceneHierarchyPanel::SceneHierarchyPanel(const Ref<Scene>& context) 
+    {
         SetContext(context);
-        m_PlusSmallButton = Texture2D::Create("Resource/Icons/SceneHierarchy/Plus_Small_Green_Img.png");
-    }
+		m_PlusSmallButton = Texture2D::Create("Resource/Icons/SceneHierarchy/Plus_Small_Green_Img.png");
+	}
 
-    void SceneHierarchyPanel::SetContext(const Ref<Scene>& context) {
+	void SceneHierarchyPanel::OnAttach()
+	{
+	}
+
+	void SceneHierarchyPanel::OnDetach()
+	{
+
+	}
+
+	void SceneHierarchyPanel::SetContext(const Ref<Scene>& context) {
         m_Context = context;
         m_SelectionContext = {};
     }
@@ -44,6 +54,9 @@ namespace DME {
             ImGui::EndPopup();
         }
 
+        m_SceneHierarchyPanelFocused = ImGui::IsWindowFocused();
+        m_SceneHierarchyPanelHovered = ImGui::IsWindowHovered();
+
         ImGui::End();
     }
 
@@ -51,7 +64,13 @@ namespace DME {
         m_SelectionContext = entity;
     }
 
-    void SceneHierarchyPanel::OnEvent(Event& event) {
+	void SceneHierarchyPanel::DeleteSelectedEntity()
+	{
+		GetContext()->DestroyEntity(GetSelectedEntity());
+		ClearSelectedContext();
+	}
+
+	void SceneHierarchyPanel::OnEvent(Event& event) {
         EventDispatcher dispatcher(event);
         dispatcher.Dispatch<KeyPressedEvent>(DME_BIND_EVENT_FN(SceneHierarchyPanel::OnKeyPressed));
         dispatcher.Dispatch<MouseButtonPressedEvent>(DME_BIND_EVENT_FN(SceneHierarchyPanel::OnMouseButtonPressed));
@@ -60,8 +79,14 @@ namespace DME {
     void SceneHierarchyPanel::OnUpdate(TimeStep ts) {}
 
     bool SceneHierarchyPanel::OnKeyPressed(KeyPressedEvent& event) {
+
         if (event.IsRepeat())
             return false;
+        
+        switch (event.GetKeyCode())
+        {
+        }
+
         return false;
     }
 
@@ -79,7 +104,9 @@ namespace DME {
             | ImGuiTreeNodeFlags_OpenOnDoubleClick
             | ImGuiTreeNodeFlags_Framed;
 
+        ImGui::PushStyleColor(ImGuiCol_Header, (m_SelectionContext == entity) ? ImGui::GetColorU32(ImVec4(0.2f, 0.6f, 0.9f, 0.5f)) : ImGui::GetColorU32(ImGuiCol_Header));
         bool opened = ImGui::TreeNodeEx(reinterpret_cast<const void*>(static_cast<uint64_t>(entity.GetUUID())), flags, tag.c_str());
+        ImGui::PopStyleColor();
 
         if (ImGui::IsItemClicked())
             m_SelectionContext = entity;

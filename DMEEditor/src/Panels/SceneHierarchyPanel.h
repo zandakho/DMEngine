@@ -15,6 +15,9 @@ namespace DME {
         SceneHierarchyPanel() = default;
         SceneHierarchyPanel(const Ref<Scene>& context);
 
+		virtual void OnAttach() override;
+		virtual void OnDetach() override;
+
         void SetContext(const Ref<Scene>& context);
         Ref<Scene> GetContext() { return m_Context; }
 
@@ -28,6 +31,8 @@ namespace DME {
 
         bool SelectionContextIsNull() { return !m_SelectionContext; }
 
+		void DeleteSelectedEntity();
+
     private:
         void DrawEntityNode(Entity entity);
         bool OnKeyPressed(KeyPressedEvent& event);
@@ -39,6 +44,9 @@ namespace DME {
 
         Ref<Texture2D> m_PlusSmallButton;
         std::string m_Search;
+
+        bool m_SceneHierarchyPanelHovered = false;
+        bool m_SceneHierarchyPanelFocused = false;
     };
 
 }

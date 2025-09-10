@@ -1,11 +1,11 @@
 #include "dmepch.h"
 #include "PropertiesPanel.h"
 #include "DME/Scene/Components.h"
-#include "DME/Renderer/Texture.h"
 #include "FontLibrary.h"
 
 #include <ImGui/imgui.h>
 #include <ImGui/imgui_internal.h>
+#include "DME/ImGui/ImGuiDMEEditor.h"
 #include <glm/gtc/type_ptr.hpp>
 
 namespace DME {
@@ -13,8 +13,22 @@ namespace DME {
     extern const std::filesystem::path g_AssetPath;
     const ImGuiTreeNodeFlags treeNodeFlags = ImGuiTreeNodeFlags_DefaultOpen | ImGuiTreeNodeFlags_Framed | ImGuiTreeNodeFlags_SpanAvailWidth;
 
-    void PropertiesPanel::OnImGuiRender() 
+	void PropertiesPanel::OnAttach()
 	{
+
+	}
+
+	void PropertiesPanel::OnDetach()
+	{
+
+	}
+
+	void PropertiesPanel::OnImGuiRender()
+	{
+		m_PlusSmallButtonIcon = Texture2D::Create("Resources/Icons/Properties/Plus_Small_Green_Img.png");
+		m_DeleteButtonIcon = Texture2D::Create("Resources/Icons/Properties/Delete_Button_Img.png");
+		m_SettingsButtonIcon = Texture2D::Create("Resources/Icons/Properties/Settings_Img.png");
+
         ImGui::Begin("Properties");
 
         if (m_SelectedEntity) {
@@ -27,7 +41,7 @@ namespace DME {
                 tag = std::string(buffer);
 
             ImGui::SameLine();
-            if (ImGui::Button("+ADD"))
+            if (ImGuiDMEEditor::AddButton("ADD##PropertiesPanelButton", reinterpret_cast<ImTextureID*>(static_cast<uint64_t>(m_PlusSmallButtonIcon->GetRendererID()))))
                 ImGui::OpenPopup("AddComponentPopup");
 
             if (ImGui::BeginPopup("AddComponentPopup")) {
@@ -125,7 +139,17 @@ namespace DME {
 					ImGui::Text("Texture");
 					ImGui::SameLine();
 
-					ImGui::Button("##Texture", ImVec2(50.0f, 50.0f));
+					if (component.Texture)
+					{
+						ImGuiDMEEditor::IconButton("##Texture",
+							reinterpret_cast<ImTextureID*>(static_cast<uint64_t>(component.Texture->GetRendererID())),
+							{ 50.0f, 50.0f });
+					}
+					else
+					{
+						ImGuiDMEEditor::IconButton("##Texture", nullptr, { 50.0f, 50.0f });
+					}
+
 					if (ImGui::BeginDragDropTarget())
 					{
 						if (const ImGuiPayload* payload = ImGui::AcceptDragDropPayload("CONTENT_BROWSER_ITEM"))
@@ -134,7 +158,9 @@ namespace DME {
 							std::filesystem::path texturePath = std::filesystem::path(g_AssetPath) / path;
 							Ref<Texture2D> texture = Texture2D::Create(texturePath.string());
 							if (texture->IsLoaded())
+							{
 								component.Texture = texture;
+							}
 							else
 								DME_WARNING("Could not load texture {0}", texturePath.filename().string());
 						}
@@ -143,11 +169,20 @@ namespace DME {
 					ImGui::SameLine();
 					ImGui::SeparatorEx(ImGuiSeparatorFlags_Vertical, 3.0f);
 					ImGui::SameLine();
-					if (ImGui::Button("S##TextureSettings"))
+					if (ImGuiDMEEditor::IconButton("##TextureSettings", reinterpret_cast<ImTextureID*>(static_cast<uint64_t>(m_SettingsButtonIcon->GetRendererID())), {30.0f, 30.0f}))
 						ImGui::OpenPopup("##TextureWindow");
 					if (ImGui::BeginPopup("##TextureWindow"))
 					{
+						if (ImGuiDMEEditor::IconButton("##RemoveTexture", reinterpret_cast<ImTextureID*>(static_cast<uint64_t>(m_DeleteButtonIcon->GetRendererID())), { 30.0f, 30.0f }))
+						{
+							if (component.Texture)
+							{
+								component.Texture = nullptr;
+							}
+						}
+						ImGui::SameLine();
 						ImGui::DragFloat("Tiling Factor", &component.TilingFactor, 0.1f, 0.0f, 100.0f);
+
 						ImGui::EndPopup();
 					}
 				});

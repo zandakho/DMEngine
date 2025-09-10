@@ -3,12 +3,18 @@
 #include "DME/Core/Base.h"
 #include "DME/Scene/Scene.h"
 #include "DME/Scene/Entity.h"
+#include "DME/Core/Layer.h"
+#include "DME/Renderer/Texture.h"
 
 namespace DME {
 
-    class PropertiesPanel {
+    class PropertiesPanel : public Layer
+    {
     public:
         PropertiesPanel() = default;
+
+		virtual void OnAttach() override;
+		virtual void OnDetach() override;
 
         void SetContext(Entity entity) { m_SelectedEntity = entity; }
         void OnImGuiRender();
@@ -24,6 +30,12 @@ namespace DME {
 
     private:
         Entity m_SelectedEntity;
+
+        Ref<Texture2D> m_PlusSmallButtonIcon;
+        Ref<Texture2D> m_DeleteButtonIcon;
+        Ref<Texture2D> m_SettingsButtonIcon;
+
+
     };
 
 }

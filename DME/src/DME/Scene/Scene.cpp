@@ -1,12 +1,10 @@
-#include "dmepch.h"
+﻿#include "dmepch.h"
 
 #include "DME/Scene/Scene.h"
 #include "DME/Scene/Components.h"
 #include "DME/Scene/ScriptableEntity.h"
 
 #include "DME/Renderer/Renderer2D.h"
-
-#include <glm/glm.hpp>
 
 #include "DME/Scene/Entity.h"
 
@@ -15,6 +13,8 @@
 #include "box2d/b2_fixture.h"
 #include "box2d/b2_polygon_shape.h"
 #include "box2d/b2_circle_shape.h"
+
+#include <glm/glm.hpp>
 
 namespace DME
 {
@@ -128,7 +128,10 @@ namespace DME
 
 	void Scene::DestroyEntity(Entity entity)
 	{
-		m_Registry.destroy(entity);
+		if (m_Registry.valid(entity))
+		{
+			m_Registry.destroy(entity);
+		}
 	}
 
 	void Scene::OnRuntimeStart()
@@ -198,6 +201,13 @@ namespace DME
 
 	void Scene::OnPhysics2DStop()
 	{
+		auto view = m_Registry.view<Rigidbody2DComponent>();
+		for (auto e : view)
+		{
+			auto& rb2d = view.get<Rigidbody2DComponent>(e);
+			rb2d.RuntimeBody = nullptr;
+		}
+
 		delete m_PhysicsWorld;
 		m_PhysicsWorld = nullptr;
 	}
@@ -225,7 +235,6 @@ namespace DME
 			const int32_t positionIterations = 2;
 			m_PhysicsWorld->Step(ts, velocityIterations, positionIterations);
 
-			// Retrieve transform from Box2D
 			auto view = m_Registry.view<Rigidbody2DComponent>();
 			for (auto e : view)
 			{
@@ -233,11 +242,14 @@ namespace DME
 				auto& transform = entity.GetComponent<TransformComponent>();
 				auto& rb2d = entity.GetComponent<Rigidbody2DComponent>();
 
-				b2Body* body = (b2Body*)rb2d.RuntimeBody;
-				const auto& position = body->GetPosition();
-				transform.Position.x = position.x;
-				transform.Position.y = position.y;
-				transform.Rotation.z = body->GetAngle();
+				if (rb2d.RuntimeBody)
+				{
+					b2Body* body = (b2Body*)rb2d.RuntimeBody;
+					const auto& position = body->GetPosition();
+					transform.Position.x = position.x;
+					transform.Position.y = position.y;
+					transform.Rotation.z = body->GetAngle();
+				}
 			}
 		}
 
@@ -440,6 +452,7 @@ namespace DME
 	template<>
 	void Scene::OnComponentAdded<Rigidbody2DComponent>(Entity entity, Rigidbody2DComponent& component)
 	{
+		component.RuntimeBody = nullptr;
 	}
 
 	template<>
