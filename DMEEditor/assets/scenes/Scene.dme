@@ -1,6 +1,13 @@
 Scene: Untitled
 Entities:
-  - Entity: 12696849986621359099
+  - Entity: 3998893624930192722
+    TagComponent:
+      Tag: Empty Entity
+    TransformComponent:
+      Position: [0, 0, 0]
+      Rotation: [0, 0, 0]
+      Scale: [1, 1, 1]
+  - Entity: 9320255402572630228
     TagComponent:
       Tag: Floor8
     TransformComponent:
@@ -20,7 +27,7 @@ Entities:
       Friction: 0.5
       Restitution: 0
       RestitutionThreshold: 0.5
-  - Entity: 3105360474833369343
+  - Entity: 5456994965640282035
     TagComponent:
       Tag: CircleBlue
     TransformComponent:
@@ -41,7 +48,7 @@ Entities:
       Friction: 0.5
       Restitution: 0.800000012
       RestitutionThreshold: 0.5
-  - Entity: 10944927233258069111
+  - Entity: 13159753051100329577
     TagComponent:
       Tag: Floor7
     TransformComponent:
@@ -61,7 +68,7 @@ Entities:
       Friction: 0.5
       Restitution: 0
       RestitutionThreshold: 0.5
-  - Entity: 16064334519816967171
+  - Entity: 9231335069841394340
     TagComponent:
       Tag: Floor5
     TransformComponent:
@@ -81,7 +88,7 @@ Entities:
       Friction: 0.5
       Restitution: 0
       RestitutionThreshold: 0.5
-  - Entity: 16519394222600111902
+  - Entity: 2655918850428584790
     TagComponent:
       Tag: RedCube
     TransformComponent:
@@ -101,7 +108,7 @@ Entities:
       Friction: 0.5
       Restitution: 0.720000029
       RestitutionThreshold: 0.5
-  - Entity: 3373513794984086623
+  - Entity: 946438824829492295
     TagComponent:
       Tag: Floor
     TransformComponent:
@@ -121,7 +128,7 @@ Entities:
       Friction: 0.119999997
       Restitution: 0
       RestitutionThreshold: 0.5
-  - Entity: 984141414367906662
+  - Entity: 15354312472009047090
     TagComponent:
       Tag: CircleYellow
     TransformComponent:
@@ -142,7 +149,7 @@ Entities:
       Friction: 0.5
       Restitution: 0.800000012
       RestitutionThreshold: 0.5
-  - Entity: 6922873363176681694
+  - Entity: 11115339657593279236
     TagComponent:
       Tag: BoxRight
     TransformComponent:
@@ -162,7 +169,7 @@ Entities:
       Friction: 0.5
       Restitution: 0
       RestitutionThreshold: 0.5
-  - Entity: 6071187666482092431
+  - Entity: 36675865213957969
     TagComponent:
       Tag: BoxBottom
     TransformComponent:
@@ -182,7 +189,7 @@ Entities:
       Friction: 0.5
       Restitution: 0
       RestitutionThreshold: 0.5
-  - Entity: 9849173102639474472
+  - Entity: 16602557911551232635
     TagComponent:
       Tag: BoxLeft
     TransformComponent:
@@ -202,7 +209,7 @@ Entities:
       Friction: 0.5
       Restitution: 0
       RestitutionThreshold: 0.5
-  - Entity: 2470866612131610643
+  - Entity: 10849204471596365752
     TagComponent:
       Tag: Floor3
     TransformComponent:
@@ -222,7 +229,7 @@ Entities:
       Friction: 0.5
       Restitution: 0
       RestitutionThreshold: 0.5
-  - Entity: 10764248190355903064
+  - Entity: 239441613932969388
     TagComponent:
       Tag: Floor1
     TransformComponent:
@@ -242,7 +249,7 @@ Entities:
       Friction: 0.5
       Restitution: 0
       RestitutionThreshold: 0.5
-  - Entity: 4691110093841488616
+  - Entity: 14659309189576639819
     TagComponent:
       Tag: Floor2
     TransformComponent:
@@ -262,7 +269,7 @@ Entities:
       Friction: 0.5
       Restitution: 0
       RestitutionThreshold: 0.5
-  - Entity: 13919296731868748770
+  - Entity: 14489245532207985659
     TagComponent:
       Tag: GreenCube
     TransformComponent:
@@ -282,7 +289,7 @@ Entities:
       Friction: 0.5
       Restitution: 0.800000012
       RestitutionThreshold: 0.5
-  - Entity: 8537867984221530325
+  - Entity: 1711109496898277741
     TagComponent:
       Tag: Camera
     TransformComponent:
@@ -300,7 +307,7 @@ Entities:
         OrthographicFar: 1
       Primary: true
       FixedAspectRatio: false
-  - Entity: 15277905133324246658
+  - Entity: 13264770467654418691
     TagComponent:
       Tag: Floor9
     TransformComponent:
@@ -320,16 +327,16 @@ Entities:
       Friction: 0.5
       Restitution: 0
       RestitutionThreshold: 0.5
-  - Entity: 16994081801184389233
+  - Entity: 8123000792418052893
     TagComponent:
       Tag: Floor6
     TransformComponent:
       Position: [8.37195015, 2.00305581, 0]
       Rotation: [0, 0, -1.17909837]
-      Scale: [3, 3, 1]
+      Scale: [3, 3.09819031, 1]
     SpriteRendererComponent:
       Color: [0.321568638, 0.321568638, 0.321568638, 1]
-      TexturePath: assets\textures\SymbolWhiteAlphaBG.png
+      TexturePath: assets\textures\Checkerboard.png
       TilingFactor: 1
     Rigidbody2DComponent:
       BodyType: Static
@@ -341,7 +348,7 @@ Entities:
       Friction: 0.5
       Restitution: 0
       RestitutionThreshold: 0.5
-  - Entity: 4413667821809421919
+  - Entity: 15237133988201944906
     TagComponent:
       Tag: Floor9
     TransformComponent:
@@ -361,9 +368,9 @@ Entities:
       Friction: 0.5
       Restitution: 0
       RestitutionThreshold: 0.5
-  - Entity: 14393182241798580052
+  - Entity: 8219320407247720414
     TagComponent:
-      Tag: Empty Entity
+      Tag: White Cube
     TransformComponent:
       Position: [4.95216846, 8.09744644, -3.7252903e-09]
       Rotation: [0, 0, 0]
@@ -381,3 +388,10 @@ Entities:
       Friction: 0.5
       Restitution: 0
       RestitutionThreshold: 0.5
+  - Entity: 6530942944802607064
+    TagComponent:
+      Tag: Empty Entity
+    TransformComponent:
+      Position: [0, 0, 0]
+      Rotation: [0, 0, 0]
+      Scale: [1.00000011e-06, 1, 1]

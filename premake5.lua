@@ -42,7 +42,6 @@ group ""
 
 group "Tools"
     include "DMEEditor"
-    include "Sandbox"
 group ""
 
 group "Other"

@@ -1,11 +1,13 @@
 #include "dmepch.h"
+
 #include "PropertiesPanel.h"
 #include "DME/Scene/Components.h"
 #include "FontLibrary.h"
 
+#include "DME/ImGui/ImGuiDMEEditor.h"
+
 #include <ImGui/imgui.h>
 #include <ImGui/imgui_internal.h>
-#include "DME/ImGui/ImGuiDMEEditor.h"
 #include <glm/gtc/type_ptr.hpp>
 
 namespace DME {

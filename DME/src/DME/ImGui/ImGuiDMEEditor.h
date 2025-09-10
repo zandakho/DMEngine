@@ -16,8 +16,6 @@ namespace DME
 		bool FolderCard(const char* name_id, void* image, const char* type, const char* hint, const glm::vec2& uv0, const glm::vec2& uv1, int flags);
 	}
 
-
-
 }
 
 

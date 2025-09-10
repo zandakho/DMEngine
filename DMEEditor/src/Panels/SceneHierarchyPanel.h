@@ -43,6 +43,7 @@ namespace DME {
         Entity m_SelectionContext;
 
         Ref<Texture2D> m_PlusSmallButton;
+
         std::string m_Search;
 
         bool m_SceneHierarchyPanelHovered = false;

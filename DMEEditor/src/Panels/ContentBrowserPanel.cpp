@@ -1,4 +1,5 @@
 #include "dmepch.h"
+
 #include "ContentBrowserPanel.h"
 
 #include "DME/Core/Input.h"
@@ -8,8 +9,6 @@
 #include "DME/ImGui/ImGuiDMEEditor.h"
 
 #include <ImGui/imgui.h>
-
-
 
 namespace DME
 {

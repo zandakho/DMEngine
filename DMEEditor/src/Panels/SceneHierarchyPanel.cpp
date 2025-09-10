@@ -2,6 +2,8 @@
 #include "SceneHierarchyPanel.h"
 #include "DME/Scene/Components.h"
 
+#include "DME/ImGui/ImGuiDMEEditor.h"
+
 #include <ImGui/imgui.h>
 #include <ImGui/imgui_internal.h>
 
@@ -12,8 +14,7 @@ namespace DME {
     SceneHierarchyPanel::SceneHierarchyPanel(const Ref<Scene>& context) 
     {
         SetContext(context);
-		m_PlusSmallButton = Texture2D::Create("Resource/Icons/SceneHierarchy/Plus_Small_Green_Img.png");
-	}
+    }
 
 	void SceneHierarchyPanel::OnAttach()
 	{
@@ -29,7 +30,10 @@ namespace DME {
         m_SelectionContext = {};
     }
 
-    void SceneHierarchyPanel::OnImGuiRender() {
+    void SceneHierarchyPanel::OnImGuiRender() 
+    {
+		m_PlusSmallButton = Texture2D::Create("Resources/Icons/SceneHieararchy/Plus_Small_Green_Img.png");
+
         if (!m_Context)
             return;
 
@@ -48,10 +52,15 @@ namespace DME {
         if (ImGui::IsMouseDown(0) && ImGui::IsWindowHovered())
             m_SelectionContext = {};
 
-        if (ImGui::BeginPopupContextWindow(0, 1 | ImGuiPopupFlags_NoOpenOverExistingPopup)) {
-            if (ImGui::MenuItem("Create Empty Entity"))
-                m_Context->CreateEntity("Empty Entity");
-            ImGui::EndPopup();
+        if (ImGui::IsMouseClicked(1) && ImGui::IsWindowHovered())
+            ImGui::OpenPopup("AddEntityPopup");
+        if (ImGui::BeginPopup("AddEntityPopup"))
+        {
+            if (ImGuiDMEEditor::AddButton("ADD##CreateEntityButton", reinterpret_cast<ImTextureID*>(static_cast<uintptr_t>(m_PlusSmallButton->GetRendererID()))))
+            {
+				m_Context->CreateEntity("Empty Entity");
+            }
+			ImGui::EndPopup();
         }
 
         m_SceneHierarchyPanelFocused = ImGui::IsWindowFocused();
