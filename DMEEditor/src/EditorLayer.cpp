@@ -310,14 +310,14 @@ namespace DME
 			if (ImGui::BeginMenu("Window"))
 			{
 				ImGui::SeparatorText("Main");
-				if (ImGui::MenuItem("Viewport", nullptr, &m_ViewportWindow));
-				if (ImGui::MenuItem("Scene Hierarchy", nullptr, &m_SceneHierarchyWindow));
+				ImGui::MenuItem("Scene Hierarchy", nullptr, &m_SceneHierarchyWindow);
+				ImGui::MenuItem("Viewport", nullptr, &m_ViewportWindow);
 
 				ImGui::SeparatorText("Other");
-				if (ImGui::MenuItem("Settings", nullptr, &m_SettingsWindow));
-				if (ImGui::MenuItem("Debug", nullptr, &m_DebugWindow));
-				if (ImGui::MenuItem("Demo", nullptr, &m_DemoWindow));
-				if (ImGui::MenuItem("Renderer Stats", nullptr, &m_RendererStatsWindow));
+				ImGui::MenuItem("Settings", nullptr, &m_SettingsWindow);
+				ImGui::MenuItem("Debug", nullptr, &m_DebugWindow);
+				ImGui::MenuItem("Demo", nullptr, &m_DemoWindow);
+				ImGui::MenuItem("Renderer Stats", nullptr, &m_RendererStatsWindow);
 
 				ImGui::EndMenu();
 			}

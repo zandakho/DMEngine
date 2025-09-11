@@ -20,7 +20,7 @@ namespace DME
 		virtual void OnDetach() override;
 
 		void OnUpdate(TimeStep ts) override;
-		virtual void OnImGuiRender() override;
+		void OnImGuiRender() override;
 		void OnDockspace() override;
 		void OnEvent(Event& event) override;
 		void OnOverlayRender();

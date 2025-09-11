@@ -111,7 +111,7 @@ namespace DME
 	OpenGLFramebuffer::~OpenGLFramebuffer()
 	{
 		glDeleteFramebuffers(1, &m_RendererID);
-		glDeleteTextures(m_ColorAttachments.size(), m_ColorAttachments.data());
+		glDeleteTextures(static_cast<GLsizei>(m_ColorAttachments.size()), m_ColorAttachments.data());
 		glDeleteTextures(1, &m_DepthAttachments);
 	}
 
@@ -120,7 +120,7 @@ namespace DME
 		if (m_RendererID)
 		{
 			glDeleteFramebuffers(1, &m_RendererID);
-			glDeleteTextures(m_ColorAttachments.size(), m_ColorAttachments.data());
+			glDeleteTextures(static_cast<GLsizei>(m_ColorAttachments.size()), m_ColorAttachments.data());
 			glDeleteTextures(1, &m_DepthAttachments);
 
 			m_ColorAttachments.clear();
@@ -136,7 +136,7 @@ namespace DME
 		if (m_ColorAttachmentSpecifications.size())
 		{
 			m_ColorAttachments.resize(m_ColorAttachmentSpecifications.size());
-			Utils::CreateTextures(multisample, m_ColorAttachments.data(), m_ColorAttachments.size());
+			Utils::CreateTextures(multisample, m_ColorAttachments.data(), static_cast<uint32_t>(m_ColorAttachments.size()));
 
 			for (size_t i = 0; i < m_ColorAttachments.size(); ++i)
 			{
@@ -149,7 +149,7 @@ namespace DME
 							GL_RGBA8,
 							GL_RGBA,
 							m_Specification.Width, m_Specification.Height, 
-							i);
+							static_cast<int>(i));
 						break;
 					case FramebufferTextureFormat::RED_INTEGER:
 						Utils::AttachColorTexture(m_ColorAttachments[i],
@@ -157,7 +157,7 @@ namespace DME
 							GL_R32I,
 							GL_RED_INTEGER,
 							m_Specification.Width, m_Specification.Height,
-							i);
+							static_cast<int>(i));
 						break;
 				}
 			}
@@ -181,7 +181,7 @@ namespace DME
 		{
 			DME_CORE_ASSERT(m_ColorAttachments.size() <= 4);
 			GLenum buffers[4] = { GL_COLOR_ATTACHMENT0, GL_COLOR_ATTACHMENT1, GL_COLOR_ATTACHMENT2, GL_COLOR_ATTACHMENT3 };
-			glDrawBuffers(m_ColorAttachments.size(), buffers);
+			glDrawBuffers(static_cast<GLsizei>(m_ColorAttachments.size()), buffers);
 		}
 		else if (m_ColorAttachments.empty())
 		{

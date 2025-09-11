@@ -92,10 +92,6 @@ namespace DME {
         if (event.IsRepeat())
             return false;
         
-        switch (event.GetKeyCode())
-        {
-        }
-
         return false;
     }
 

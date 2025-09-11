@@ -144,11 +144,6 @@ namespace DME
 		bool shift = Input::IsKeyPressed(Key::LeftShift) || Input::IsKeyPressed(Key::RightShift);
 		bool alt = Input::IsKeyPressed(Key::LeftAlt) || Input::IsKeyPressed(Key::RightAlt);
 
-		switch (event.GetKeyCode())
-		{
-
-		}
-
 		return false;
 	}
 
