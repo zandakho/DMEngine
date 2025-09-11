@@ -4,8 +4,8 @@ project "ImGui"
 	cppdialect "C++20"
     staticruntime "on"
 
-	targetdir ("bin/" .. outputdir .. "/%{prj.name}")
-	objdir ("bin-int/" .. outputdir .. "/%{prj.name}")
+	targetdir ("Build/Binaries/" .. outputdir .. "/%{prj.name}")
+	objdir ("Build/Intermediate/" .. outputdir .. "/%{prj.name}")
 
 	files
 	{

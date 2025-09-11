@@ -2,10 +2,12 @@
 
 #dirs
 .vs/
-bin/
-bin-int/
+.vscode/
+Build/
+Binaries/
+Intermediate/
 DME/vendor/VulkanSDK
-Common/assets/cache
+**/assets/cache
 scripts/__pycache__
 
 #files
@@ -14,7 +16,10 @@ scripts/__pycache__
 **/*.sln
 **/*.json
 **/*.ini
-**/*.sln
+**/*.lib
+**/*.pch
+**/*.ilk
+**/*.pdb
 **/*.vcxproj
 **/*.vcxproj.filters
 **/*.vcxproj.user

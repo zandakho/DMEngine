@@ -6,8 +6,8 @@ project "DMEEditor"
 
     buildoptions "/utf-8"
 
-    targetdir ("%{wks.location}/bin/" .. outputdir .. "/%{prj.name}")
-    objdir ("%{wks.location}/bin-int/" .. outputdir .. "/%{prj.name}")
+    targetdir ("%{wks.location}/Build/Binaries/" .. outputdir .. "/%{prj.name}")
+    objdir ("%{wks.location}/Build/Intermediate/" .. outputdir .. "/%{prj.name}")
 
     files
     {
