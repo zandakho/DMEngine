@@ -38,36 +38,39 @@ namespace DME {
         if (!m_Context)
             return;
 
-        ImGui::Begin("Scene Hierarchy");
+		if (ImGui::Begin("Scene Hierarchy"))
+		{
+			static char buffer[256]{};
+			ImGui::SetNextItemWidth(ImGui::GetContentRegionAvail().x);
+			if (ImGui::InputTextWithHint("##Search", "Search ...", buffer, sizeof(buffer)))
+				m_Search = buffer;
 
-        static char buffer[256]{};
-        ImGui::SetNextItemWidth(ImGui::GetContentRegionAvail().x);
-        if (ImGui::InputTextWithHint("##Search", "Search ...", buffer, sizeof(buffer)))
-            m_Search = buffer;
+			m_Context->m_Registry.view<entt::entity>().each([&](auto entityID) {
+				Entity entity{ entityID , m_Context.get() };
+				DrawEntityNode(entity);
+				});
 
-        m_Context->m_Registry.view<entt::entity>().each([&](auto entityID) {
-            Entity entity{ entityID , m_Context.get() };
-            DrawEntityNode(entity);
-            });
+			if (ImGui::IsMouseDown(0) && ImGui::IsWindowHovered())
+				m_SelectionContext = {};
 
-        if (ImGui::IsMouseDown(0) && ImGui::IsWindowHovered())
-            m_SelectionContext = {};
+			if (ImGui::IsMouseClicked(1) && ImGui::IsWindowHovered())
+				ImGui::OpenPopup("AddEntityPopup");
+			if (ImGui::BeginPopup("AddEntityPopup"))
+			{
+				if (ImGuiDMEEditor::IconButtonWithText("ADD##CreateEntityButton", reinterpret_cast<ImTextureID*>(static_cast<uintptr_t>(m_PlusSmallButton->GetRendererID()))))
+				{
+					m_Context->CreateEntity("Empty Entity");
+				}
+				ImGui::EndPopup();
+			}
 
-        if (ImGui::IsMouseClicked(1) && ImGui::IsWindowHovered())
-            ImGui::OpenPopup("AddEntityPopup");
-        if (ImGui::BeginPopup("AddEntityPopup"))
-        {
-            if (ImGuiDMEEditor::IconButtonWithText("ADD##CreateEntityButton", reinterpret_cast<ImTextureID*>(static_cast<uintptr_t>(m_PlusSmallButton->GetRendererID()))))
-            {
-				m_Context->CreateEntity("Empty Entity");
-            }
-			ImGui::EndPopup();
-        }
+			m_SceneHierarchyPanelFocused = ImGui::IsWindowFocused();
+			m_SceneHierarchyPanelHovered = ImGui::IsWindowHovered();
 
-        m_SceneHierarchyPanelFocused = ImGui::IsWindowFocused();
-        m_SceneHierarchyPanelHovered = ImGui::IsWindowHovered();
-
-        ImGui::End();
+			ImGui::End();
+		}
+        
+        
     }
 
     void SceneHierarchyPanel::SetSelectedEntity(Entity entity) {

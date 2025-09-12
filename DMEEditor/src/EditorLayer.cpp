@@ -274,6 +274,7 @@ namespace DME
 	}
 	void EditorLayer::UITabBar()
 	{
+			
 		ImGui::PushStyleColor(ImGuiCol_HeaderHovered, ImVec4(0.2f, 0.5f, 0.8f, 0.7f));
 		if (ImGui::BeginMenuBar())
 		{
@@ -335,6 +336,8 @@ namespace DME
 			ImGui::EndMenuBar();
 			ImGui::PopStyleColor();
 		}
+		
+
 	}
 
 	void EditorLayer::SerializeScene(Ref<Scene> scene, const std::filesystem::path& path)
