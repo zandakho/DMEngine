@@ -16,3 +16,7 @@
 [submodule "DME/vendor/Box2D"]
 	path = DME/vendor/Box2D
 	url = https://github.com/TheCherno/box2d
+[submodule "DME/vendor/ImGui"]
+	path = DME/vendor/ImGui
+	url = https://github.com/ocornut/imgui
+	branch = docking
