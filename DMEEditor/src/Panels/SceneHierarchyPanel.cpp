@@ -33,6 +33,7 @@ namespace DME {
     void SceneHierarchyPanel::OnImGuiRender() 
     {
 		m_PlusSmallButton = Texture2D::Create("Resources/Icons/SceneHieararchy/Plus_Small_Green_Img.png");
+		m_DeleteButton = Texture2D::Create("Resources/Icons/SceneHieararchy/Delete_Button_Img.png");
 
         if (!m_Context)
             return;
@@ -56,7 +57,7 @@ namespace DME {
             ImGui::OpenPopup("AddEntityPopup");
         if (ImGui::BeginPopup("AddEntityPopup"))
         {
-            if (ImGuiDMEEditor::AddButton("ADD##CreateEntityButton", reinterpret_cast<ImTextureID*>(static_cast<uintptr_t>(m_PlusSmallButton->GetRendererID()))))
+            if (ImGuiDMEEditor::IconButtonWithText("ADD##CreateEntityButton", reinterpret_cast<ImTextureID*>(static_cast<uintptr_t>(m_PlusSmallButton->GetRendererID()))))
             {
 				m_Context->CreateEntity("Empty Entity");
             }
@@ -118,8 +119,8 @@ namespace DME {
 
         bool entityDeleted = false;
         if (ImGui::BeginPopupContextItem()) {
-            std::string name = std::format("Delete {}", tag);
-            if (ImGui::MenuItem(name.c_str()))
+            std::string name = std::format("{}", tag);
+            if (ImGuiDMEEditor::IconButtonWithText(name.c_str(), reinterpret_cast<ImTextureID*>(static_cast<uint64_t>(m_DeleteButton->GetRendererID()))))
                 entityDeleted = true;
             ImGui::EndPopup();
         }

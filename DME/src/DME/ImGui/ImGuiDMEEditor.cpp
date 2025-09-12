@@ -353,7 +353,7 @@ namespace DME
             return pressed;
         }
 
-		bool AddButton(const char* label, unsigned long long* texture_id)
+		bool IconButtonWithText(const char* label, unsigned long long* texture_id)
 		{
 			ImGuiWindow* window = ImGui::GetCurrentWindow();
 			if (window->SkipItems)
@@ -364,7 +364,7 @@ namespace DME
 			const ImGuiStyle& style = g.Style;
 
 			const ImVec2 label_size = ImGui::CalcTextSize(label, NULL, true);
-			ImVec2 actual_size = ImGui::CalcItemSize(ImVec2(60, 28), 60, 28);
+			ImVec2 actual_size = ImGui::CalcItemSize(ImVec2(60 + label_size.x, 28), 32 + label_size.x, 28);
 
 			const ImRect bb(window->DC.CursorPos, window->DC.CursorPos + actual_size);
 			ImGui::ItemSize(bb, style.FramePadding.y);
@@ -381,7 +381,7 @@ namespace DME
 
 			if (texture_id)
 			{
-				window->DrawList->AddImage(texture_id, ImVec2(bb.Min.x + 6, bb.Min.y + 6), ImVec2(bb.Min.x + 24, bb.Max.y - 6), { 0, 1 }, { 1, 0 });
+				window->DrawList->AddImage(texture_id, ImVec2(bb.Min.x + 6, bb.Min.y + 6), ImVec2(bb.Min.x + 24, bb.Max.y - 6), {0, 1}, {1, 0});
                 ImGui::RenderText(ImVec2(bb.Min.x + 28, bb.Min.y + actual_size.y / 2 - (label_size.y / 2)), label);
 
 			}

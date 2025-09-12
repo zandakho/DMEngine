@@ -30,6 +30,7 @@ namespace DME {
 		m_PlusSmallButtonIcon = Texture2D::Create("Resources/Icons/Properties/Plus_Small_Green_Img.png");
 		m_DeleteButtonIcon = Texture2D::Create("Resources/Icons/Properties/Delete_Button_Img.png");
 		m_SettingsButtonIcon = Texture2D::Create("Resources/Icons/Properties/Settings_Img.png");
+		m_ResetButtonIcon = Texture2D::Create("Resources/Icons/Properties/Reset_Img.png");
 
         ImGui::Begin("Properties");
 
@@ -43,7 +44,7 @@ namespace DME {
                 tag = std::string(buffer);
 
             ImGui::SameLine();
-            if (ImGuiDMEEditor::AddButton("ADD##PropertiesPanelButton", reinterpret_cast<ImTextureID*>(static_cast<uint64_t>(m_PlusSmallButtonIcon->GetRendererID()))))
+            if (ImGuiDMEEditor::IconButtonWithText("ADD##PropertiesPanelButton", reinterpret_cast<ImTextureID*>(static_cast<uint64_t>(m_PlusSmallButtonIcon->GetRendererID()))))
                 ImGui::OpenPopup("AddComponentPopup");
 
             if (ImGui::BeginPopup("AddComponentPopup")) {
@@ -58,7 +59,7 @@ namespace DME {
 
             ImGui::SeparatorEx(ImGuiSeparatorFlags_Horizontal, 3);
 
-            DrawComponent<TransformComponent>("Transform", m_SelectedEntity, [](auto& component) {
+            DrawComponent<TransformComponent>("Transform", m_SelectedEntity, [this](auto& component) {
                 DrawVec3Control("Position", component.Position);
                 glm::vec3 rotation = glm::degrees(component.Rotation);
                 DrawVec3Control("Rotation", rotation);
@@ -265,12 +266,27 @@ namespace DME {
 
     template<typename T, typename UFunction>
     void PropertiesPanel::DrawComponent(const std::string& name, Entity entity, UFunction uifunction) {
+		std::string SettingsButton = std::format("##{0}", name.c_str());
+		std::string DeleteButton = std::format("##{0}", name.c_str());
+		std::string DialogWindow = std::format("##{0}", name.c_str());
+
         if (entity.HasComponent<T>()) {
             auto& component = entity.GetComponent<T>();
             ImGui::PushStyleVar(ImGuiStyleVar_FramePadding, ImVec2(8, 4));
             ImGui::PushStyleVar(ImGuiStyleVar_ItemSpacing, ImVec2(15, 10));
 
-            bool removeComponent = false;
+			bool removeComponent = false;
+
+			if (ImGuiDMEEditor::IconButton(SettingsButton.c_str(), reinterpret_cast<ImTextureID*>(static_cast<uint64_t>(m_SettingsButtonIcon->GetRendererID())), { 25.0f, 25.0f }))
+				ImGui::OpenPopup(DialogWindow.c_str());
+			if (ImGui::BeginPopup(DialogWindow.c_str()))
+			{
+				if (ImGuiDMEEditor::IconButton(DeleteButton.c_str(), reinterpret_cast<ImTextureID*>(static_cast<uint64_t>(m_DeleteButtonIcon->GetRendererID())), {25.0f, 25.0f}))
+					removeComponent = true;
+				ImGui::EndPopup();
+			}
+
+			ImGui::SameLine();
             bool open = ImGui::TreeNodeEx(reinterpret_cast<const void*>(typeid(T).hash_code()), treeNodeFlags, name.c_str());
             if (open) {
                 uifunction(component);
@@ -306,6 +322,13 @@ namespace DME {
 		ImGui::DragFloat("##ValuesY", &values.y, 0.1f, -FLT_MAX, FLT_MAX, "%.2f", ImGuiSliderFlags_AsVectorY);
 		ImGui::SameLine();
 		ImGui::DragFloat("##ValuesZ", &values.z, 0.1f, -FLT_MAX, FLT_MAX, "%.2f", ImGuiSliderFlags_AsVectorZ);
+		ImGui::SameLine();
+		if (ImGuiDMEEditor::IconButton("##TextureSettings", reinterpret_cast<ImTextureID*>(static_cast<uint64_t>(m_ResetButtonIcon->GetRendererID())), {25.0f, 25.0f}))
+		{
+			values.x = 0.0f;
+			values.y = 0.0f;
+			values.z = 0.0f;
+		}
 		ImGui::PopStyleVar();
 		ImGui::PopItemWidth();
         ImGui::Columns(1);

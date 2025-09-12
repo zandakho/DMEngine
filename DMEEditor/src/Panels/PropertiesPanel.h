@@ -26,7 +26,7 @@ namespace DME {
         template<typename T>
         void DisplayAddComponentEntry(const std::string& entryName);
 
-        static void DrawVec3Control(const std::string& label, glm::vec3& values);
+        void DrawVec3Control(const std::string& label, glm::vec3& values);
 
     private:
         Entity m_SelectedEntity;
@@ -34,6 +34,7 @@ namespace DME {
         Ref<Texture2D> m_PlusSmallButtonIcon;
         Ref<Texture2D> m_DeleteButtonIcon;
         Ref<Texture2D> m_SettingsButtonIcon;
+        Ref<Texture2D> m_ResetButtonIcon;
 
 
     };

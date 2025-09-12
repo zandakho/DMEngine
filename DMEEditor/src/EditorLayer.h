@@ -4,9 +4,11 @@
 #include "Panels/SceneHierarchyPanel.h"
 #include "Panels/PropertiesPanel.h"
 #include "Panels/ContentBrowserPanel.h"
+#include "Panels/ToolbarPanel.h"
 
 #include "DME/Renderer/EditorCamera.h"
 #include "DME/ImGui/ImGuiDMEEditor.h"
+
 
 namespace DME
 {
@@ -64,6 +66,7 @@ namespace DME
 		Ref<Shader> m_FlatColorShader;
 		Ref<Scene> m_ActiveScene;
 		Ref<Scene> m_EditorScene;
+		Ref<ToolbarPanel> m_ToolbarPanel;
 		std::filesystem::path m_EditorScenePath;
 		
 	private:

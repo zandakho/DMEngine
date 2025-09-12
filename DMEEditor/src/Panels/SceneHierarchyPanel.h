@@ -43,6 +43,7 @@ namespace DME {
         Entity m_SelectionContext;
 
         Ref<Texture2D> m_PlusSmallButton;
+        Ref<Texture2D> m_DeleteButton;
 
         std::string m_Search;
 
