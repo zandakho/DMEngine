@@ -3,6 +3,7 @@
 #dirs
 .vs/
 .vscode/
+.idea/
 Build/
 Binaries/
 Intermediate/
