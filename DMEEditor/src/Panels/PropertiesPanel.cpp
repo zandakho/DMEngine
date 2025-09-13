@@ -317,11 +317,11 @@ namespace DME {
         ImGui::NextColumn();
 		ImGui::PushMultiItemsWidths(3, ImGui::CalcItemWidth() + 50);
 		ImGui::PushStyleVar(ImGuiStyleVar_ItemSpacing, ImVec2(4, 5));
-        ImGui::DragFloat("##ValuesX", &values.x, 0.1f, -FLT_MAX, FLT_MAX, "%.2f", ImGuiSliderFlags_DrawBorderX_);
+        ImGui::DragFloat("##ValuesX", &values.x, 0.1f, -FLT_MAX, FLT_MAX, "%.2f", ImGuiSliderFlags_DrawBorderX_ | ImGuiSliderFlags_Logarithmic);
 		ImGui::SameLine();
-		ImGui::DragFloat("##ValuesY", &values.y, 0.1f, -FLT_MAX, FLT_MAX, "%.2f", ImGuiSliderFlags_DrawBorderY_);
+		ImGui::DragFloat("##ValuesY", &values.y, 0.1f, -FLT_MAX, FLT_MAX, "%.2f", ImGuiSliderFlags_DrawBorderY_ | ImGuiSliderFlags_Logarithmic);
 		ImGui::SameLine();
-		ImGui::DragFloat("##ValuesZ", &values.z, 0.1f, -FLT_MAX, FLT_MAX, "%.2f", ImGuiSliderFlags_DrawBorderZ_);
+		ImGui::DragFloat("##ValuesZ", &values.z, 0.1f, -FLT_MAX, FLT_MAX, "%.2f", ImGuiSliderFlags_DrawBorderZ_ | ImGuiSliderFlags_Logarithmic);
 		ImGui::SameLine();
 		if (ImGuiDMEEditor::IconButton("##TextureSettings", reinterpret_cast<ImTextureID*>(static_cast<uint64_t>(m_ResetButtonIcon->GetRendererID())), {25.0f, 25.0f}))
 		{

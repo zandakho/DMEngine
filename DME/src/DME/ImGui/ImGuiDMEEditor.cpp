@@ -366,7 +366,7 @@ namespace DME
 			const ImGuiStyle& style = g.Style;
 
 			const ImVec2 label_size = ImGui::CalcTextSize(label, NULL, true);
-			ImVec2 actual_size = ImGui::CalcItemSize(ImVec2(60 + label_size.x, 28), 32 + label_size.x, 28);
+			ImVec2 actual_size = ImGui::CalcItemSize(ImVec2(40 + label_size.x, 28), 32, 28);
 
 			const ImRect bb(window->DC.CursorPos, window->DC.CursorPos + actual_size);
 			ImGui::ItemSize(bb, style.FramePadding.y);
@@ -384,8 +384,8 @@ namespace DME
 			if (texture_id)
 			{
 				window->DrawList->AddImage(texture_id, ImVec2(bb.Min.x + 6, bb.Min.y + 6), ImVec2(bb.Min.x + 24, bb.Max.y - 6), {0, 1}, {1, 0});
-                ImGui::RenderText(ImVec2(bb.Min.x + 28, bb.Min.y + actual_size.y / 2 - (label_size.y / 2)), label);
-
+                ImRect text_pos(ImVec2(bb.Min.x + 30, bb.Min.y + 5), ImVec2(bb.Max.x - 5, bb.Max.y - 5));
+                ImGui::RenderTextClipped(text_pos.Min, text_pos.Max, label, nullptr, nullptr, ImVec2(0.0f, 0.0f), &text_pos);
 			}
 
 			return pressed;
@@ -426,7 +426,7 @@ namespace DME
 			ImGui::PushFont(ImGui::GetIO().Fonts->Fonts[4]);
 			{
 				ImRect text_bb(bb.Min + ImVec2(10, 120), bb.Min + ImVec2(110, 140));
-				ImGui::RenderTextClipped(text_bb.Min, text_bb.Max, name_id, NULL, NULL, ImVec2(0.0f, 0.0f), &text_bb);
+				ImGui::RenderTextClipped(text_bb.Min, text_bb.Max, name_id, nullptr, nullptr, ImVec2(0.0f, 0.0f), &text_bb);
 			}
 			ImGui::PopFont();
 
@@ -434,7 +434,7 @@ namespace DME
 			ImGui::PushFont(ImGui::GetIO().Fonts->Fonts[0]);
 			{
 				ImRect th_bb(bb.Min + ImVec2(5, 180), bb.Min + ImVec2(115, 200));
-				ImGui::RenderTextClipped(th_bb.Min, th_bb.Max, cast_string.c_str(), NULL, NULL, ImVec2(0.5f, 0.0f), &th_bb);
+				ImGui::RenderTextClipped(th_bb.Min, th_bb.Max, cast_string.c_str(), nullptr, nullptr, ImVec2(0.5f, 0.0f), &th_bb);
 			}
 			ImGui::PopFont();
 

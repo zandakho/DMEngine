@@ -44,10 +44,14 @@ namespace DME
 		Ref<Texture2D> m_SceneIcon;
 		Ref<Texture2D> m_ShadersFVIcon;
 		Ref<Texture2D> m_CloseFolderIcon;
+		Ref<Texture2D> m_PlusSmallGreenIcon;
 		Ref<Texture2D> m_OpenFolderIcon;
 
 		std::unordered_map<std::string, Ref<Texture2D>> m_TextureCache;
 		std::unordered_map<std::string, bool> m_FolderStates;
+
+		char m_NewFolderName[128] = "New Folder";
+		bool m_CreateFolderPopupOpen = false;
 	};
 
 }

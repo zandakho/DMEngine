@@ -46,14 +46,14 @@ namespace DME {
 				m_Search = buffer;
 
 			m_Context->m_Registry.view<entt::entity>().each([&](auto entityID) {
-				Entity entity{ entityID , m_Context.get() };
+				Entity entity{ entityID, m_Context.get() };
 				DrawEntityNode(entity);
 				});
 
 			if (ImGui::IsMouseDown(0) && ImGui::IsWindowHovered())
 				m_SelectionContext = {};
 
-			if (ImGui::IsMouseClicked(1) && ImGui::IsWindowHovered())
+			if (ImGui::IsMouseClicked(1) && ImGui::IsWindowFocused() && ImGui::IsWindowHovered())
 				ImGui::OpenPopup("AddEntityPopup");
 			if (ImGui::BeginPopup("AddEntityPopup"))
 			{
@@ -63,9 +63,6 @@ namespace DME {
 				}
 				ImGui::EndPopup();
 			}
-
-			m_SceneHierarchyPanelFocused = ImGui::IsWindowFocused();
-			m_SceneHierarchyPanelHovered = ImGui::IsWindowHovered();
 
 			ImGui::End();
 		}

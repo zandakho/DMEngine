@@ -20,14 +20,15 @@ namespace DME
 
 	ContentBrowserPanel::ContentBrowserPanel() : m_CurrentDirectory(g_AssetPath)
 	{
-		m_FolderIcon = Texture2D::Create("Resources/Icons/ContentBrowser/FolderIcon.png");
-		m_FileIcon = Texture2D::Create("Resources/Icons/ContentBrowser/FileIcon.png");
-		m_BackButtonIcon = Texture2D::Create("Resources/Icons/ContentBrowser/Back_Img.png");
-		m_SettingsButtonIcon = Texture2D::Create("Resources/Icons/ContentBrowser/Settings_Img.png");
+		m_FolderIcon = Texture2D::Create("Resources/Icons/ContentBrowser/FolderIcon_Img.png");
+		m_FileIcon = Texture2D::Create("Resources/Icons/ContentBrowser/FileIcon_Img.png");
+		m_BackButtonIcon = Texture2D::Create("Resources/Icons/ContentBrowser/BackIcon_Img.png");
+		m_SettingsButtonIcon = Texture2D::Create("Resources/Icons/ContentBrowser/SettingsIcon_Img.png");
 		m_SceneIcon = Texture2D::Create("Resources/Icons/ContentBrowser/SceneIcon_Img.png");
 		m_ShadersFVIcon = Texture2D::Create("Resources/Icons/ContentBrowser/ShadersFVIcon_Img.png");
 		m_OpenFolderIcon = Texture2D::Create("Resources/Icons/ContentBrowser/OpenFolderIcon_Img.png");
 		m_CloseFolderIcon = Texture2D::Create("Resources/Icons/ContentBrowser/CloseFolderIcon_Img.png");
+		m_PlusSmallGreenIcon = Texture2D::Create("Resources/Icons/ContentBrowser/PlusSmallGreenIcon_Img.png");
 	}
 
 	void ContentBrowserPanel::OnAttach()
@@ -55,9 +56,40 @@ namespace DME
 
 		ImGui::SameLine();
 
-		ImGui::BeginChild("##ContentChildBrowser", ImVec2(ImGui::GetContentRegionAvail().x - 30, 31));
+		ImGui::BeginChild("##ContentChildBrowser", ImVec2(ImGui::GetContentRegionAvail().x - 30, 38));
 
+		ImGui::SetCursorPos({ 10.0f ,5.0f });
+		if (ImGuiDMEEditor::IconButtonWithText("ADD##ContentChildBrowser", reinterpret_cast<ImTextureID*>(static_cast<uint64_t>(m_PlusSmallGreenIcon->GetRendererID()))))
+		{
+			strcpy_s(m_NewFolderName, "New Folder");
+			ImGui::OpenPopup("AddItemDialogWindow");
+		}
+		if (ImGui::BeginPopup("AddItemDialogWindow"))
+		{
+			ImGui::Text("Create new item:");
+			ImGui::Separator();
+
+			ImGui::InputText("Folder name", m_NewFolderName, IM_ARRAYSIZE(m_NewFolderName));
+
+			if (ImGui::Button("Add new folder"))
+			{
+				std::filesystem::path newFolder = m_CurrentDirectory / m_NewFolderName;
+
+				if (!std::filesystem::exists(newFolder))
+					std::filesystem::create_directory(newFolder);
+
+				ImGui::CloseCurrentPopup();
+			}
+
+			ImGui::SameLine();
+			if (ImGui::Button("Cancel"))
+				ImGui::CloseCurrentPopup();
+
+			ImGui::EndPopup();
+		}
+		
 		ImGui::EndChild();
+
 
 		ImGui::SameLine();
 
@@ -142,7 +174,7 @@ namespace DME
 						path.string().c_str(),
 						{ 0,1 }, { 1,0 },
 						glm::vec4(1.0f, 1.0f, 1.0f, 1.0f),
-						ImGuiButtonFlags_None, {1.0f, 1.0f, 0.0f, 1.0f});
+						ImGuiButtonFlags_None, {1.0f, 0.5f, 0.0f, 1.0f});
 				}
 				else if (ext == ".glsl" || ext == ".hlsl" || ext == ".frag" || ext == ".vert")
 				{
@@ -206,9 +238,7 @@ namespace DME
 			ImVec2(16, 16), { 0, 1 }, {1, 0});
 		ImGui::SameLine();
 
-		bool clicked = ImGui::Selectable(folderName.c_str(), m_CurrentDirectory == directory, ImGuiSelectableFlags_AllowDoubleClick);
-
-		if (clicked)
+		if (ImGui::Selectable(folderName.c_str(), m_CurrentDirectory == directory, ImGuiSelectableFlags_AllowDoubleClick))
 			m_CurrentDirectory = directory;
 
 		if (ImGui::IsItemClicked())
@@ -216,13 +246,13 @@ namespace DME
 
 		if (openState)
 		{
-			ImGui::Indent(30.0f);
+			ImGui::Indent(20.0f);
 			for (auto& entry : std::filesystem::directory_iterator(directory))
 			{
 				if (entry.is_directory())
 					DrawDirectoryTree(entry.path());
 			}
-			ImGui::Unindent(30.0f);
+			ImGui::Unindent(20.0f);
 		}
 	}
 
