@@ -35,6 +35,9 @@ namespace DME
 		Ref<Texture2D> m_FileIcon;
 		Ref<Texture2D> m_BackButtonIcon;
 		Ref<Texture2D> m_SettingsButtonIcon;
+		Ref<Texture2D> m_SceneIcon;
+
+		std::unordered_map<std::string, Ref<Texture2D>> m_TextureCache;
 	};
 
 }

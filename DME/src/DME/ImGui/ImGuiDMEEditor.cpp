@@ -1,4 +1,4 @@
-#include "dmepch.h"
+﻿#include "dmepch.h"
 
 #include "ImGuiDMEEditor.h"
 
@@ -422,18 +422,22 @@ namespace DME
                 
                 3.0f, ImDrawFlags_RoundCornersAll, 3.0f);
 
-            ImGui::PushFont(ImGui::GetIO().Fonts->Fonts[4]);
-            window->DrawList->AddText(ImVec2(bb.Min.x + 5, bb.Min.y + 120), ImGui::GetColorU32(ImGuiCol_Text), name_id);
-            ImGui::PopFont();
+			ImGui::PushFont(ImGui::GetIO().Fonts->Fonts[4]);
+			{
+				ImRect text_bb(bb.Min + ImVec2(5, 120), bb.Min + ImVec2(115, 140));
+				ImGui::RenderTextClipped(text_bb.Min, text_bb.Max, name_id, NULL, NULL, ImVec2(0.0f, 0.0f), &text_bb);
+			}
+			ImGui::PopFont();
 
-            std::string cast_string = std::format("{0} ({1})", type, hint);
-            const ImVec2 type_hint_size = ImGui::CalcTextSize(cast_string.c_str(), NULL, true);
+			std::string cast_string = std::format("{0} ({1})", type, hint);
+			ImGui::PushFont(ImGui::GetIO().Fonts->Fonts[0]);
+			{
+				ImRect th_bb(bb.Min + ImVec2(5, bb.Max.y - 25), bb.Min + ImVec2(115, bb.Max.y - 5));
+				ImGui::RenderTextClipped(th_bb.Min, th_bb.Max, cast_string.c_str(), NULL, NULL, ImVec2(0.0f, 0.0f), &th_bb);
+			}
+			ImGui::PopFont();
 
-            ImGui::PushFont(ImGui::GetIO().Fonts->Fonts[0], 13.0f);
-            window->DrawList->AddText(ImVec2(bb.Min.x + 5, bb.Max.y - 10 - (type_hint_size.y)), ImGui::GetColorU32(ImGuiCol_TextDisabled), cast_string.c_str());
-            ImGui::PopFont();
-
-            window->DrawList->AddRect(bb.Min, bb.Max, ImColor(15, 15, 15, 255), 4.0f, ImDrawFlags_RoundCornersAll, 3.0f);
+			window->DrawList->AddRect(bb.Min, bb.Max, ImColor(15, 15, 15, 255), 4.0f, ImDrawFlags_RoundCornersAll, 3.0f);
 
             return pressed;
         }
@@ -468,7 +472,15 @@ namespace DME
             window->DrawList->AddRectFilled(bb.Min + ImVec2(5, 5), bb.Min + ImVec2(115, 115), ImColor(0.10f, 0.10f, 0.10f, 1.0f), 4.0f, ImDrawFlags_RoundCornersAll);
             window->DrawList->AddImageRounded(image, bb.Min + ImVec2(10, 10), bb.Min + ImVec2(110, 110), ImVec2(uv0.x, uv0.y), ImVec2(uv1.x, uv1.y), ImColor(1.0f, 1.0f, 1.0f, 1.0f), 3.0f, ImDrawFlags_RoundCornersAll);
 
-            window->DrawList->AddText(ImVec2(bb.Min.x + 120 / 2 - (name_id_size.x / 2), bb.Min.y + 120), ImGui::GetColorU32(ImGuiCol_Text), name_id);
+            ImRect text_bb(bb.Min + ImVec2(10, 120), bb.Min + ImVec2(110, 140));
+
+			ImGui::RenderTextClipped(text_bb.Min,
+				text_bb.Max,
+				name_id,
+				NULL,
+				NULL,
+				ImVec2(0.5f, 0.0f),
+				&text_bb);
 
             return pressed;
         }

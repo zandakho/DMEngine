@@ -79,6 +79,7 @@ namespace DME {
 					const char* projectionTypeString[] = { "Perspective", "Orthographic" };
 					const char* currentProjectionTypeString = projectionTypeString[static_cast<int>(camera.GetProjectionType())];
 
+					ImGui::PushItemWidth(ImGui::GetContentRegionAvail().x - 100);
 					if (ImGui::BeginCombo("Projection", currentProjectionTypeString))
 					{
 						for (int i = 0; i < 2; i++)
@@ -125,6 +126,7 @@ namespace DME {
 						if (ImGui::DragFloat("Far", &orthographicFar))
 							camera.SetOrthographicFarClip(orthographicFar);
 					}
+					ImGui::PopItemWidth();
 				});
 
 			DrawComponent<SpriteRendererComponent>("Sprite Renderer", m_SelectedEntity, [this](auto& component)
@@ -133,9 +135,7 @@ namespace DME {
 					ImGui::SameLine();
 					ImGui::SeparatorEx(ImGuiSeparatorFlags_Vertical, 3.0f);
 					ImGui::SameLine();
-					ImGui::SetNextItemWidth(ImGui::GetContentRegionAvail().x - 100);
 					ImGui::ColorEdit4("##Color", glm::value_ptr(component.Color), ImGuiColorEditFlags_NoInputs);
-					ImGui::PushItemWidth(ImGui::GetContentRegionAvail().x - 100);
 
 					ImGui::Separator();
 

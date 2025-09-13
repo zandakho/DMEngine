@@ -1,4 +1,4 @@
-#include "dmepch.h"
+﻿#include "dmepch.h"
 
 #include "ContentBrowserPanel.h"
 
@@ -24,6 +24,7 @@ namespace DME
 		m_FileIcon = Texture2D::Create("Resources/Icons/ContentBrowser/FileIcon.png");
 		m_BackButtonIcon = Texture2D::Create("Resources/Icons/ContentBrowser/Back_Img.png");
 		m_SettingsButtonIcon = Texture2D::Create("Resources/Icons/ContentBrowser/Settings_Img.png");
+		m_SceneIcon = Texture2D::Create("Resources/Icons/ContentBrowser/SceneIcon_Img.png");
 	}
 
 	void ContentBrowserPanel::OnAttach()
@@ -43,28 +44,30 @@ namespace DME
 
 		if (m_CurrentDirectory != std::filesystem::path(g_AssetPath))
 		{
-			if (ImGuiDMEEditor::IconButton("##Back button", reinterpret_cast<ImTextureID*>(static_cast<uintptr_t>(m_BackButtonIcon->GetRendererID())), { 30, 30 }, { 1.0f, 1.0f, 1.0f, 1.0f }))
+			if (ImGuiDMEEditor::IconButton("##Back button",
+				reinterpret_cast<ImTextureID*>(static_cast<uintptr_t>(m_BackButtonIcon->GetRendererID())),
+				{ 30, 30 }, { 1.0f,1.0f,1.0f,1.0f }))
 			{
 				m_CurrentDirectory = m_CurrentDirectory.parent_path();
 			}
 		}
-
 		ImGui::EndChild();
 
 		ImGui::SameLine();
 
-		if (ImGuiDMEEditor::IconButton("##Settings", reinterpret_cast<ImTextureID*>(static_cast<uintptr_t>(m_SettingsButtonIcon->GetRendererID())), { 30, 30 }))
+		if (ImGuiDMEEditor::IconButton("##Settings",
+			reinterpret_cast<ImTextureID*>(static_cast<uintptr_t>(m_SettingsButtonIcon->GetRendererID())),
+			{ 30, 30 }))
 			ImGui::OpenPopup("##SettingsWindow");
+
 		if (ImGui::BeginPopup("##SettingsWindow"))
 		{
 			ImGui::DragFloat("Thumbnail Size", &thumbnailSize, 0.1f, 80.0f, 120.0f, "%.1f", ImGuiSliderFlags_WrapAround);
 			ImGui::DragFloat("Padding", &padding, 0.1f, 14.0f, 20.0f, "%.1f", ImGuiSliderFlags_WrapAround);
-
 			ImGui::EndPopup();
 		}
 
 		ImGui::BeginChild("##Directories", { 100, ImGui::GetContentRegionAvail().y }, ImGuiChildFlags_ResizeX);
-
 		ImGui::EndChild();
 
 		ImGui::SameLine();
@@ -72,11 +75,9 @@ namespace DME
 		ImGui::BeginChild("##ContentObjects", ImVec2(ImGui::GetContentRegionAvail().x, ImGui::GetContentRegionAvail().y));
 
 		float cellSize = thumbnailSize + padding;
-
 		float panelWidth = ImGui::GetContentRegionAvail().x;
 		int columnCount = (int)(panelWidth / cellSize);
-		if (columnCount < 1)
-			columnCount = 1;
+		if (columnCount < 1) columnCount = 1;
 
 		ImGui::Columns(columnCount, 0, false);
 
@@ -89,18 +90,66 @@ namespace DME
 
 			if (directoryEntry.is_directory())
 			{
-				ImGuiDMEEditor::FolderCard(filenameString.c_str(), reinterpret_cast<void*>(static_cast<uintptr_t>(m_FolderIcon->GetRendererID())), nullptr, nullptr, { 0, 1 }, {1, 0}, ImGuiButtonFlags_None);
+				ImGuiDMEEditor::FolderCard(filenameString.c_str(),
+					reinterpret_cast<void*>(static_cast<uintptr_t>(m_FolderIcon->GetRendererID())),
+					nullptr, nullptr, { 0,1 }, { 1,0 }, ImGuiButtonFlags_None);
 			}
 			else
 			{
-				ImGuiDMEEditor::CardWithAssetType(filenameString.c_str(), reinterpret_cast<void*>(static_cast<uintptr_t>(m_FileIcon->GetRendererID())), "Texture", "Not hint", {0, 1}, {1, 0}, glm::vec4(0.25f, 0.25f, 0.25f, 1.0f), ImGuiButtonFlags_None);
+				auto ext = path.extension().string();
+				std::transform(ext.begin(), ext.end(), ext.begin(), ::tolower);
+
+				if (ext == ".png" || ext == ".jpg" || ext == ".jpeg" || ext == ".bmp" || ext == ".tga")
+				{
+					Ref<Texture2D> texture;
+					auto it = m_TextureCache.find(path.string());
+					if (it != m_TextureCache.end())
+						texture = it->second;
+					else
+					{
+						texture = Texture2D::Create(path.string());
+						m_TextureCache[path.string()] = texture;
+					}
+
+					ImGuiDMEEditor::CardWithAssetType(
+						filenameString.c_str(),
+						reinterpret_cast<void*>(static_cast<uintptr_t>(texture->GetRendererID())),
+						"Texture",
+						path.string().c_str(),
+						{ 0,1 }, { 1,0 },
+						glm::vec4(1.0f, 1.0f, 1.0f, 1.0f),
+						ImGuiButtonFlags_None);
+				}
+				else if (ext == ".dme")
+				{
+					ImGuiDMEEditor::CardWithAssetType(
+						filenameString.c_str(),
+						reinterpret_cast<void*>(static_cast<uintptr_t>(m_SceneIcon->GetRendererID())),
+						"File",
+						"Not hint",
+						{ 0,1 }, { 1,0 },
+						glm::vec4(1.0f, 1.0f, 1.0f, 1.0f),
+						ImGuiButtonFlags_None);
+				}
+				else
+				{
+					ImGuiDMEEditor::CardWithAssetType(
+						filenameString.c_str(),
+						reinterpret_cast<void*>(static_cast<uintptr_t>(m_FileIcon->GetRendererID())),
+						"File",
+						"Not hint",
+						{ 0,1 }, { 1,0 },
+						glm::vec4(1.0f, 1.0f, 1.0f, 1.0f),
+						ImGuiButtonFlags_None);
+				}
 			}
 
 			if (ImGui::BeginDragDropSource())
 			{
 				auto relativePath = std::filesystem::relative(path, g_AssetPath);
 				const wchar_t* itemPath = relativePath.c_str();
-				ImGui::SetDragDropPayload("CONTENT_BROWSER_ITEM", itemPath, (wcslen(itemPath) + 1) * sizeof(wchar_t));
+				ImGui::SetDragDropPayload("CONTENT_BROWSER_ITEM", itemPath,
+					(wcslen(itemPath) + 1) * sizeof(wchar_t));
 				ImGui::EndDragDropSource();
 			}
 
@@ -108,17 +157,13 @@ namespace DME
 			{
 				if (directoryEntry.is_directory())
 					m_CurrentDirectory /= path.filename();
-
 			}
 
 			ImGui::NextColumn();
-
 			ImGui::PopID();
 		}
-		
 
 		ImGui::EndChild();
-
 		ImGui::End();
 	}
 

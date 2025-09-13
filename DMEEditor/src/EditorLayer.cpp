@@ -90,7 +90,6 @@ namespace DME
 
 		}
 		
-		//Render
 		Renderer2D::ResetStats();
 		m_Framebuffer->Bind();
 		RenderCommand::SetClearColor({ 0.07f, 0.07f, 0.07f, 1.0f });
@@ -271,6 +270,8 @@ namespace DME
 			ImGui::EndChild();
 
 		}
+		
+	
 	}
 	void EditorLayer::UITabBar()
 	{
@@ -337,7 +338,6 @@ namespace DME
 			ImGui::PopStyleColor();
 		}
 		
-
 	}
 
 	void EditorLayer::SerializeScene(Ref<Scene> scene, const std::filesystem::path& path)
@@ -630,6 +630,7 @@ namespace DME
 				Renderer2D::DrawCircle(position, glm::vec4(1.0f, 0.5f, 0.0f, 1.0f), 0.15f);
 
 			}
+
 		}
 
 		Renderer2D::EndScene();

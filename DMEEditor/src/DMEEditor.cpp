@@ -1,22 +1,12 @@
+#include <dme.h>
 
-// --- Dependencies --------------------------------------------//
-#include <dme.h>												//
-#include <ImGui/imgui.h>										//
-#include <glm/gtc/type_ptr.hpp>									//
-#include <glm/gtc/matrix_transform.hpp>							//
-// -------------------------------------------------------------//
+#include "EditorLayer.h"
+#include "Platform/OpenGL/OpenGLShader.h"
 
-// --- DME/Core/ ---------------------------------------------//
-#include <DME/Core/EntryPoint.h>								//
-// -------------------------------------------------------------//
-
-// --- Platform/OpenGL/ ----------------------------------------//
-#include "Platform/OpenGL/OpenGLShader.h"						//
-// -------------------------------------------------------------//
-
-// --- src -----------------------------------------------------//
-#include "EditorLayer.h"										//
-// -------------------------------------------------------------//
+#include <ImGui/imgui.h>
+#include <DME/Core/EntryPoint.h>
+#include <glm/gtc/type_ptr.hpp>
+#include <glm/gtc/matrix_transform.hpp>
 
 namespace DME
 {
