@@ -12,7 +12,7 @@
 namespace DME
 {
     namespace ImGuiDMEEditor
-    {
+    { 
         bool Checkbox(const char* label, bool* v)
         {
             ImGuiWindow* window = ImGui::GetCurrentWindow();
@@ -83,6 +83,7 @@ namespace DME
             IMGUI_TEST_ENGINE_ITEM_INFO(id, label, g.LastItemData.StatusFlags | ImGuiItemStatusFlags_Checkable | (*v ? ImGuiItemStatusFlags_Checked : 0));
             return pressed;
         }
+
         bool CheckboxAsRadio(const char* label, bool* value, unsigned long long* iconTexture)
         {
             ImGuiWindow* window = ImGui::GetCurrentWindow();
@@ -187,6 +188,7 @@ namespace DME
 
             return pressed;
         }
+
         bool RadioButton(const char* label, bool active)
         {
             ImGuiWindow* window = ImGui::GetCurrentWindow();
@@ -389,14 +391,15 @@ namespace DME
 			return pressed;
 		}
 
-		bool CardWithAssetType(const char* name_id, void* image, const char* type, const char* hint, const glm::vec2& uv0, const glm::vec2& uv1, const glm::vec4& tint_col, int flags)
+		bool CardWithAssetType(const char* name_id, void* image, const char* type, const char* extension, const char* hint, const glm::vec2& uv0, const glm::vec2& uv1, const glm::vec4& tint_col, int flags, const glm::vec4& asset_type_color)
         {
             ImGuiContext& g = *GImGui;
             ImGuiWindow* window = ImGui::GetCurrentWindow();
             if (window->SkipItems)
                 return false;
 
-            ImGuiID id = ImGui::GetID(name_id);
+            std::string global_id = std::format("{0}##{1}", name_id, extension);
+            ImGuiID id = ImGui::GetID(global_id.c_str());
 
             const ImVec2 name_id_size = ImGui::CalcTextSize(name_id, NULL, true);
 
@@ -418,13 +421,11 @@ namespace DME
             window->DrawList->AddRectFilled(bb.Min + ImVec2(5, 5), bb.Min + ImVec2(115, 115), ImColor(0.10f, 0.10f, 0.10f, 1.0f), 4.0f, ImDrawFlags_RoundCornersAll);
             window->DrawList->AddImageRounded(image, bb.Min + ImVec2(10, 10), bb.Min + ImVec2(110, 110), ImVec2(uv0.x, uv0.y), ImVec2(uv1.x, uv1.y), ImColor(tint_col.r, tint_col.g, tint_col.b, tint_col.a), 4.0f, ImDrawFlags_RoundCornersAll);
 
-            window->DrawList->AddRect(bb.Min + ImVec2(6, 6), bb.Min + ImVec2(114, 114), ImColor(20, 20, 20, 255),
-                
-                3.0f, ImDrawFlags_RoundCornersAll, 3.0f);
+            window->DrawList->AddRectFilled(bb.Min + ImVec2(5, 114), bb.Min + ImVec2(115, 117), ImColor(asset_type_color.r, asset_type_color.g, asset_type_color.b, asset_type_color.a), 3, ImDrawFlags_RoundCornersBottomLeft | ImDrawFlags_RoundCornersBottomRight);
 
 			ImGui::PushFont(ImGui::GetIO().Fonts->Fonts[4]);
 			{
-				ImRect text_bb(bb.Min + ImVec2(5, 120), bb.Min + ImVec2(115, 140));
+				ImRect text_bb(bb.Min + ImVec2(10, 120), bb.Min + ImVec2(110, 140));
 				ImGui::RenderTextClipped(text_bb.Min, text_bb.Max, name_id, NULL, NULL, ImVec2(0.0f, 0.0f), &text_bb);
 			}
 			ImGui::PopFont();
@@ -432,12 +433,31 @@ namespace DME
 			std::string cast_string = std::format("{0} ({1})", type, hint);
 			ImGui::PushFont(ImGui::GetIO().Fonts->Fonts[0]);
 			{
-				ImRect th_bb(bb.Min + ImVec2(5, bb.Max.y - 25), bb.Min + ImVec2(115, bb.Max.y - 5));
-				ImGui::RenderTextClipped(th_bb.Min, th_bb.Max, cast_string.c_str(), NULL, NULL, ImVec2(0.0f, 0.0f), &th_bb);
+				ImRect th_bb(bb.Min + ImVec2(5, 180), bb.Min + ImVec2(115, 200));
+				ImGui::RenderTextClipped(th_bb.Min, th_bb.Max, cast_string.c_str(), NULL, NULL, ImVec2(0.5f, 0.0f), &th_bb);
 			}
 			ImGui::PopFont();
 
 			window->DrawList->AddRect(bb.Min, bb.Max, ImColor(15, 15, 15, 255), 4.0f, ImDrawFlags_RoundCornersAll, 3.0f);
+
+            if (ImGui::IsItemHovered())
+            {
+                ImGui::PushStyleColor(ImGuiCol_PopupBg, ImVec4(0.2f, 0.2f, 0.2f, 1.0f));
+                ImGui::PushStyleVar(ImGuiStyleVar_WindowRounding, 3.0f);
+                if (ImGui::BeginTooltip())
+                {
+
+                    ImGui::Text("Name: %s", name_id);
+                    ImGui::Text("Extension: %s", extension);
+                    ImGui::Text("Type: %s", type);
+                    ImGui::Text("Directory: %s", hint);
+
+					ImGui::EndTooltip();
+                }
+                ImGui::PopStyleVar();
+                ImGui::PopStyleColor();
+            }
+          
 
             return pressed;
         }

@@ -312,7 +312,7 @@ namespace DME {
     void PropertiesPanel::DrawVec3Control(const std::string& label, glm::vec3& values) {
         ImGui::PushID(label.c_str());
         ImGui::Columns(2);
-        ImGui::SetColumnWidth(0, 120.0f);
+        ImGui::SetColumnWidth(0, 90.0f);
         ImGui::Text(label.c_str());
         ImGui::NextColumn();
 		ImGui::PushMultiItemsWidths(3, ImGui::CalcItemWidth() + 50);
