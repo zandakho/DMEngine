@@ -18,6 +18,17 @@ namespace DME
 	static float padding = 16.0f;
 	static float thumbnailSize = 101.0f;
 
+	static void IsCheckerTextError(bool check, const ImVec4& color, const char* format, ...)
+	{
+		if (check)
+			return;
+
+		va_list args;
+		va_start(args, format);
+		ImGui::TextColoredV(color, format, args);
+		va_end(args);
+	}
+
 	ContentBrowserPanel::ContentBrowserPanel() : m_CurrentDirectory(g_AssetPath)
 	{
 		m_FolderIcon = Texture2D::Create("Resources/Icons/ContentBrowser/FolderIcon_Img.png");
@@ -66,20 +77,58 @@ namespace DME
 		}
 		if (ImGui::BeginPopup("AddItemDialogWindow"))
 		{
-			ImGui::Text("Create new item:");
+			ImGui::SeparatorText("New item");
 			ImGui::Separator();
-
-			ImGui::InputText("Folder name", m_NewFolderName, IM_ARRAYSIZE(m_NewFolderName));
 
 			if (ImGui::Button("Add new folder"))
 			{
-				std::filesystem::path newFolder = m_CurrentDirectory / m_NewFolderName;
-
-				if (!std::filesystem::exists(newFolder))
-					std::filesystem::create_directory(newFolder);
-
-				ImGui::CloseCurrentPopup();
+				ImGui::OpenPopup("ModalWindow");
 			}
+
+			ImGui::PushStyleVar(ImGuiStyleVar_WindowRounding, 4.0f);
+			if (ImGui::BeginPopupModal("ModalWindow", nullptr, ImGuiWindowFlags_NoMove | ImGuiWindowFlags_NoResize | ImGuiWindowFlags_NoTitleBar))
+			{
+				std::filesystem::path newFolder = m_CurrentDirectory / m_NewFolderName;
+				ImGui::InputText("Folder name", m_NewFolderName, IM_ARRAYSIZE(m_NewFolderName));
+
+				bool isNameEmpty = strlen(m_NewFolderName) == 0;
+				bool folderAlreadyExists = std::filesystem::exists(newFolder);
+				bool isSameAsCurrent = (newFolder == m_CurrentDirectory);
+
+				bool canCreateFolder = !isNameEmpty && !folderAlreadyExists && !isSameAsCurrent;
+
+				IsCheckerTextError(!isNameEmpty, ImVec4(1, 0.0f, 0, 1), "Folder name cannot be empty");
+
+				IsCheckerTextError(!folderAlreadyExists, ImVec4(1, 0.0f, 0, 1), "A folder with this name already exists");
+
+				IsCheckerTextError(!isSameAsCurrent, ImVec4(1, 0.0f, 0, 1), "Cannot create folder with current directory name");
+
+				ImGui::BeginDisabled(!canCreateFolder);
+				if (ImGui::Button("Add"))
+				{
+
+					if (!std::filesystem::exists(newFolder))
+						std::filesystem::create_directory(newFolder);
+
+					ImGui::CloseCurrentPopup();
+				}
+				ImGui::EndDisabled();
+
+				ImGui::SameLine();
+
+				if (ImGui::Button("Cancel"))
+				{
+					ImGui::CloseCurrentPopup();
+
+				}
+
+				if (!ImGui::IsWindowHovered() && ImGui::IsMouseDoubleClicked(0))
+					ImGui::CloseCurrentPopup();
+
+				ImGui::EndPopup();
+			}
+
+			ImGui::PopStyleVar();
 
 			ImGui::SameLine();
 			if (ImGui::Button("Cancel"))
