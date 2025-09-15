@@ -15,8 +15,8 @@ namespace DME {
         SceneHierarchyPanel() = default;
         SceneHierarchyPanel(const Ref<Scene>& context);
 
-		virtual void OnAttach() override;
-		virtual void OnDetach() override;
+		void OnAttach() override;
+		void OnDetach() override;
 
         void SetContext(const Ref<Scene>& context);
         Ref<Scene> GetContext() { return m_Context; }

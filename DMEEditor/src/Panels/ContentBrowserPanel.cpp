@@ -1,22 +1,24 @@
 ﻿#include "dmepch.h"
 
 #include "ContentBrowserPanel.h"
+#include "FontLibrary.h"
 
 #include "DME/Core/Input.h"
 
-#include "FontLibrary.h"
-
 #include "DME/ImGui/ImGuiDMEEditor.h"
 
+#define IMGUI_DEFINE_MATH_OPERATORS_IMPLEMENTED
+
 #include <ImGui/imgui.h>
+#include <ImGui/imgui_internal.h>
 
 namespace DME
 {
 	
 	extern const std::filesystem::path g_AssetPath = "assets";
 
-	static float padding = 16.0f;
-	static float thumbnailSize = 101.0f;
+	static float padding = 20.0f;
+	static float thumbnailSize = 100.0f;
 
 	static void IsCheckerTextError(bool check, const ImVec4& color, const char* format, ...)
 	{
@@ -75,6 +77,7 @@ namespace DME
 			strcpy_s(m_NewFolderName, "New Folder");
 			ImGui::OpenPopup("AddItemDialogWindow");
 		}
+
 		if (ImGui::BeginPopup("AddItemDialogWindow"))
 		{
 			ImGui::SeparatorText("New item");
@@ -151,6 +154,7 @@ namespace DME
 		{
 			ImGui::DragFloat("Thumbnail Size", &thumbnailSize, 0.1f, 80.0f, 120.0f, "%.1f", ImGuiSliderFlags_WrapAround);
 			ImGui::DragFloat("Padding", &padding, 0.1f, 14.0f, 20.0f, "%.1f", ImGuiSliderFlags_WrapAround);
+
 			ImGui::EndPopup();
 		}
 
@@ -166,7 +170,7 @@ namespace DME
 
 		float cellSize = thumbnailSize + padding;
 		float panelWidth = ImGui::GetContentRegionAvail().x;
-		int columnCount = (int)(panelWidth / cellSize);
+		auto columnCount = static_cast<int>(panelWidth / cellSize);
 		if (columnCount < 1) columnCount = 1;
 
 		ImGui::Columns(columnCount, 0, false);
@@ -177,8 +181,9 @@ namespace DME
 			std::string filenameString = path.stem().string();
 			std::string filenameWithExt = path.filename().string();
 			std::string fileExtension = path.extension().string();
+			std::string PushID = std::format("{0}-{1}", filenameString, fileExtension);
 
-			ImGui::PushID(filenameString.c_str());
+			ImGui::PushID(PushID.c_str());
 
 			if (directoryEntry.is_directory())
 			{
@@ -271,7 +276,9 @@ namespace DME
 		}
 
 		ImGui::EndChild();
+
 		ImGui::End();
+
 	}
 
 	void ContentBrowserPanel::DrawDirectoryTree(const std::filesystem::path& directory)
@@ -327,19 +334,17 @@ namespace DME
 		bool shift = Input::IsKeyPressed(Key::LeftShift) || Input::IsKeyPressed(Key::RightShift);
 		bool alt = Input::IsKeyPressed(Key::LeftAlt) || Input::IsKeyPressed(Key::RightAlt);
 
+		switch (event.GetKeyCode())
+		{
+			case Key::A:
+				DME_INFO("Pressed {}", event.GetName());
+		}
+
 		return false;
 	}
 
 	bool ContentBrowserPanel::OnMouseButtonPressed(MouseButtonPressedEvent& event)
 	{
-		switch (event.GetMouseButton())
-		{
-			case Mouse::ButtonRight:
-			{
-				DME_CORE_INFO("Pressed: {0}", event.GetName());
-			}
-		}
-
 		return false;
 	}
 }

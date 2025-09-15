@@ -22,7 +22,7 @@ namespace DME
             ImGuiContext& g = *GImGui;
             const ImGuiStyle& style = g.Style;
             const ImGuiID id = window->GetID(label);
-            const ImVec2 label_size = ImGui::CalcTextSize(label, NULL, true);
+            const ImVec2 label_size = ImGui::CalcTextSize(label, nullptr, true);
 
             const float square_sz = ImGui::GetFrameHeight();
             const ImVec2 pos = window->DC.CursorPos;
@@ -39,7 +39,7 @@ namespace DME
 
             bool checked = *v;
             if (is_multi_select)
-                ImGui::MultiSelectItemHeader(id, &checked, NULL);
+                ImGui::MultiSelectItemHeader(id, &checked, nullptr);
 
             bool hovered, held;
             bool pressed = ImGui::ButtonBehavior(total_bb, id, &hovered, &held);
@@ -95,7 +95,7 @@ namespace DME
             const ImGuiID id = window->GetID(label);
 
             // Calculate sizes
-            const ImVec2 label_size = ImGui::CalcTextSize(label, NULL, true);
+            const ImVec2 label_size = ImGui::CalcTextSize(label, nullptr, true);
             const float circle_radius = 8.0f;
             const ImVec2 circle_size = ImVec2(circle_radius * 2, circle_radius * 2);
             const ImVec2 icon_size = iconTexture ? ImVec2(16.0f, 16.0f) : ImVec2(0.0f, 0.0f);
@@ -198,7 +198,7 @@ namespace DME
             ImGuiContext& g = *GImGui;
             const ImGuiStyle& style = g.Style;
             const ImGuiID id = window->GetID(label);
-            const ImVec2 label_size = ImGui::CalcTextSize(label, NULL, true);
+            const ImVec2 label_size = ImGui::CalcTextSize(label, nullptr, true);
 
             const float square_sz = ImGui::GetFrameHeight();
             const ImVec2 pos = window->DC.CursorPos;
@@ -265,7 +265,7 @@ namespace DME
             ImGuiContext& g = *GImGui;
             ImGuiStyle& style = g.Style;
             ImVec2 pos = window->DC.CursorPos;
-            ImVec2 label_size = ImGui::CalcTextSize(label, NULL, true);
+            ImVec2 label_size = ImGui::CalcTextSize(label, nullptr, true);
 
             const bool menuset_is_open = IsRootOfOpenMenuSet();
             if (menuset_is_open)
@@ -331,7 +331,7 @@ namespace DME
             ImGuiID id = window->GetID(label);
             const ImGuiStyle& style = g.Style;
 
-            const ImVec2 label_size = ImGui::CalcTextSize(label, NULL, true);
+            const ImVec2 label_size = ImGui::CalcTextSize(label, nullptr, true);
             ImVec2 actual_size = ImGui::CalcItemSize(ImVec2(size.x, size.y), label_size.x + 10, label_size.y + 10);
 
             const ImRect bb(window->DC.CursorPos, window->DC.CursorPos + actual_size);
@@ -365,7 +365,7 @@ namespace DME
 			ImGuiID id = window->GetID(label);
 			const ImGuiStyle& style = g.Style;
 
-			const ImVec2 label_size = ImGui::CalcTextSize(label, NULL, true);
+			const ImVec2 label_size = ImGui::CalcTextSize(label, nullptr, true);
 			ImVec2 actual_size = ImGui::CalcItemSize(ImVec2(40 + label_size.x, 28), 32, 28);
 
 			const ImRect bb(window->DC.CursorPos, window->DC.CursorPos + actual_size);
@@ -401,7 +401,7 @@ namespace DME
             std::string global_id = std::format("{0}##{1}", name_id, extension);
             ImGuiID id = ImGui::GetID(global_id.c_str());
 
-            const ImVec2 name_id_size = ImGui::CalcTextSize(name_id, NULL, true);
+            const ImVec2 name_id_size = ImGui::CalcTextSize(name_id, nullptr, true);
 
             const ImVec2 padding = g.Style.FramePadding;
             const ImRect bb(window->DC.CursorPos, window->DC.CursorPos + ImVec2(120, 200));
@@ -440,25 +440,24 @@ namespace DME
 
 			window->DrawList->AddRect(bb.Min, bb.Max, ImColor(15, 15, 15, 255), 4.0f, ImDrawFlags_RoundCornersAll, 3.0f);
 
-            if (ImGui::IsItemHovered())
-            {
-                ImGui::PushStyleColor(ImGuiCol_PopupBg, ImVec4(0.2f, 0.2f, 0.2f, 1.0f));
-                ImGui::PushStyleVar(ImGuiStyleVar_WindowRounding, 3.0f);
-                if (ImGui::BeginTooltip())
-                {
 
-                    ImGui::Text("Name: %s", name_id);
-                    ImGui::Text("Extension: %s", extension);
-                    ImGui::Text("Type: %s", type);
-                    ImGui::Text("Directory: %s", hint);
+            if (ImGui::IsItemHovered(ImGuiHoveredFlags_DelayNormal))
+            {
+				ImGui::PushStyleColor(ImGuiCol_PopupBg, ImVec4(0.2f, 0.2f, 0.2f, 1.0f));
+				ImGui::PushStyleVar(ImGuiStyleVar_WindowRounding, 3.0f);
+				if (ImGui::BeginTooltipEx(ImGuiTooltipFlags_OverridePrevious, ImGuiWindowFlags_None))
+				{
+
+					ImGui::Text("Name: %s", name_id);
+					ImGui::Text("Extension: %s", extension);
+					ImGui::Text("Type: %s", type);
+					ImGui::Text("Directory: %s", hint);
 
 					ImGui::EndTooltip();
-                }
-                ImGui::PopStyleVar();
-                ImGui::PopStyleColor();
+				}
+				ImGui::PopStyleVar();
+				ImGui::PopStyleColor();
             }
-          
-
             return pressed;
         }
 
@@ -470,7 +469,7 @@ namespace DME
                 return false;
 
             ImGuiID id = ImGui::GetID(name_id);
-            const ImVec2 name_id_size = ImGui::CalcTextSize(name_id, NULL, true);
+            const ImVec2 name_id_size = ImGui::CalcTextSize(name_id, nullptr, true);
 
             const ImVec2 padding = g.Style.FramePadding;
             const ImRect bb(window->DC.CursorPos, window->DC.CursorPos + ImVec2(120, 200));
@@ -497,8 +496,8 @@ namespace DME
 			ImGui::RenderTextClipped(text_bb.Min,
 				text_bb.Max,
 				name_id,
-				NULL,
-				NULL,
+				nullptr,
+                nullptr,
 				ImVec2(0.5f, 0.0f),
 				&text_bb);
 

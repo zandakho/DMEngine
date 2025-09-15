@@ -17,8 +17,8 @@ namespace DME
 		EditorLayer();
 		virtual ~EditorLayer() = default;
 
-		virtual void OnAttach() override;
-		virtual void OnDetach() override;
+		void OnAttach() override;
+		void OnDetach() override;
 
 		void OnUpdate(TimeStep ts) override;
 		void OnImGuiRender() override;

@@ -561,6 +561,7 @@ namespace DME
 
 				case Key::Delete:
 				{
+					DME_CORE_WARNING("Delete entity: {0}", m_SceneHierarchyPanel.GetSelectedEntity().GetName());
 					DeleteSelectedEntity();
 				}
 			}

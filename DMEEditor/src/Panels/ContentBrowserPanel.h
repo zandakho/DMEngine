@@ -21,8 +21,8 @@ namespace DME
 
 		ContentBrowserPanel();
 
-		virtual void OnAttach() override;
-		virtual void OnDetach() override;
+		void OnAttach() override;
+		void OnDetach() override;
 
 		void OnEvent(Event& event) override;
 		void OnUpdate(TimeStep ts) override;
