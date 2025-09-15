@@ -10,9 +10,9 @@ First, install the latest version of VulkanSDK on your computer (the Python scri
 VulkanSDK:
 
 [![Lunarg](https://img.shields.io/badge/-Vulkan-090909?style=for-the-badge&logo=Vulkan&logoColor=47C5FB)](https://vulkan.lunarg.com/)
-[![Lunarg](https://img.shields.io/badge/-For_Windows-090909?style=for-the-badge&logo=Vulkan&logoColor=47C5FB)](https://vulkan.lunarg.com/sdk/home#windows)
-[![Lunarg](https://img.shields.io/badge/-For_Linux-090909?style=for-the-badge&logo=Vulkan&logoColor=47C5FB)](https://vulkan.lunarg.com/sdk/home#linux)
-[![Lunarg](https://img.shields.io/badge/-For_Mac-090909?style=for-the-badge&logo=Vulkan&logoColor=47C5FB)](https://vulkan.lunarg.com/sdk/home#mac)
+[![Lunarg](https://img.shields.io/badge/-For_Windows-090909?style=for-the-badge&logo=Vulkan&logoColor=47C5FB)](https://sdk.lunarg.com/sdk/download/1.4.321.1/windows/vulkansdk-windows-X64-1.4.321.1.exe)
+[![Lunarg](https://img.shields.io/badge/-For_Linux-090909?style=for-the-badge&logo=Vulkan&logoColor=47C5FB)](https://sdk.lunarg.com/sdk/download/1.4.321.1/linux/vulkansdk-linux-x86_64-1.4.321.1.tar.xz)
+[![Lunarg](https://img.shields.io/badge/-For_Mac-090909?style=for-the-badge&logo=Vulkan&logoColor=47C5FB)](https://sdk.lunarg.com/sdk/download/1.4.321.0/mac/vulkansdk-macos-1.4.321.0.zip)
 
 Clone this repository:
 
