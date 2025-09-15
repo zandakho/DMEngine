@@ -1,4 +1,4 @@
-include "./vendor/premake/premake_customization/solution_items.lua"
+include "./vendor/premake/PremakeCustomization/SolutionItems.lua"
 include "Dependencies.lua"
 
 workspace "DME"
@@ -12,7 +12,7 @@ workspace "DME"
         "Dist"
     }
 
-    solution_items
+    SolutionItems
     {
         ".editorconfig"
     }
@@ -42,7 +42,4 @@ group ""
 
 group "Tools"
     include "DMEEditor"
-group ""
-
-group "Other"
 group ""
