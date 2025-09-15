@@ -142,9 +142,4 @@ namespace DME
 			glfwMakeContextCurrent(backup_current_context);
 		}
 	}
-
-	void ImGuiLayer::SetImGuiStyle()
-	{
-
-	}
 }

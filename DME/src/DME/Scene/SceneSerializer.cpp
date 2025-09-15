@@ -254,7 +254,7 @@ namespace DME
 		if (entity.HasComponent<CircleCollider2DComponent>())
 		{
 			out << YAML::Key << "CircleCollider2DComponent";
-			out << YAML::BeginMap; // CircleCollider2DComponent
+			out << YAML::BeginMap;
 
 			auto& cc2dComponent = entity.GetComponent<CircleCollider2DComponent>();
 			out << YAML::Key << "Offset" << YAML::Value << cc2dComponent.Offset;
@@ -264,7 +264,7 @@ namespace DME
 			out << YAML::Key << "Restitution" << YAML::Value << cc2dComponent.Restitution;
 			out << YAML::Key << "RestitutionThreshold" << YAML::Value << cc2dComponent.RestitutionThreshold;
 
-			out << YAML::EndMap; // CircleCollider2DComponent
+			out << YAML::EndMap;
 		}
 
 		out << YAML::EndMap;

@@ -281,7 +281,7 @@ namespace DME
                 ImGuiSelectableFlags_NoSetKeyOwner |
                 ImGuiSelectableFlags_SetNavIdOnHover;
 
-            float circle_size = g.FontSize * 0.55f;
+            float circle_size = g.FontSize * 0.60f;
             float spacing = style.ItemSpacing.x;   
             float total_w = circle_size + spacing + label_size.x;
 
@@ -293,16 +293,16 @@ namespace DME
                 ImVec2 center = pos + ImVec2(circle_size * 0.5f, label_size.y * 0.5f + g.FontSize * 0.05f);
 
                 if (selected)
-                    window->DrawList->AddCircleFilled(center, circle_size * 0.5f, ImGui::GetColorU32(ImGuiCol_Text), 16);
+					window->DrawList->AddCircleFilled(center, circle_size * 0.4f, ImColor(185, 185, 185, 255), 16);
                 else
-                    window->DrawList->AddCircle(center, circle_size * 0.5f, ImGui::GetColorU32(ImGuiCol_Text), 16, 1.6f);
+					window->DrawList->AddCircleFilled(center, circle_size * 0.4f, ImColor(185, 185, 185, 50), 16);
 
                 ImGui::RenderText(pos + ImVec2(circle_size + spacing, 0.0f), label);
 
                 if (shortcut && shortcut[0])
                 {
                     ImVec2 shortcut_size = ImGui::CalcTextSize(shortcut);
-                    ImVec2 shortcut_pos = ImVec2(window->WorkRect.Max.x - shortcut_size.x - style.ItemSpacing.x,
+                    ImVec2 shortcut_pos = ImVec2(window->WorkRect.Max.x - shortcut_size.x - spacing,
                         pos.y);
                     ImGui::PushStyleColor(ImGuiCol_Text, style.Colors[ImGuiCol_TextDisabled]);
                     ImGui::RenderText(shortcut_pos, shortcut);

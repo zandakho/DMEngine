@@ -40,6 +40,8 @@ namespace DME
 		m_IconRotate = Texture2D::Create("Resources/Icons/Viewport/Viewport_Rotate_Img.png");
 		m_IconScale = Texture2D::Create("Resources/Icons/Viewport/Viewport_Resize_Img.png");
 
+		m_SettingButton = Texture2D::Create("Resources/Icons/Editor/SettingsIcon_Img.png");
+
 		FramebufferSpecification fbSpec;
 		fbSpec.Attachments = { FramebufferTextureFormat::RGBA8, FramebufferTextureFormat::RED_INTEGER, FramebufferTextureFormat::Depth };
 		fbSpec.Width = 1600;
@@ -182,6 +184,8 @@ namespace DME
 			ImGui::ShowDemoWindow();
 		if (m_RendererStatsWindow)
 			RendererStatsWindow();
+		if (m_ConsoleWindow)
+			ConsoleWindow();
 
 	}
 
@@ -279,6 +283,7 @@ namespace DME
 		ImGui::PushStyleColor(ImGuiCol_HeaderHovered, ImVec4(0.2f, 0.5f, 0.8f, 0.7f));
 		if (ImGui::BeginMenuBar())
 		{
+			ImGui::PushStyleColor(ImGuiCol_PopupBg, ImVec4(0.05f, 0.05f, 0.05f, 1.0f));
 			if (ImGui::BeginMenu("File"))
 			{
 				if (ImGui::MenuItem("New", "Ctrl+N"))
@@ -312,14 +317,15 @@ namespace DME
 			if (ImGui::BeginMenu("Window"))
 			{
 				ImGui::SeparatorText("Main");
-				ImGui::MenuItem("Scene Hierarchy", nullptr, &m_SceneHierarchyWindow);
-				ImGui::MenuItem("Viewport", nullptr, &m_ViewportWindow);
+				ImGui::Checkbox("Scene Hierarchy", &m_SceneHierarchyWindow);
+				ImGui::Checkbox("Viewport", &m_ViewportWindow);
 
 				ImGui::SeparatorText("Other");
-				ImGui::MenuItem("Settings", nullptr, &m_SettingsWindow);
-				ImGui::MenuItem("Debug", nullptr, &m_DebugWindow);
-				ImGui::MenuItem("Demo", nullptr, &m_DemoWindow);
-				ImGui::MenuItem("Renderer Stats", nullptr, &m_RendererStatsWindow);
+				ImGui::Checkbox("Settings", &m_SettingsWindow);
+				ImGui::Checkbox("Debug", &m_DebugWindow);
+				ImGui::Checkbox("Demo", &m_DemoWindow);
+				ImGui::Checkbox("Renderer Stats",  &m_RendererStatsWindow);
+				ImGui::Checkbox("Console",  &m_ConsoleWindow);
 
 				ImGui::EndMenu();
 			}
@@ -327,12 +333,37 @@ namespace DME
 			if (ImGui::BeginMenu("Mode"))
 			{
 				ImGui::SeparatorText("View mode");
+
 				if (ImGuiDMEEditor::MenuItemEx("Default", nullptr, nullptr, s_DebugRendererMode == DebugRendererMode::Normal)) s_DebugRendererMode = DebugRendererMode::Normal;
 				if (ImGuiDMEEditor::MenuItemEx("Wireframe", nullptr, nullptr, s_DebugRendererMode == DebugRendererMode::Wireframe)) s_DebugRendererMode = DebugRendererMode::Wireframe;
 				if (ImGuiDMEEditor::MenuItemEx("Point", nullptr, nullptr, s_DebugRendererMode == DebugRendererMode::Point)) s_DebugRendererMode = DebugRendererMode::Point;
 
 				ImGui::EndMenu();
 			}
+
+			if (ImGui::BeginMenu("Log"))
+			{
+				ImGui::SeparatorText("Core");
+				ImGui::Checkbox("Core Log",			&DME::LogSettings::m_GlobalCoreLogger);
+				ImGui::Separator();
+				ImGui::Checkbox("Core Critical",	&DME::LogSettings::m_CoreCriticalLogger);
+				ImGui::Checkbox("Core Error",		&DME::LogSettings::m_CoreErrorLogger);
+				ImGui::Checkbox("Core Warning",		&DME::LogSettings::m_CoreWarningLogger);
+				ImGui::Checkbox("Core Info",		&DME::LogSettings::m_CoreInfoLogger);
+				ImGui::Checkbox("Core Trace",		&DME::LogSettings::m_CoreTraceLogger);
+
+				ImGui::SeparatorText("Default");
+				ImGui::Checkbox("Default Log",		&DME::LogSettings::m_GlobalLogger);
+				ImGui::Separator();
+				ImGui::Checkbox("Default Critical", &DME::LogSettings::m_CriticalLogger);
+				ImGui::Checkbox("Default Error",	&DME::LogSettings::m_ErrorLogger);
+				ImGui::Checkbox("Default Warning",	&DME::LogSettings::m_WarningLogger);
+				ImGui::Checkbox("Default Info",		&DME::LogSettings::m_InfoLogger);
+				ImGui::Checkbox("Default Trace",	&DME::LogSettings::m_TraceLogger);
+
+				ImGui::EndMenu();
+			}
+			ImGui::PopStyleColor();
 
 			ImGui::EndMenuBar();
 			ImGui::PopStyleColor();
@@ -802,6 +833,89 @@ namespace DME
 
 		ImGui::Text("Hovered Entity: %s", name.c_str());
 
+		ImGui::End();
+	}
+
+	void EditorLayer::ConsoleWindow()
+	{
+		const char* levels[] = { "All", "Info", "Warn", "Error", "Critical"};
+		static int currentLevel = 0;
+		static float ConsoleWindowFontScale = 1.0f;
+
+		if (ImGui::Begin("Console"))
+		{
+
+			if (ImGuiDMEEditor::IconButton("##ConsoleSettingsButton", reinterpret_cast<ImTextureID*>(static_cast<uintptr_t>(m_SettingButton->GetRendererID())), {30, 30}))
+				ImGui::OpenPopup("ConsoleSettingsWindow");
+
+			if (ImGui::BeginPopup("ConsoleSettingsWindow", ImGuiWindowFlags_NoMove))
+			{
+
+				ImGui::SliderFloat("ConsoleWindowFontScale", &ConsoleWindowFontScale, 0.5f, 1.5f, "%.1f");
+
+				if (ImGui::BeginCombo("Log Level", levels[currentLevel]))
+				{
+					for (int n = 0; n < IM_ARRAYSIZE(levels); n++)
+					{
+						bool isSelected = (currentLevel == n);
+						if (ImGui::Selectable(levels[n], isSelected))
+						{
+							currentLevel = n;
+							switch (n)
+							{
+								case 0: DME::LogSettings::m_LogFilter = spdlog::level::trace;    break;
+								case 1: DME::LogSettings::m_LogFilter = spdlog::level::info;     break;
+								case 2: DME::LogSettings::m_LogFilter = spdlog::level::warn;     break;
+								case 3: DME::LogSettings::m_LogFilter = spdlog::level::err;      break;
+								case 4: DME::LogSettings::m_LogFilter = spdlog::level::critical; break;
+							}
+						}
+						if (isSelected)
+							ImGui::SetItemDefaultFocus();
+					}
+					ImGui::EndCombo();
+				}
+
+				ImGui::EndPopup();
+			}
+
+			if (ImGui::BeginChild("Logs"))
+			{
+				ImGui::SetWindowFontScale(ConsoleWindowFontScale);
+				if (DME::Log::m_ImGuiSink)
+				{
+					const auto& buffer = DME::Log::m_ImGuiSink->GetBuffer();
+					for (auto& entry : buffer)
+					{
+						if (currentLevel != 0)
+						{
+							if (entry.level < DME::LogSettings::m_LogFilter)
+								continue;
+						}
+
+						ImVec4 color;
+						switch (entry.level)
+						{
+							case spdlog::level::trace:    color = ImVec4(1.0f, 1.0f, 1.0f, 1.0f); break;
+							case spdlog::level::info:     color = ImVec4(0.0f, 1.0f, 0.0f, 1.0f); break;
+							case spdlog::level::warn:     color = ImVec4(1.0f, 1.0f, 0.3f, 1.0f); break;
+							case spdlog::level::err:      color = ImVec4(1.0f, 0.4f, 0.4f, 1.0f); break;
+							case spdlog::level::critical: color = ImVec4(1.0f, 0.0f, 0.0f, 1.0f); break;
+						}
+
+						ImGui::PushFont(ImGui::GetIO().Fonts->Fonts[FontLibrary::OpenSansBold_21]);
+						ImGui::PushStyleColor(ImGuiCol_Text, color);
+						ImGui::TextUnformatted(entry.message.c_str());
+						ImGui::PopStyleColor();
+						ImGui::PopFont();
+					}
+
+					if (ImGui::GetScrollY() >= ImGui::GetScrollMaxY())
+						ImGui::SetScrollHereY(1.0f);
+				}
+			}
+			ImGui::EndChild();
+		}
 		ImGui::End();
 	}
 

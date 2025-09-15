@@ -1,5 +1,5 @@
 project "DMEEditor"
-    kind "ConsoleApp"
+    kind "WindowedApp"
     language "C++"
     cppdialect "C++20"
     staticruntime "off"
@@ -32,7 +32,8 @@ project "DMEEditor"
 
     filter "system:windows"
         systemversion "latest"
-
+        linkoptions { "/ENTRY:mainCRTStartup" }
+        
     filter "configurations:Debug"
         defines "DME_DEBUG"
         runtime "Debug"

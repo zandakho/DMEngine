@@ -23,9 +23,6 @@ namespace DME
 
 		void BlockEvents(bool block) { m_BlockEvents = block; }
 
-		void SetImGuiStyle();
-
-
 	private:
 		bool m_BlockEvents = true;
 	};

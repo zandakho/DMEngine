@@ -51,6 +51,7 @@ namespace DME
 		void ViewportWindow();
 		void DebugWindow();
 		void RendererStatsWindow();
+		void ConsoleWindow();
 
 	private:
 		bool OnKeyPressed(KeyPressedEvent& event);
@@ -100,6 +101,7 @@ namespace DME
 		
 		Ref<Texture2D> m_IconPlay, m_IconSimulate, m_IconStop;
 		Ref<Texture2D> m_IconCursor, m_IconMove, m_IconRotate, m_IconScale;
+		Ref<Texture2D> m_SettingButton;
 
 	private: // Window variables
 
@@ -113,6 +115,7 @@ namespace DME
 		bool m_DebugWindow = false;
 		bool m_DemoWindow = false;
 		bool m_RendererStatsWindow = false;
+		bool m_ConsoleWindow = true;
 	
 	};
 

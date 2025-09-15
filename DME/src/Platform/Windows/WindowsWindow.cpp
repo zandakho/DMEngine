@@ -88,15 +88,12 @@ namespace DME
 			++s_GLFWWindowCount;
 		}
 
-		//🔽
 		m_Context = GraphicsContext::Create(m_Window);
 		m_Context->Init();
-		//🔼
 
 		glfwSetWindowUserPointer(m_Window, &m_Data);
 		SetVSync(true);
 
-		//Set GLFW Callbacks
 		glfwSetWindowSizeCallback(m_Window, [](GLFWwindow* window, int width, int height) 
 		{
 			WindowData& data = *(WindowData*)glfwGetWindowUserPointer(window);
