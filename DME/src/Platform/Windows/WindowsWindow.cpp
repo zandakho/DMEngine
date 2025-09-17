@@ -17,26 +17,26 @@ namespace DME
 
 	static void GLFWErrorCallback(int error, const char* description)
 	{
-		DME_CORE_ERROR("GLFWErrorCallback (Code: {0}), Hint: {1}", error, description);
+		DME_CORE_ERROR("GLFWErrorCallback (Code: {0}), Hint: {1}", error, description)
 	}
 
 	WindowsWindow::WindowsWindow(const WindowProps& props)
 	{
-		DME_PROFILE_FUNCTION();
+		DME_PROFILE_FUNCTION()
 
 		Init(props);
 	}
 
 	WindowsWindow::~WindowsWindow()
 	{
-		DME_PROFILE_FUNCTION();
+		DME_PROFILE_FUNCTION()
 
 		Shutdown();
 	}
 
 	void WindowsWindow::OnUpdate()
 	{
-		DME_PROFILE_FUNCTION();
+		DME_PROFILE_FUNCTION()
 
 		glfwPollEvents();
 		m_Context->SwapBuffers();
@@ -44,7 +44,7 @@ namespace DME
 
 	void WindowsWindow::SetVSync(bool enabled)
 	{
-		DME_PROFILE_FUNCTION();
+		DME_PROFILE_FUNCTION()
 
 		if (enabled)
 		{
@@ -63,7 +63,7 @@ namespace DME
 	
 	void WindowsWindow::Init(const WindowProps& props)
 	{
-		DME_PROFILE_FUNCTION();
+		DME_PROFILE_FUNCTION()
 
 		m_Data.Title = props.Title;
 		m_Data.Width = props.Width;
@@ -71,19 +71,19 @@ namespace DME
 		m_Data.VSync = true;
 
 
-		DME_CORE_INFO("Creating window {0} ({1}, {2})", props.Title, props.Width, props.Height);
+		DME_CORE_INFO("Creating window {0} ({1}, {2})", props.Title, props.Width, props.Height)
 
 		if (s_GLFWWindowCount == 0)
 		{
-			DME_PROFILE_SCOPE("glfwInit");
+			DME_PROFILE_SCOPE("glfwInit")
 		
 			int succes = glfwInit();
-			DME_CORE_ASSERT(succes, "Could not initialize GLFW!");
+			DME_CORE_ASSERT(succes, "Could not initialize GLFW!")
 			glfwSetErrorCallback(GLFWErrorCallback);
 		}
 
 		{
-			DME_PROFILE_SCOPE("glfwCreateWindows");
+			DME_PROFILE_SCOPE("glfwCreateWindows")
 			m_Window = glfwCreateWindow(static_cast<uint32_t>(props.Width), static_cast<uint32_t>(props.Height), m_Data.Title.c_str(), nullptr, nullptr);
 			++s_GLFWWindowCount;
 		}
@@ -190,7 +190,7 @@ namespace DME
 
 	void WindowsWindow::Shutdown()
 	{
-		DME_PROFILE_FUNCTION();
+		DME_PROFILE_FUNCTION()
 
 		glfwDestroyWindow(m_Window);
 		--s_GLFWWindowCount;

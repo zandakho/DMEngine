@@ -12,11 +12,11 @@ namespace DME
 	{
 		switch (Renderer::GetAPI())
 		{
-			case RendererAPI::API::None:		DME_CORE_ASSERT(false, "RendererAPI::None is currently not supported!"); return nullptr;
+			case RendererAPI::API::None:		DME_CORE_ASSERT(false, "RendererAPI::None is currently not supported!") return nullptr;
 			case RendererAPI::API::OpenGL:		return CreateRef<OpenGLVertexBuffer>(size);
 		}
 
-		DME_CORE_ASSERT(false, "Unknown RendererAPI!");
+		DME_CORE_ASSERT(false, "Unknown RendererAPI!")
 		return nullptr;
 	}
 
@@ -24,11 +24,11 @@ namespace DME
 	{
 		switch (Renderer::GetAPI())
 		{
-			case RendererAPI::API::None:		DME_CORE_ASSERT(false, "RendererAPI::None is currently not supported!"); return nullptr;
+			case RendererAPI::API::None:		DME_CORE_ASSERT(false, "RendererAPI::None is currently not supported!") return nullptr;
 			case RendererAPI::API::OpenGL:		return CreateRef<OpenGLVertexBuffer>(vertices, size);
 		}
 
-		DME_CORE_ASSERT(false, "Unknown RendererAPI!");
+		DME_CORE_ASSERT(false, "Unknown RendererAPI!")
 		return nullptr;
 	}
 
@@ -36,11 +36,11 @@ namespace DME
 	{
 		switch (Renderer::GetAPI())
 		{
-			case RendererAPI::API::None:		DME_CORE_ASSERT(false, "RendererAPI::None is currently not supported!"); return nullptr;
+			case RendererAPI::API::None:		DME_CORE_ASSERT(false, "RendererAPI::None is currently not supported!") return nullptr;
 			case RendererAPI::API::OpenGL:		return CreateRef<OpenGLIndexBuffer>(indices, count);
 		}
 
-		DME_CORE_ASSERT(false, "Unknown RendererAPI!");
+		DME_CORE_ASSERT(false, "Unknown RendererAPI!")
 		return nullptr;
 	}
 }

@@ -1,7 +1,6 @@
 ﻿#include "dmepch.h"
 
 #include "ContentBrowserPanel.h"
-#include "FontLibrary.h"
 
 #include "DME/Core/Input.h"
 
@@ -345,7 +344,7 @@ namespace DME
 		switch (event.GetKeyCode())
 		{
 			case Key::A:
-				DME_INFO("Pressed {}", event.GetName());
+				DME_INFO("Pressed {}", event.GetName())
 		}
 
 		return false;

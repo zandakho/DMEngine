@@ -3,10 +3,9 @@
 #include <dme.h>
 #include <filesystem>
 
-#include "DME/Renderer/Texture.h"
-#include "DME/Events/Event.h"
 #include "DME/Events/KeyEvent.h"
 #include "DME/Events/MouseEvent.h"
+#include "DME/Renderer/Texture.h"
 
 namespace DME
 {

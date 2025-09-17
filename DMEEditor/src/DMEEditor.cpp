@@ -1,12 +1,8 @@
 #include <dme.h>
 
 #include "EditorLayer.h"
-#include "Platform/OpenGL/OpenGLShader.h"
 
-#include <ImGui/imgui.h>
 #include <DME/Core/EntryPoint.h>
-#include <glm/gtc/type_ptr.hpp>
-#include <glm/gtc/matrix_transform.hpp>
 
 namespace DME
 {

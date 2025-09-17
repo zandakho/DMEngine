@@ -23,41 +23,41 @@ namespace DME
 			case ShaderDataType::Bool:		return GL_BOOL;
 		}
 
-		DME_CORE_ASSERT(false, "Unknown ShaderDataType!");
+		DME_CORE_ASSERT(false, "Unknown ShaderDataType!")
 		return 0;
 	}
 
 	OpenGLVertexArray::OpenGLVertexArray()
 	{
-		DME_PROFILE_FUNCTION();
+		DME_PROFILE_FUNCTION()
 
 		glCreateVertexArrays(1, &m_RendererID);
 	}
 
 	OpenGLVertexArray::~OpenGLVertexArray()
 	{
-		DME_PROFILE_FUNCTION();
+		DME_PROFILE_FUNCTION()
 	
 		glDeleteVertexArrays(1, &m_RendererID);
 	}
 
 	void OpenGLVertexArray::Bind() const
 	{
-		DME_PROFILE_FUNCTION();
+		DME_PROFILE_FUNCTION()
 		
 		glBindVertexArray(m_RendererID);
 	}
 
 	void OpenGLVertexArray::UnBind() const
 	{
-		DME_PROFILE_FUNCTION();
+		DME_PROFILE_FUNCTION()
 		
 		glBindVertexArray(0);
 	}
 
 	void OpenGLVertexArray::AddVertexBuffer(const Ref<VertexBuffer>& vertexBuffer)
 	{
-		DME_PROFILE_FUNCTION();
+		DME_PROFILE_FUNCTION()
 		
 		DME_CORE_ASSERT(vertexBuffer->GetLayout().GetElements().size(), "Vertex buffer has no layout!");
 
@@ -130,7 +130,7 @@ namespace DME
 
 	void OpenGLVertexArray::SetIndexBuffer(const Ref<IndexBuffer>& indexBuffer)
 	{
-		DME_PROFILE_FUNCTION();
+		DME_PROFILE_FUNCTION()
 		
 		glBindVertexArray(m_RendererID);
 		indexBuffer->Bind();

@@ -213,7 +213,7 @@ namespace DME
 
 		if (width == 0 || height == 0 || width > s_MaxFramebufferSize || height > s_MaxFramebufferSize)
 		{
-			DME_CORE_WARNING("Attempted to resize frame buffer to {0}, {1}", width, height);
+			DME_CORE_WARNING("Attempted to resize frame buffer to {0}, {1}", width, height)
 			return;
 		}
 

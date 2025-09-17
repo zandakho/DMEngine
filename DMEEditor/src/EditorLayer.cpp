@@ -1,11 +1,8 @@
 #include "dmepch.h"
 
 #include "EditorLayer.h"
-#include <ImGui/imgui.h>
-#include <ImGui/imgui_internal.h>
 
-#include <glm/gtc/matrix_transform.hpp>
-#include <glm/gtc/type_ptr.hpp>
+#include "Panels/FontLibrary.h"
 
 #include "DME/Scene/SceneSerializer.h"
 
@@ -13,25 +10,31 @@
 
 #include "DME/Renderer/DebugRendererMode.h"
 
-#include "Panels/FontLibrary.h"
-
-#include "ImGuizmo.h"
-
 #include "DME/Math/Math.h"
+
+#include <ImGui/imgui.h>
+#include <ImGui/imgui_internal.h>
+#include <ImGuizmo.h>
+
+#include <glm/gtc/matrix_transform.hpp>
+#include <glm/gtc/type_ptr.hpp>
 
 namespace DME
 {
 
 	extern const std::filesystem::path g_AssetPath;
 
+	// Constructors and destructors
 	EditorLayer::EditorLayer() : Layer("EditorLayer"), m_CameraController(1600.0f / 900.0f) {}
 
+	// Layer overrides
 	void EditorLayer::OnAttach()
 	{
-		DME_PROFILE_FUNCTION();
+		DME_PROFILE_FUNCTION()
 
+		m_ConsolePanel.OnAttach();
+		m_ContentBrowserPanel.OnAttach();
 		m_SceneHierarchyPanel.OnAttach();
-		m_ContentBrowser.OnAttach();
 		m_PropertiesPanel.OnAttach();
 
 		m_IconPlay = Texture2D::Create("Resources/Icons/Viewport/PlayButton.png");
@@ -70,16 +73,17 @@ namespace DME
 
 	void EditorLayer::OnDetach()
 	{
-		DME_PROFILE_FUNCTION();
+		DME_PROFILE_FUNCTION()
 
+		m_ConsolePanel.OnDetach();
+		m_ContentBrowserPanel.OnDetach();
 		m_SceneHierarchyPanel.OnDetach();
-		m_ContentBrowser.OnDetach();
 		m_PropertiesPanel.OnDetach();
 	}
 
 	void EditorLayer::OnUpdate(TimeStep ts)
 	{
-		DME_PROFILE_FUNCTION();
+		DME_PROFILE_FUNCTION()
 
 		if (m_ViewportFocused)
 			m_EditorCamera.SetViewportActive(true);
@@ -164,6 +168,94 @@ namespace DME
 
 	}
 
+	void EditorLayer::OnImGuiRender()
+	{
+		DME_PROFILE_FUNCTION()
+
+		EditorLayer::OnDockspace();
+
+
+		if (m_ConsoleWindow)
+			m_ConsolePanel.OnImGuiRender();
+
+		if (m_ContentBrowserWindow)
+			m_ContentBrowserPanel.OnImGuiRender();
+
+		if (m_SceneHierarchyWindow)
+			m_SceneHierarchyPanel.OnImGuiRender();
+
+		if (m_PropertiesWindow)
+		{
+			m_PropertiesPanel.SetContext(m_SceneHierarchyPanel.GetSelectedEntity());
+			m_PropertiesPanel.OnImGuiRender();
+		}
+
+		if (m_ViewportWindow)
+			ViewportWindow();
+		if (m_DebugWindow)
+			DebugWindow();
+		if (m_DemoWindow)
+			ImGui::ShowDemoWindow();
+		if (m_RendererStatsWindow)
+			RendererStatsWindow();
+	}
+
+	void EditorLayer::OnDockspace()
+	{
+		static bool dockspaceOpen = true;
+		static bool opt_fullscreen = true;
+		static bool opt_padding = false;
+		static ImGuiDockNodeFlags dockspace_flags = ImGuiDockNodeFlags_None;
+
+		ImGuiWindowFlags window_flags = ImGuiWindowFlags_MenuBar | ImGuiWindowFlags_NoDocking;
+		if (opt_fullscreen)
+		{
+			const ImGuiViewport* viewport = ImGui::GetMainViewport();
+			ImGui::SetNextWindowPos(viewport->WorkPos);
+			ImGui::SetNextWindowSize(viewport->WorkSize);
+			ImGui::SetNextWindowViewport(viewport->ID);
+			ImGui::PushStyleVar(ImGuiStyleVar_WindowRounding, 0.0f);
+			ImGui::PushStyleVar(ImGuiStyleVar_WindowBorderSize, 0.0f);
+			window_flags |= ImGuiWindowFlags_NoTitleBar | ImGuiWindowFlags_NoCollapse | ImGuiWindowFlags_NoResize | ImGuiWindowFlags_NoMove;
+			window_flags |= ImGuiWindowFlags_NoBringToFrontOnFocus | ImGuiWindowFlags_NoNavFocus;
+		}
+		else
+		{
+			dockspace_flags &= ~ImGuiDockNodeFlags_PassthruCentralNode;
+		}
+
+		if (dockspace_flags & ImGuiDockNodeFlags_PassthruCentralNode)
+			window_flags |= ImGuiWindowFlags_NoBackground;
+
+		if (!opt_padding)
+			ImGui::PushStyleVar(ImGuiStyleVar_WindowPadding, ImVec2(0.0f, 0.0f));
+
+		ImGui::Begin("DockSpace Demo", &dockspaceOpen, window_flags);
+		if (!opt_padding)
+			ImGui::PopStyleVar();
+
+		if (opt_fullscreen)
+			ImGui::PopStyleVar(2);
+
+		// Submit the DockSpace
+		ImGuiIO& io = ImGui::GetIO();
+		ImGuiStyle& style = ImGui::GetStyle();
+		float minWindowSizeX = style.WindowMinSize.x = 290.0f;
+		float minWindowSizeY = style.WindowMinSize.y = 100.0f;
+		if (io.ConfigFlags & ImGuiConfigFlags_DockingEnable)
+		{
+			ImGuiID dockspace_id = ImGui::GetID("MyDockSpace");
+			ImGui::DockSpace(dockspace_id, ImVec2(0.0f, 0.0f), dockspace_flags);
+		}
+
+		style.WindowMinSize.x = minWindowSizeX;
+		style.WindowMinSize.y = minWindowSizeY;
+
+		UITabBar();
+
+		ImGui::End();
+	}
+
 	void EditorLayer::OnEvent(Event& event)
 	{
 
@@ -177,32 +269,36 @@ namespace DME
 		}
 
 		EventDispatcher dispatcher(event);
+
 		dispatcher.Dispatch<KeyPressedEvent>(DME_BIND_EVENT_FN(EditorLayer::OnKeyPressed));
 		dispatcher.Dispatch<MouseButtonPressedEvent>(DME_BIND_EVENT_FN(EditorLayer::OnMouseButtonPressed));
 
+		dispatcher.Dispatch<KeyPressedEvent>(DME_BIND_EVENT_FN(m_ConsolePanel.OnKeyPressed));
+		dispatcher.Dispatch<MouseButtonPressedEvent>(DME_BIND_EVENT_FN(m_ConsolePanel.OnMouseButtonPressed));
+
+		dispatcher.Dispatch<KeyPressedEvent>(DME_BIND_EVENT_FN(m_ContentBrowserPanel.OnKeyPressed));
+		dispatcher.Dispatch<MouseButtonPressedEvent>(DME_BIND_EVENT_FN(m_ContentBrowserPanel.OnMouseButtonPressed));
+
 		dispatcher.Dispatch<KeyPressedEvent>(DME_BIND_EVENT_FN(m_SceneHierarchyPanel.OnKeyPressed));
 		dispatcher.Dispatch<MouseButtonPressedEvent>(DME_BIND_EVENT_FN(m_SceneHierarchyPanel.OnMouseButtonPressed));
-
-		dispatcher.Dispatch<KeyPressedEvent>(DME_BIND_EVENT_FN(m_ContentBrowser.OnKeyPressed));
-		dispatcher.Dispatch<MouseButtonPressedEvent>(DME_BIND_EVENT_FN(m_ContentBrowser.OnMouseButtonPressed));
 
 		dispatcher.Dispatch<KeyPressedEvent>(DME_BIND_EVENT_FN(m_PropertiesPanel.OnKeyPressed));
 		dispatcher.Dispatch<MouseButtonPressedEvent>(DME_BIND_EVENT_FN(m_PropertiesPanel.OnMouseButtonPressed));
 		
 	}
 
-	bool EditorLayer::OnKeyPressed(KeyPressedEvent& event)
+	// Events
+	bool EditorLayer::OnKeyPressed(const KeyPressedEvent& event)
 	{
 		if (event.IsRepeat())
 			return false;
 
 		bool control = Input::IsKeyPressed(Key::LeftControl) || Input::IsKeyPressed(Key::RightControl);
-		bool super = Input::IsKeyPressed(Key::LeftSuper) || Input::IsKeyPressed(Key::RightSuper);
 		bool shift = Input::IsKeyPressed(Key::LeftShift) || Input::IsKeyPressed(Key::RightShift);
-		bool alt = Input::IsKeyPressed(Key::LeftAlt) || Input::IsKeyPressed(Key::RightAlt);
 
 		switch (event.GetKeyCode())
 		{
+			default:
 			case Key::N:
 			{
 				if (control)
@@ -271,7 +367,7 @@ namespace DME
 				case Key::Delete:
 				{
 					if (m_SceneHierarchyPanel.GetSelectedEntity())
-						DME_CORE_WARNING("Delete entity: {0}", m_SceneHierarchyPanel.GetSelectedEntity().GetName());
+						DME_CORE_WARNING("Delete entity: {0}", m_SceneHierarchyPanel.GetSelectedEntity().GetName())
 					DeleteSelectedEntity();
 				}
 			}
@@ -279,10 +375,11 @@ namespace DME
 		return false;
 	}
 
-	bool EditorLayer::OnMouseButtonPressed(MouseButtonPressedEvent& e)
+	bool EditorLayer::OnMouseButtonPressed(const MouseButtonPressedEvent& event)
 	{
-		switch (e.GetMouseButton())
+		switch (event.GetMouseButton())
 		{
+			default:
 			case Mouse::ButtonLeft:
 			{
 				if (m_ViewportHovered && !ImGuizmo::IsOver() && !Input::IsKeyPressed(Key::LeftShift))
@@ -292,38 +389,7 @@ namespace DME
 		return false;
 	}
 
-	void EditorLayer::OnImGuiRender()
-	{
-		DME_PROFILE_FUNCTION();
-
-		EditorLayer::OnDockspace();
-
-		if (m_SceneHierarchyWindow)
-			m_SceneHierarchyPanel.OnImGuiRender();
-
-		if (m_ContentBrowserWindow)
-			m_ContentBrowser.OnImGuiRender();
-
-		if (m_PropertiesPanelWindow)
-		{
-			m_PropertiesPanel.SetContext(m_SceneHierarchyPanel.GetSelectedEntity());
-			m_PropertiesPanel.OnImGuiRender();
-		}
-		
-
-		if (m_ViewportWindow)
-			ViewportWindow();
-		if (m_DebugWindow)
-			DebugWindow();
-		if (m_DemoWindow)
-			ImGui::ShowDemoWindow();
-		if (m_RendererStatsWindow)
-			RendererStatsWindow();
-		if (m_ConsoleWindow)
-			ConsoleWindow();
-
-	}
-
+	// UI functions
 	void EditorLayer::UIToolbar()
 	{
 		ImGui::PushStyleColor(ImGuiCol_FrameBg, ImVec4(0.11f, 0.11f, 0.11f, 0.5f));
@@ -332,7 +398,7 @@ namespace DME
 
 		{
 			Ref<Texture2D> icon = (m_SceneState == SceneState::Edit || m_SceneState == SceneState::Simulate) ? m_IconPlay : m_IconStop;
-			ImTextureID buttonID = static_cast<uintptr_t>(icon->GetRendererID());
+			ImTextureID buttonID = icon->GetRendererID();
 			ImGui::PushStyleVar(ImGuiStyleVar_FramePadding, ImVec2(1, 1));
 			ImGui::SetCursorPosY(ImGui::GetWindowContentRegionMax().y * 0.5f - 12);
 			std::string ButtonID = std::format("Image | {0}", buttonID);
@@ -354,7 +420,7 @@ namespace DME
 			ImGui::PushStyleVar(ImGuiStyleVar_FramePadding, ImVec2(1, 1));
 			ImGui::SetCursorPosY(ImGui::GetWindowContentRegionMax().y * 0.5f - 12);
 			std::string ButtonID = std::format("Image | {0}", static_cast<uintptr_t>(icon->GetRendererID()));
-			if (ImGui::ImageButton(ButtonID.c_str(), static_cast<uintptr_t>(icon->GetRendererID()), ImVec2(24, 24), ImVec2(0, 0), ImVec2(1, 1), ImVec4(0, 0, 0, 0)))
+			if (ImGui::ImageButton(ButtonID.c_str(), icon->GetRendererID(), ImVec2(24, 24), ImVec2(0, 0), ImVec2(1, 1), ImVec4(0, 0, 0, 0)))
 			{
 				if (m_SceneState == SceneState::Edit || m_SceneState == SceneState::Play)
 					OnSceneSimulate();
@@ -368,13 +434,9 @@ namespace DME
 		ImGui::PopStyleColor();
 		ImGui::EndChild();
 
-		bool toolbarEnabled = (bool)m_ActiveScene;
-
-		ImVec4 tintColor = ImVec4(1, 1, 1, 1);
-		if (!toolbarEnabled)
-			tintColor.w = 0.5f;
-
+		bool toolbarEnabled = static_cast<bool>(m_ActiveScene);
 	}
+
 	void EditorLayer::GizmosToolbar()
 	{
 		ImGui::PushStyleColor(ImGuiCol_FrameBg, ImVec4(0.11f, 0.11f, 0.11f, 0.5f));
@@ -412,6 +474,7 @@ namespace DME
 
 
 	}
+
 	void EditorLayer::UITabBar()
 	{
 
@@ -506,12 +569,7 @@ namespace DME
 
 	}
 
-	void EditorLayer::SerializeScene(Ref<Scene> scene, const std::filesystem::path& path)
-	{
-		SceneSerializer serializer(scene);
-		serializer.Serialize(path.string());
-	}
-
+	// Scene state
 	void EditorLayer::OnScenePlay()
 	{
 		if (m_SceneState == SceneState::Simulate)
@@ -542,7 +600,7 @@ namespace DME
 
 	void EditorLayer::OnSceneStop()
 	{
-		DME_CORE_ASSERT(m_SceneState == SceneState::Play || m_SceneState == SceneState::Simulate);
+		DME_CORE_ASSERT(m_SceneState == SceneState::Play || m_SceneState == SceneState::Simulate)
 
 		if (m_SceneState == SceneState::Play)
 			m_ActiveScene->OnRuntimeStop();
@@ -558,81 +616,8 @@ namespace DME
 
 	}
 
-	void EditorLayer::OnDuplicateEntity()
-	{
-		if (m_SceneState != SceneState::Edit)
-			return;
-
-		Entity selectedEntity = m_SceneHierarchyPanel.GetSelectedEntity();
-		if (selectedEntity)
-			m_EditorScene->DuplicateEntity(selectedEntity);
-	}
-
-	void EditorLayer::DeleteSelectedEntity()
-	{
-		if (!m_SceneHierarchyPanel.GetSelectedEntity()) return;
-
-		m_SceneHierarchyPanel.GetContext()->DestroyEntity(m_SceneHierarchyPanel.GetSelectedEntity());
-		m_SceneHierarchyPanel.ClearSelectedContext();
-	}
-
-	void EditorLayer::OnDockspace()
-	{
-		static bool dockspaceOpen = true;
-		static bool opt_fullscreen = true;
-		static bool opt_padding = false;
-		static ImGuiDockNodeFlags dockspace_flags = ImGuiDockNodeFlags_None;
-
-		ImGuiWindowFlags window_flags = ImGuiWindowFlags_MenuBar | ImGuiWindowFlags_NoDocking;
-		if (opt_fullscreen)
-		{
-			const ImGuiViewport* viewport = ImGui::GetMainViewport();
-			ImGui::SetNextWindowPos(viewport->WorkPos);
-			ImGui::SetNextWindowSize(viewport->WorkSize);
-			ImGui::SetNextWindowViewport(viewport->ID);
-			ImGui::PushStyleVar(ImGuiStyleVar_WindowRounding, 0.0f);
-			ImGui::PushStyleVar(ImGuiStyleVar_WindowBorderSize, 0.0f);
-			window_flags |= ImGuiWindowFlags_NoTitleBar | ImGuiWindowFlags_NoCollapse | ImGuiWindowFlags_NoResize | ImGuiWindowFlags_NoMove;
-			window_flags |= ImGuiWindowFlags_NoBringToFrontOnFocus | ImGuiWindowFlags_NoNavFocus;
-		}
-		else
-		{
-			dockspace_flags &= ~ImGuiDockNodeFlags_PassthruCentralNode;
-		}
-
-		if (dockspace_flags & ImGuiDockNodeFlags_PassthruCentralNode)
-			window_flags |= ImGuiWindowFlags_NoBackground;
-
-		if (!opt_padding)
-			ImGui::PushStyleVar(ImGuiStyleVar_WindowPadding, ImVec2(0.0f, 0.0f));
-
-		ImGui::Begin("DockSpace Demo", &dockspaceOpen, window_flags);
-		if (!opt_padding)
-			ImGui::PopStyleVar();
-
-		if (opt_fullscreen)
-			ImGui::PopStyleVar(2);
-
-		// Submit the DockSpace
-		ImGuiIO& io = ImGui::GetIO();
-		ImGuiStyle& style = ImGui::GetStyle();
-		float minWindowSizeX = style.WindowMinSize.x = 290.0f;
-		float minWindowSizeY = style.WindowMinSize.y = 100.0f;
-		if (io.ConfigFlags & ImGuiConfigFlags_DockingEnable)
-		{
-			ImGuiID dockspace_id = ImGui::GetID("MyDockSpace");
-			ImGui::DockSpace(dockspace_id, ImVec2(0.0f, 0.0f), dockspace_flags);
-		}
-
-		style.WindowMinSize.x = minWindowSizeX;
-		style.WindowMinSize.y = minWindowSizeY;
-
-		UITabBar();
-
-		ImGui::End();
-	}
-
-	void EditorLayer::OnOverlayRender()
+	// Overlay render
+	void EditorLayer::OnOverlayRender() const 
 	{
 		if (m_SceneState == SceneState::Play)
 		{
@@ -684,6 +669,29 @@ namespace DME
 		Renderer2D::EndScene();
 	}
 
+	// Helper scene functions
+	void EditorLayer::OnDuplicateEntity() const
+	{
+		if (m_SceneState != SceneState::Edit)
+			return;
+
+		if (const Entity selectedEntity = m_SceneHierarchyPanel.GetSelectedEntity())
+		{
+			if (selectedEntity)
+				m_EditorScene->DuplicateEntity(selectedEntity);
+		}
+
+	}
+
+	void EditorLayer::DeleteSelectedEntity()
+	{
+		if (!m_SceneHierarchyPanel.GetSelectedEntity()) return;
+
+		m_SceneHierarchyPanel.GetContext()->DestroyEntity(m_SceneHierarchyPanel.GetSelectedEntity());
+		m_SceneHierarchyPanel.ClearSelectedContext();
+	}
+
+	// SceneSerializer functions
 	void EditorLayer::NewScene()
 	{
 		m_ActiveScene = CreateRef<Scene>();
@@ -708,7 +716,7 @@ namespace DME
 
 		if (path.extension().string() != ".dme")
 		{
-			DME_WARNING("Could not load {0} - not a scene file", path.filename().string());
+			DME_WARNING("Could not load {0} - not a scene file", path.filename().string())
 			return;
 		}
 
@@ -743,6 +751,13 @@ namespace DME
 		}
 	}
 
+	void EditorLayer::SerializeScene(const Ref<Scene>& scene, const std::filesystem::path& path)
+	{
+		SceneSerializer serializer(scene);
+		serializer.Serialize(path.string());
+	}
+
+	// Windows
 	void EditorLayer::ViewportWindow()
 	{
 		ImGui::PushStyleVar(ImGuiStyleVar_WindowPadding, ImVec2(3.5f, 3.5f));
@@ -772,9 +787,9 @@ namespace DME
 		{
 			if (const ImGuiPayload* payload = ImGui::AcceptDragDropPayload("CONTENT_BROWSER_ITEM"))
 			{
-				const wchar_t* path = (const wchar_t*)payload->Data;
+				const wchar_t* path = static_cast<const wchar_t*>(payload->Data);
 				OpenScene(std::filesystem::path(g_AssetPath) / path);
-				DME_CORE_INFO("Deserialize");
+				DME_CORE_INFO("Deserialize")
 			}
 			ImGui::EndDragDropTarget();
 		}
@@ -804,7 +819,7 @@ namespace DME
 			float snapValues[3] = { snapValue, snapValue, snapValue };
 
 			ImGuizmo::Manipulate(glm::value_ptr(cameraView), glm::value_ptr(cameraProjection),
-				(ImGuizmo::OPERATION)m_GizmoType, ImGuizmo::LOCAL, glm::value_ptr(transform),
+				static_cast<ImGuizmo::OPERATION>(m_GizmoType), ImGuizmo::LOCAL, glm::value_ptr(transform),
 				nullptr, snap ? snapValues : nullptr);
 
 			if (ImGuizmo::IsUsing())
@@ -840,11 +855,11 @@ namespace DME
 	{
 		ImGui::Begin("Renderer Stats");
 
-		ImGui::Text("Draw Calls: %d", Renderer2D::GetStats().DrawCalls);
-		ImGui::Text("Quads: %d", Renderer2D::GetStats().QuadCount);
-		ImGui::Text("Vertices: %d", Renderer2D::GetStats().GetTotalVertexCount());
-		ImGui::Text("Indices: %d", Renderer2D::GetStats().GetTotalIndexCount());
-		ImGui::Text("FPS: %d", static_cast<uint16_t>(ImGui::GetIO().Framerate));
+		ImGui::Text("Draw Calls: %i", Renderer2D::GetStats().DrawCalls);
+		ImGui::Text("Quads: %i", Renderer2D::GetStats().QuadCount);
+		ImGui::Text("Vertices: %i", Renderer2D::GetStats().GetTotalVertexCount());
+		ImGui::Text("Indices: %i", Renderer2D::GetStats().GetTotalIndexCount());
+		ImGui::Text("FPS: %i", static_cast<uint16_t>(ImGui::GetIO().Framerate));
 		ImGui::Text("Frame time: %.3f ms", static_cast<uint16_t>(ImGui::GetIO().Framerate) / 1000.0f);
 
 		std::string name = m_HoveredEntity && m_HoveredEntity.HasComponent<TagComponent>() ? m_HoveredEntity.GetComponent<TagComponent>().Tag : "None";
@@ -853,88 +868,4 @@ namespace DME
 
 		ImGui::End();
 	}
-
-	void EditorLayer::ConsoleWindow()
-	{
-		const char* levels[] = { "All", "Info", "Warn", "Error", "Critical" };
-		static int currentLevel = 0;
-		static float ConsoleWindowFontScale = 1.0f;
-
-		if (ImGui::Begin("Console"))
-		{
-
-			if (ImGuiDMEEditor::IconButton("##ConsoleSettingsButton", reinterpret_cast<ImTextureID*>(static_cast<uintptr_t>(m_SettingButton->GetRendererID())), { 30, 30 }))
-				ImGui::OpenPopup("ConsoleSettingsWindow");
-
-			if (ImGui::BeginPopup("ConsoleSettingsWindow", ImGuiWindowFlags_NoMove))
-			{
-
-				ImGui::SliderFloat("ConsoleWindowFontScale", &ConsoleWindowFontScale, 0.5f, 1.5f, "%.1f");
-
-				if (ImGui::BeginCombo("Log Level", levels[currentLevel]))
-				{
-					for (int n = 0; n < IM_ARRAYSIZE(levels); n++)
-					{
-						bool isSelected = (currentLevel == n);
-						if (ImGui::Selectable(levels[n], isSelected))
-						{
-							currentLevel = n;
-							switch (n)
-							{
-							case 0: DME::LogSettings::m_LogFilter = spdlog::level::trace;    break;
-							case 1: DME::LogSettings::m_LogFilter = spdlog::level::info;     break;
-							case 2: DME::LogSettings::m_LogFilter = spdlog::level::warn;     break;
-							case 3: DME::LogSettings::m_LogFilter = spdlog::level::err;      break;
-							case 4: DME::LogSettings::m_LogFilter = spdlog::level::critical; break;
-							}
-						}
-						if (isSelected)
-							ImGui::SetItemDefaultFocus();
-					}
-					ImGui::EndCombo();
-				}
-
-				ImGui::EndPopup();
-			}
-
-			if (ImGui::BeginChild("Logs"))
-			{
-				ImGui::SetWindowFontScale(ConsoleWindowFontScale);
-				if (DME::Log::m_ImGuiSink)
-				{
-					const auto& buffer = DME::Log::m_ImGuiSink->GetBuffer();
-					for (auto& entry : buffer)
-					{
-						if (currentLevel != 0)
-						{
-							if (entry.level < DME::LogSettings::m_LogFilter)
-								continue;
-						}
-
-						ImVec4 color;
-						switch (entry.level)
-						{
-						case spdlog::level::trace:    color = ImVec4(1.0f, 1.0f, 1.0f, 1.0f); break;
-						case spdlog::level::info:     color = ImVec4(0.0f, 1.0f, 0.0f, 1.0f); break;
-						case spdlog::level::warn:     color = ImVec4(1.0f, 1.0f, 0.3f, 1.0f); break;
-						case spdlog::level::err:      color = ImVec4(1.0f, 0.4f, 0.4f, 1.0f); break;
-						case spdlog::level::critical: color = ImVec4(1.0f, 0.0f, 0.0f, 1.0f); break;
-						}
-
-						ImGui::PushFont(ImGui::GetIO().Fonts->Fonts[FontLibrary::OpenSansBold_21]);
-						ImGui::PushStyleColor(ImGuiCol_Text, color);
-						ImGui::TextUnformatted(entry.message.c_str());
-						ImGui::PopStyleColor();
-						ImGui::PopFont();
-					}
-
-					if (ImGui::GetScrollY() >= ImGui::GetScrollMaxY())
-						ImGui::SetScrollHereY(1.0f);
-				}
-			}
-			ImGui::EndChild();
-		}
-		ImGui::End();
-	}
-
 }

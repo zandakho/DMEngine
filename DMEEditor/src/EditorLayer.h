@@ -1,8 +1,9 @@
 #pragma once
 
 #include <dme.h>
-#include "Panels/SceneHierarchyPanel.h"
+#include "Panels/ConsolePanel.h"
 #include "Panels/ContentBrowserPanel.h"
+#include "Panels/SceneHierarchyPanel.h"
 #include "Panels/PropertiesPanel.h"
 
 #include "DME/Renderer/EditorCamera.h"
@@ -16,7 +17,6 @@ namespace DME
 	public: // Constructors and destructors
 
 		EditorLayer();
-		virtual ~EditorLayer() = default;
 
 	public: // Layer overrides
 
@@ -28,9 +28,19 @@ namespace DME
 		void OnDockspace() override;
 		void OnEvent(Event& event) override;
 
+	public: // Events
+
+		bool OnKeyPressed(const KeyPressedEvent& event);
+		bool OnMouseButtonPressed(const MouseButtonPressedEvent& event);
+
 	public: // Overlay render
 
-		void OnOverlayRender();
+		void OnOverlayRender() const;
+
+	public: // Helper scene functions
+
+		void OnDuplicateEntity() const;
+		void DeleteSelectedEntity();
 
 	private: // SceneSerializer functions
 
@@ -40,16 +50,11 @@ namespace DME
 		void SaveScene();
 		void SaveSceneAs();
 
-		void SerializeScene(Ref<Scene> scene, const std::filesystem::path& path);
-
-	private: // Helper scene functions
-
-		void OnDuplicateEntity();
-		void DeleteSelectedEntity();
+		static void SerializeScene(const Ref<Scene>& scene, const std::filesystem::path& path);
 
 	private: // Scene state
 
-		enum class SceneState
+		enum class SceneState : std::uint8_t
 		{
 			Edit = 0, Play = 1, Simulate = 2
 		};
@@ -71,12 +76,6 @@ namespace DME
 		void ViewportWindow();
 		void DebugWindow();
 		void RendererStatsWindow();
-		void ConsoleWindow();
-
-	public: // Events
-
-		bool OnKeyPressed(KeyPressedEvent& event);
-		bool OnMouseButtonPressed(MouseButtonPressedEvent& e);
 
 	private: // Camera controller
 
@@ -90,8 +89,10 @@ namespace DME
 		std::filesystem::path m_EditorScenePath;
 
 	private: // Panels
+
+		ConsolePanel m_ConsolePanel;
+		ContentBrowserPanel m_ContentBrowserPanel;
 		SceneHierarchyPanel m_SceneHierarchyPanel;
-		ContentBrowserPanel m_ContentBrowser;
 		PropertiesPanel m_PropertiesPanel;
 
 	private: // Cameras
@@ -105,12 +106,7 @@ namespace DME
 
 	private: // Viewport
 
-		bool m_BlockViewportEvents = false;
-		bool m_PrimaryCamera = true;
-
 		bool m_ViewportFocused = false, m_ViewportHovered = false, m_ViewportHoveredAndFocused = false, m_ViewportDocked = false;
-		bool m_MainWindowUnDocked = false;
-		bool m_MainWindowDocked = true;
 		glm::vec2 m_ViewportBounds[2]{ };
 		glm::vec2 m_ViewportSize = { 0.0f, 0.0f };
 
@@ -126,17 +122,16 @@ namespace DME
 
 	private: // Window variables
 
+		bool m_ConsoleWindow = true;
+		bool m_ContentBrowserWindow = true;
+		bool m_SceneHierarchyWindow = true;
+		bool m_PropertiesWindow = true;
+
 		bool m_ViewportWindow = true;
 		bool m_SettingsWindow = true;
-		bool m_PropertiesWindow = true;
-		bool m_SceneHierarchyWindow = true;
-		bool m_PropertiesPanelWindow = true;
-		bool m_ContentBrowserWindow = true;
-
 		bool m_DebugWindow = false;
 		bool m_DemoWindow = false;
 		bool m_RendererStatsWindow = false;
-		bool m_ConsoleWindow = true;
 
 	};
 

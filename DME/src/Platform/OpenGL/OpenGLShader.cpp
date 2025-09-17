@@ -23,7 +23,7 @@ namespace DME {
 			if (type == "fragment" || type == "pixel")
 				return GL_FRAGMENT_SHADER;
 
-			DME_CORE_ASSERT(false, "Unknown shader type!");
+			DME_CORE_ASSERT(false, "Unknown shader type!")
 			return 0;
 		}
 
@@ -34,7 +34,7 @@ namespace DME {
 			case GL_VERTEX_SHADER:   return shaderc_glsl_vertex_shader;
 			case GL_FRAGMENT_SHADER: return shaderc_glsl_fragment_shader;
 			}
-			DME_CORE_ASSERT(false);
+			DME_CORE_ASSERT(false)
 			return (shaderc_shader_kind)0;
 		}
 
@@ -45,7 +45,7 @@ namespace DME {
 			case GL_VERTEX_SHADER:   return "GL_VERTEX_SHADER";
 			case GL_FRAGMENT_SHADER: return "GL_FRAGMENT_SHADER";
 			}
-			DME_CORE_ASSERT(false);
+			DME_CORE_ASSERT(false)
 			return nullptr;
 		}
 
@@ -69,7 +69,7 @@ namespace DME {
 			case GL_VERTEX_SHADER:    return ".cached_opengl.vert";
 			case GL_FRAGMENT_SHADER:  return ".cached_opengl.frag";
 			}
-			DME_CORE_ASSERT(false);
+			DME_CORE_ASSERT(false)
 			return "";
 		}
 
@@ -80,7 +80,7 @@ namespace DME {
 			case GL_VERTEX_SHADER:    return ".cached_vulkan.vert";
 			case GL_FRAGMENT_SHADER:  return ".cached_vulkan.frag";
 			}
-			DME_CORE_ASSERT(false);
+			DME_CORE_ASSERT(false)
 			return "";
 		}
 
@@ -90,7 +90,7 @@ namespace DME {
 	OpenGLShader::OpenGLShader(const std::string& filepath)
 		: m_FilePath(filepath)
 	{
-		DME_PROFILE_FUNCTION();
+		DME_PROFILE_FUNCTION()
 
 		Utils::CreateCacheDirectoryIfNeeded();
 
@@ -102,7 +102,7 @@ namespace DME {
 			CompileOrGetVulkanBinaries(shaderSources);
 			CompileOrGetOpenGLBinaries();
 			CreateProgram();
-			DME_CORE_WARNING("Shader creation took {0} ms", timer.ElapsedMillis());
+			DME_CORE_WARNING("Shader creation took {0} ms", timer.ElapsedMillis())
 		}
 
 		// Extract name from filepath
@@ -116,7 +116,7 @@ namespace DME {
 	OpenGLShader::OpenGLShader(const std::string& name, const std::string& vertexSrc, const std::string& fragmentSrc)
 		: m_Name(name)
 	{
-		DME_PROFILE_FUNCTION();
+		DME_PROFILE_FUNCTION()
 
 		std::unordered_map<GLenum, std::string> sources;
 		sources[GL_VERTEX_SHADER] = vertexSrc;
@@ -129,14 +129,14 @@ namespace DME {
 
 	OpenGLShader::~OpenGLShader()
 	{
-		DME_PROFILE_FUNCTION();
+		DME_PROFILE_FUNCTION()
 
 		glDeleteProgram(m_RendererID);
 	}
 
 	std::string OpenGLShader::ReadFile(const std::string& filepath)
 	{
-		DME_PROFILE_FUNCTION();
+		DME_PROFILE_FUNCTION()
 
 		std::string result;
 		std::ifstream in(filepath, std::ios::in | std::ios::binary); // ifstream closes itself due to RAII
@@ -152,12 +152,12 @@ namespace DME {
 			}
 			else
 			{
-				DME_CORE_ERROR("Could not read from file '{0}'", filepath);
+				DME_CORE_ERROR("Could not read from file '{0}'", filepath)
 			}
 		}
 		else
 		{
-			DME_CORE_ERROR("Could not open file '{0}'", filepath);
+			DME_CORE_ERROR("Could not open file '{0}'", filepath)
 		}
 
 		return result;
@@ -165,7 +165,7 @@ namespace DME {
 
 	std::unordered_map<GLenum, std::string> OpenGLShader::PreProcess(const std::string& source)
 	{
-		DME_PROFILE_FUNCTION();
+		DME_PROFILE_FUNCTION()
 
 		std::unordered_map<GLenum, std::string> shaderSources;
 
@@ -226,8 +226,8 @@ namespace DME {
 				shaderc::SpvCompilationResult module = compiler.CompileGlslToSpv(source, Utils::GLShaderStageToShaderC(stage), m_FilePath.c_str(), options);
 				if (module.GetCompilationStatus() != shaderc_compilation_status_success)
 				{
-					DME_CORE_ERROR(module.GetErrorMessage());
-					DME_CORE_ASSERT(false);
+					DME_CORE_ERROR(module.GetErrorMessage())
+					DME_CORE_ASSERT(false)
 				}
 
 				shaderData[stage] = std::vector<uint32_t>(module.cbegin(), module.cend());
@@ -236,7 +236,7 @@ namespace DME {
 				if (out.is_open())
 				{
 					auto& data = shaderData[stage];
-					out.write((char*)data.data(), data.size() * sizeof(uint32_t));
+					out.write(reinterpret_cast<char*>(data.data()), static_cast<std::streamsize>(data.size()) * sizeof(uint32_t));
 					out.flush();
 					out.close();
 				}
@@ -287,8 +287,8 @@ namespace DME {
 				shaderc::SpvCompilationResult module = compiler.CompileGlslToSpv(source, Utils::GLShaderStageToShaderC(stage), m_FilePath.c_str());
 				if (module.GetCompilationStatus() != shaderc_compilation_status_success)
 				{
-					DME_CORE_ERROR(module.GetErrorMessage());
-					DME_CORE_ASSERT(false);
+					DME_CORE_ERROR(module.GetErrorMessage())
+					DME_CORE_ASSERT(false)
 				}
 
 				shaderData[stage] = std::vector<uint32_t>(module.cbegin(), module.cend());
@@ -297,7 +297,7 @@ namespace DME {
 				if (out.is_open())
 				{
 					auto& data = shaderData[stage];
-					out.write((char*)data.data(), data.size() * sizeof(uint32_t));
+					out.write(reinterpret_cast<char*>(data.data()), static_cast<std::streamsize>(data.size()) * sizeof(uint32_t));
 					out.flush();
 					out.close();
 				}
@@ -329,7 +329,7 @@ namespace DME {
 
 			std::vector<GLchar> infoLog(maxLength);
 			glGetProgramInfoLog(program, maxLength, &maxLength, infoLog.data());
-			DME_CORE_ERROR("Shader linking failed ({0}):\n{1}", m_FilePath, infoLog.data());
+			DME_CORE_ERROR("Shader linking failed ({0}):\n{1}", m_FilePath, infoLog.data())
 
 			glDeleteProgram(program);
 
@@ -351,11 +351,11 @@ namespace DME {
 		spirv_cross::Compiler compiler(shaderData);
 		spirv_cross::ShaderResources resources = compiler.get_shader_resources();
 
-		DME_CORE_TRACE("OpenGLShader::Reflect - {0} {1}", Utils::GLShaderStageToString(stage), m_FilePath);
-		DME_CORE_TRACE("    {0} uniform buffers", resources.uniform_buffers.size());
-		DME_CORE_TRACE("    {0} resources", resources.sampled_images.size());
+		DME_CORE_TRACE("OpenGLShader::Reflect - {0} {1}", Utils::GLShaderStageToString(stage), m_FilePath)
+		DME_CORE_TRACE("    {0} uniform buffers", resources.uniform_buffers.size())
+		DME_CORE_TRACE("    {0} resources", resources.sampled_images.size())
 
-		DME_CORE_TRACE("Uniform buffers:");
+		DME_CORE_TRACE("Uniform buffers:")
 		for (const auto& resource : resources.uniform_buffers)
 		{
 			const auto& bufferType = compiler.get_type(resource.base_type_id);
@@ -363,30 +363,30 @@ namespace DME {
 			uint32_t binding = compiler.get_decoration(resource.id, spv::DecorationBinding);
 			int memberCount = static_cast<int>(bufferType.member_types.size());
 
-			DME_CORE_TRACE("  {0}", resource.name);
-			DME_CORE_TRACE("    Size = {0}", bufferSize);
-			DME_CORE_TRACE("    Binding = {0}", binding);
-			DME_CORE_TRACE("    Members = {0}", memberCount);
+			DME_CORE_TRACE("   {0}", resource.name)
+			DME_CORE_TRACE("    Size = {0}", bufferSize)
+			DME_CORE_TRACE("    Binding = {0}", binding)
+			DME_CORE_TRACE("    Members = {0}", memberCount)
 		}
 	}
 
 	void OpenGLShader::Bind() const
 	{
-		DME_PROFILE_FUNCTION();
+		DME_PROFILE_FUNCTION()
 
 		glUseProgram(m_RendererID);
 	}
 
 	void OpenGLShader::UnBind() const
 	{
-		DME_PROFILE_FUNCTION();
+		DME_PROFILE_FUNCTION()
 
 		glUseProgram(0);
 	}
 
 	void OpenGLShader::SetInt(const std::string& name, int value)
 	{
-		DME_PROFILE_FUNCTION();
+		DME_PROFILE_FUNCTION()
 
 		UploadUniformInt(name, value);
 	}
@@ -398,35 +398,35 @@ namespace DME {
 
 	void OpenGLShader::SetFloat(const std::string& name, float value)
 	{
-		DME_PROFILE_FUNCTION();
+		DME_PROFILE_FUNCTION()
 
 		UploadUniformFloat(name, value);
 	}
 
 	void OpenGLShader::SetFloat2(const std::string& name, const glm::vec2& value)
 	{
-		DME_PROFILE_FUNCTION();
+		DME_PROFILE_FUNCTION()
 
 		UploadUniformFloat2(name, value);
 	}
 
 	void OpenGLShader::SetFloat3(const std::string& name, const glm::vec3& value)
 	{
-		DME_PROFILE_FUNCTION();
+		DME_PROFILE_FUNCTION()
 
 		UploadUniformFloat3(name, value);
 	}
 
 	void OpenGLShader::SetFloat4(const std::string& name, const glm::vec4& value)
 	{
-		DME_PROFILE_FUNCTION();
+		DME_PROFILE_FUNCTION()
 
 		UploadUniformFloat4(name, value);
 	}
 
 	void OpenGLShader::SetMat4(const std::string& name, const glm::mat4& value)
 	{
-		DME_PROFILE_FUNCTION();
+		DME_PROFILE_FUNCTION()
 
 		UploadUniformMat4(name, value);
 	}
@@ -440,7 +440,7 @@ namespace DME {
 	void OpenGLShader::UploadUniformIntArray(const std::string& name, int* values, uint32_t count)
 	{
 		GLint location = glGetUniformLocation(m_RendererID, name.c_str());
-		glUniform1iv(location, count, values);
+		glUniform1iv(location, static_cast<GLsizei>(count), values);
 	}
 
 	void OpenGLShader::UploadUniformFloat(const std::string& name, float value)

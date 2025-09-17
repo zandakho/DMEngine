@@ -1,0 +1,39 @@
+﻿#pragma once
+
+#include "DME/Core/Layer.h"
+
+#include "DME/Events/KeyEvent.h"
+#include "DME/Events/MouseEvent.h"
+#include "DME/Renderer/Texture.h"
+
+namespace DME
+{
+	class ConsolePanel : public Layer
+	{
+	public: // Constructors and Destructors
+
+		ConsolePanel();
+
+	public: // Helpers (Get&Set)
+
+		Ref<Texture2D> GetTextureFullPack() const;
+		void ClearTexturePack();
+
+	public: // Layer overrides
+
+		void OnAttach() override;
+		void OnDetach() override;
+		void OnImGuiRender() override;
+
+	public: // Events
+
+		bool OnKeyPressed(KeyPressedEvent& event);
+		bool OnMouseButtonPressed(MouseButtonEvent& event);
+
+	private: // Textures
+
+		Ref<Texture2D> m_SettingButton;
+
+	};
+}
+

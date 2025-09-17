@@ -12,8 +12,7 @@ namespace DME
 		enum class API
 		{
 			None = 0,
-			OpenGL = 1,
-			Direct3D = 2
+			OpenGL = 1
 		};
 	public:
 

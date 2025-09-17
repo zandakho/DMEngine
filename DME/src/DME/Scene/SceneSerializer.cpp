@@ -306,7 +306,7 @@ namespace DME
 		}
 		catch (YAML::ParserException e)
 		{
-			DME_CORE_ERROR("Failed to load .hazel file '{0}'\n     {1}", filepath, e.what());
+			DME_CORE_ERROR("Failed to load .dme file '{0}'\n     {1}", filepath, e.what())
 			return false;
 		}
 
@@ -314,26 +314,27 @@ namespace DME
 			return false;
 
 		std::string sceneName = data["Scene"].as<std::string>();
-		DME_CORE_TRACE("Deserializing scene '{0}'", sceneName);
+		DME_CORE_TRACE("Deserializing scene '{0}'", sceneName)
 
-		auto entities = data["Entities"];
-		if (entities)
+		if (auto entities = data["Entities"])
 		{
 			for (auto entity : entities)
 			{
 				uint64_t uuid = entity["Entity"].as<uint64_t>();
 
 				std::string name;
-				auto tagComponent = entity["TagComponent"];
-				if (tagComponent)
-					name = tagComponent["Tag"].as<std::string>();
-
-				DME_CORE_TRACE("Deserialized entity with ID = {0}, name = {1}", uuid, name);
+				if (auto tagComponent = entity["TagComponent"])
+				{
+					if (tagComponent)
+						name = tagComponent["Tag"].as<std::string>();
+				}
+				
+				DME_CORE_TRACE("Deserialized entity with ID = {0}, name = {1}", uuid, name)
 
 				Entity deserializedEntity = m_Scene->CreateEntityWithUUID(uuid, name);
 
-				auto transformComponent = entity["TransformComponent"];
-				if (transformComponent)
+				
+				if (auto transformComponent = entity["TransformComponent"])
 				{
 					auto& tc = deserializedEntity.GetComponent<TransformComponent>();
 					tc.Position = transformComponent["Position"].as<glm::vec3>();
@@ -341,8 +342,8 @@ namespace DME
 					tc.Scale = transformComponent["Scale"].as<glm::vec3>();
 				}
 
-				auto cameraComponent = entity["CameraComponent"];
-				if (cameraComponent)
+				
+				if (auto cameraComponent = entity["CameraComponent"])
 				{
 					auto& cc = deserializedEntity.AddComponent<CameraComponent>();
 
@@ -361,8 +362,8 @@ namespace DME
 					cc.FixedAspectRatio = cameraComponent["FixedAspectRatio"].as<bool>();
 				}
 
-				auto spriteRendererComponent = entity["SpriteRendererComponent"];
-				if (spriteRendererComponent)
+				
+				if (auto spriteRendererComponent = entity["SpriteRendererComponent"])
 				{
 					auto& src = deserializedEntity.AddComponent<SpriteRendererComponent>();
 					src.Color = spriteRendererComponent["Color"].as<glm::vec4>();
@@ -373,8 +374,8 @@ namespace DME
 						src.TilingFactor = spriteRendererComponent["TilingFactor"].as<float>();
 				}
 
-				auto circleRendererComponent = entity["CircleRendererComponent"];
-				if (circleRendererComponent)
+				
+				if (auto circleRendererComponent = entity["CircleRendererComponent"])
 				{
 					auto& crc = deserializedEntity.AddComponent<CircleRendererComponent>();
 					crc.Color = circleRendererComponent["Color"].as<glm::vec4>();
@@ -382,16 +383,16 @@ namespace DME
 					crc.Fade = circleRendererComponent["Fade"].as<float>();
 				}
 
-				auto rigidbody2DComponent = entity["Rigidbody2DComponent"];
-				if (rigidbody2DComponent)
+				
+				if (auto rigidbody2DComponent = entity["Rigidbody2DComponent"])
 				{
 					auto& rb2d = deserializedEntity.AddComponent<Rigidbody2DComponent>();
 					rb2d.Type = RigidBody2DBodyTypeFromString(rigidbody2DComponent["BodyType"].as<std::string>());
 					rb2d.FixedRotation = rigidbody2DComponent["FixedRotation"].as<bool>();
 				}
 
-				auto boxCollider2DComponent = entity["BoxCollider2DComponent"];
-				if (boxCollider2DComponent)
+				
+				if (auto boxCollider2DComponent = entity["BoxCollider2DComponent"])
 				{
 					auto& bc2d = deserializedEntity.AddComponent<BoxCollider2DComponent>();
 					bc2d.Offset = boxCollider2DComponent["Offset"].as<glm::vec2>();
@@ -402,8 +403,8 @@ namespace DME
 					bc2d.RestitutionThreshold = boxCollider2DComponent["RestitutionThreshold"].as<float>();
 				}
 
-				auto circleCollider2DComponent = entity["CircleCollider2DComponent"];
-				if (circleCollider2DComponent)
+				
+				if (auto circleCollider2DComponent = entity["CircleCollider2DComponent"])
 				{
 					auto& cc2d = deserializedEntity.AddComponent<CircleCollider2DComponent>();
 					cc2d.Offset = circleCollider2DComponent["Offset"].as<glm::vec2>();
@@ -420,7 +421,7 @@ namespace DME
 	}
 	bool SceneSerializer::DeSerializeRuntime(const std::string& filepath)
 	{
-		DME_CORE_ASSERT(false);
+		DME_CORE_ASSERT(false)
 		return false;
 	}
 } 

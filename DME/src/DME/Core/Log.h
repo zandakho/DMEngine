@@ -1,6 +1,5 @@
 #pragma once
 
-#include "DME/Core/Base.h"
 #include "DME/Core/LogImGuiSink.h"
 
 #define GLM_ENABLE_EXPERIMENTAL

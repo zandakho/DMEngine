@@ -14,11 +14,11 @@ namespace DME
 
 	void OpenGLContext::Init()
 	{
-		DME_PROFILE_FUNCTION();
+		DME_PROFILE_FUNCTION()
 
 		glfwMakeContextCurrent(m_WindowHandle);
 		int status = gladLoadGLLoader((GLADloadproc)glfwGetProcAddress);
-		DME_CORE_ASSERT(status, "Failed to initialized Glad");
+		DME_CORE_ASSERT(status, "Failed to initialized Glad")
 
 	#ifdef DME_ENABLE_ASSERTS
 		int versionMajor;
@@ -26,13 +26,13 @@ namespace DME
 		glGetIntegerv(GL_MAJOR_VERSION, &versionMajor);
 		glGetIntegerv(GL_MINOR_VERSION, &versionMinor);
 
-		DME_CORE_ASSERT(versionMajor > 4 || (versionMajor == 4 && versionMinor >= 5), "DME requires at least OpenGL version 4.5!");
+		DME_CORE_ASSERT(versionMajor > 4 || (versionMajor == 4 && versionMinor >= 5), "DME requires at least OpenGL version 4.5!")
 	#endif
 	}
 
 	void OpenGLContext::SwapBuffers()
 	{
-		DME_PROFILE_FUNCTION();
+		DME_PROFILE_FUNCTION()
 
 		glfwSwapBuffers(m_WindowHandle);
 	}

@@ -160,7 +160,7 @@ namespace DME {
 					{
 						if (const ImGuiPayload* payload = ImGui::AcceptDragDropPayload("CONTENT_BROWSER_ITEM"))
 						{
-							const wchar_t* path = (const wchar_t*)payload->Data;
+							const wchar_t* path = static_cast<const wchar_t*>(payload->Data);
 							std::filesystem::path texturePath = std::filesystem::path(g_AssetPath) / path;
 							Ref<Texture2D> texture = Texture2D::Create(texturePath.string());
 							if (texture->IsLoaded())
@@ -168,7 +168,7 @@ namespace DME {
 								component.Texture = texture;
 							}
 							else
-								DME_WARNING("Could not load texture {0}", texturePath.filename().string());
+								DME_WARNING("Could not load texture {0}", texturePath.filename().string())
 						}
 						ImGui::EndDragDropTarget();
 					}

@@ -16,9 +16,10 @@ namespace DME
 	Application::Application(const ApplicationSpecification& specification)
 		: m_Specification(specification)
 	{
-		DME_PROFILE_FUNCTION();
+		DME_PROFILE_FUNCTION()
 
-		DME_CORE_ASSERT(!s_Instance, "Application already exists!");
+		DME_CORE_ASSERT(!s_Instance, "Application already exists!")
+
 		s_Instance = this;
 
 		if (!m_Specification.WorkingDirectory.empty())
@@ -35,21 +36,21 @@ namespace DME
 
 	Application::~Application()
 	{
-		DME_PROFILE_FUNCTION();
+		DME_PROFILE_FUNCTION()
 
 		Renderer::Shutdown();
 	}
 
 	void Application::PushLayer(Layer* layer)
 	{
-		DME_PROFILE_FUNCTION();
+		DME_PROFILE_FUNCTION()
 		m_LayerStack.PushLayer(layer);
 		layer->OnAttach();
 	}
 
 	void Application::PushOverlay(Layer* overlay)
 	{
-		DME_PROFILE_FUNCTION();
+		DME_PROFILE_FUNCTION()
 
 		m_LayerStack.PushOverlay(overlay);
 		overlay->OnAttach();
@@ -57,7 +58,7 @@ namespace DME
 
 	void Application::OnEvent(Event& event)
 	{
-		DME_PROFILE_FUNCTION();
+		DME_PROFILE_FUNCTION()
 		
 		EventDispatcher dispatcher(event);
 		dispatcher.Dispatch<WindowCloseEvent>(DME_BIND_EVENT_FN(Application::OnWindowClose));
@@ -73,11 +74,11 @@ namespace DME
 
 	void Application::Run()
 	{
-		DME_PROFILE_FUNCTION();
+		DME_PROFILE_FUNCTION()
 
 		while (m_Running)
 		{
-			DME_PROFILE_SCOPE("RunLoop");
+			DME_PROFILE_SCOPE("RunLoop")
 		
 			float time = Time::GetTime();
 			TimeStep timestep = time - m_LastFrameTime;
@@ -110,7 +111,7 @@ namespace DME
 
 	void Application::Shutdown()
 	{
-		DME_PROFILE_FUNCTION();
+		DME_PROFILE_FUNCTION()
 		delete s_Instance;
 	}
 
@@ -122,7 +123,7 @@ namespace DME
 
 	bool Application::OnWindowResize(WindowResizeEvent& event)
 	{
-		DME_PROFILE_FUNCTION();
+		DME_PROFILE_FUNCTION()
 
 		if (event.GetWidth() == 0 || event.GetHeight() == 0)
 		{

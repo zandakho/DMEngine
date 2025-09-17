@@ -22,6 +22,8 @@ namespace DME
 
 		const std::deque<ImGuiLogEntry>& GetBuffer() const { return m_Buffer; }
 
+		void Clear() { m_Buffer.clear(); }
+
 	protected:
 		void sink_it_(const spdlog::details::log_msg& msg) override
 		{

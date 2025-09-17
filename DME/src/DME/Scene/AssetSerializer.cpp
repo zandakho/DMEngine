@@ -90,7 +90,7 @@ namespace DME
 {
 	void AssetSerializer::Serialize(Entity entity, const std::string& filepath)
 	{
-		DME_CORE_ASSERT(entity.HasComponent<IDComponent>());
+		DME_CORE_ASSERT(entity.HasComponent<IDComponent>())
 
 		YAML::Emitter out;
 		out << YAML::BeginMap;
@@ -231,111 +231,133 @@ namespace DME
 		}
 		catch (YAML::ParserException e)
 		{
-			DME_CORE_ERROR("Failed to parse dasset: {0}", e.what());
+			DME_CORE_ERROR("Failed to parse dasset: {0}", e.what())
 			return false;
 		}
 
 		YAML::Node entity = data;
 		if (!entity)
 		{
-			DME_CORE_ERROR("DME asset file empty or invalid: {0}", filepath);
+			DME_CORE_ERROR("DME asset file empty or invalid: {0}", filepath)
 			return false;
 		}
 
 		std::string name;
-		auto tagComponent = entity["TagComponent"];
-		if (tagComponent)
-			name = tagComponent["Tag"].as<std::string>();
+		if (auto tagComponent = entity["TagComponent"])
+		{
+			if (tagComponent)
+				name = tagComponent["Tag"].as<std::string>();
+		}
 
 		// Create a new entity (new UUID) in the provided scene
 		Entity deserializedEntity = scene->CreateEntity(name);
 
-		auto transformComponent = entity["TransformComponent"];
-		if (transformComponent)
+		if (auto transformComponent = entity["TransformComponent"])
 		{
-			auto& tc = deserializedEntity.GetComponent<TransformComponent>();
-			tc.Position = transformComponent["Position"].as<glm::vec3>();
-			tc.Rotation = transformComponent["Rotation"].as<glm::vec3>();
-			tc.Scale = transformComponent["Scale"].as<glm::vec3>();
+			if (transformComponent)
+			{
+				auto& tc = deserializedEntity.GetComponent<TransformComponent>();
+				tc.Position = transformComponent["Position"].as<glm::vec3>();
+				tc.Rotation = transformComponent["Rotation"].as<glm::vec3>();
+				tc.Scale = transformComponent["Scale"].as<glm::vec3>();
 
-			// override position with supplied drop-position
-			tc.Position = position;
+				// override position with supplied drop-position
+				tc.Position = position;
+			}
 		}
+		
 
-		auto cameraComponent = entity["CameraComponent"];
-		if (cameraComponent)
+		if (auto cameraComponent = entity["CameraComponent"])
 		{
-			auto& cc = deserializedEntity.AddComponent<CameraComponent>();
+			if (cameraComponent)
+			{
+				auto& cc = deserializedEntity.AddComponent<CameraComponent>();
 
-			auto cameraProps = cameraComponent["Camera"];
-			cc.Camera.SetProjectionType(static_cast<SceneCamera::ProjectionType>(cameraProps["ProjectionType"].as<int>()));
+				auto cameraProps = cameraComponent["Camera"];
+				cc.Camera.SetProjectionType(static_cast<SceneCamera::ProjectionType>(cameraProps["ProjectionType"].as<int>()));
 
-			cc.Camera.SetPerspectiveVerticalFOV(cameraProps["PerspectiveFOV"].as<float>());
-			cc.Camera.SetPerspectiveNearClip(cameraProps["PerspectiveNear"].as<float>());
-			cc.Camera.SetPerspectiveFarClip(cameraProps["PerspectiveFar"].as<float>());
+				cc.Camera.SetPerspectiveVerticalFOV(cameraProps["PerspectiveFOV"].as<float>());
+				cc.Camera.SetPerspectiveNearClip(cameraProps["PerspectiveNear"].as<float>());
+				cc.Camera.SetPerspectiveFarClip(cameraProps["PerspectiveFar"].as<float>());
 
-			cc.Camera.SetOrthographicSize(cameraProps["OrthographicSize"].as<float>());
-			cc.Camera.SetOrthographicNearClip(cameraProps["OrthographicNear"].as<float>());
-			cc.Camera.SetOrthographicFarClip(cameraProps["OrthographicFar"].as<float>());
+				cc.Camera.SetOrthographicSize(cameraProps["OrthographicSize"].as<float>());
+				cc.Camera.SetOrthographicNearClip(cameraProps["OrthographicNear"].as<float>());
+				cc.Camera.SetOrthographicFarClip(cameraProps["OrthographicFar"].as<float>());
 
-			cc.Primary = cameraComponent["Primary"].as<bool>();
-			cc.FixedAspectRatio = cameraComponent["FixedAspectRatio"].as<bool>();
+				cc.Primary = cameraComponent["Primary"].as<bool>();
+				cc.FixedAspectRatio = cameraComponent["FixedAspectRatio"].as<bool>();
+			}
 		}
+		
 
-		auto spriteRendererComponent = entity["SpriteRendererComponent"];
-		if (spriteRendererComponent)
+		if (auto spriteRendererComponent = entity["SpriteRendererComponent"])
 		{
-			auto& src = deserializedEntity.AddComponent<SpriteRendererComponent>();
-			src.Color = spriteRendererComponent["Color"].as<glm::vec4>();
-			if (spriteRendererComponent["TexturePath"])
-				src.Texture = Texture2D::Create(spriteRendererComponent["TexturePath"].as<std::string>());
+			if (spriteRendererComponent)
+			{
+				auto& src = deserializedEntity.AddComponent<SpriteRendererComponent>();
+				src.Color = spriteRendererComponent["Color"].as<glm::vec4>();
+				if (spriteRendererComponent["TexturePath"])
+					src.Texture = Texture2D::Create(spriteRendererComponent["TexturePath"].as<std::string>());
 
-			src.TilingFactor = spriteRendererComponent["TilingFactor"].as<float>();
+				src.TilingFactor = spriteRendererComponent["TilingFactor"].as<float>();
+			}
 		}
+		
 
-		auto circleRendererComponent = entity["CircleRendererComponent"];
-		if (circleRendererComponent)
+		if (auto circleRendererComponent = entity["CircleRendererComponent"])
 		{
-			auto& crc = deserializedEntity.AddComponent<CircleRendererComponent>();
-			crc.Color = circleRendererComponent["Color"].as<glm::vec4>();
-			crc.Thickness = circleRendererComponent["Thickness"].as<float>();
-			crc.Fade = circleRendererComponent["Fade"].as<float>();
+			if (circleRendererComponent)
+			{
+				auto& crc = deserializedEntity.AddComponent<CircleRendererComponent>();
+				crc.Color = circleRendererComponent["Color"].as<glm::vec4>();
+				crc.Thickness = circleRendererComponent["Thickness"].as<float>();
+				crc.Fade = circleRendererComponent["Fade"].as<float>();
+			}
 		}
+		
 
-		auto rigidbody2DComponent = entity["Rigidbody2DComponent"];
-		if (rigidbody2DComponent)
+		if (auto rigidbody2DComponent = entity["Rigidbody2DComponent"])
 		{
-			auto& rb2d = deserializedEntity.AddComponent<Rigidbody2DComponent>();
-			std::string bodyType = rigidbody2DComponent["BodyType"].as<std::string>();
-			if (bodyType == "Static") rb2d.Type = Rigidbody2DComponent::BodyType::Static;
-			else if (bodyType == "Dynamic") rb2d.Type = Rigidbody2DComponent::BodyType::Dynamic;
-			else rb2d.Type = Rigidbody2DComponent::BodyType::Kinematic;
+			if (rigidbody2DComponent)
+			{
+				auto& rb2d = deserializedEntity.AddComponent<Rigidbody2DComponent>();
+				std::string bodyType = rigidbody2DComponent["BodyType"].as<std::string>();
+				if (bodyType == "Static") rb2d.Type = Rigidbody2DComponent::BodyType::Static;
+				else if (bodyType == "Dynamic") rb2d.Type = Rigidbody2DComponent::BodyType::Dynamic;
+				else rb2d.Type = Rigidbody2DComponent::BodyType::Kinematic;
 
-			rb2d.FixedRotation = rigidbody2DComponent["FixedRotation"].as<bool>();
+				rb2d.FixedRotation = rigidbody2DComponent["FixedRotation"].as<bool>();
+			}
 		}
+		
 
-		auto boxColliderComponent = entity["BoxCollider2DComponent"];
-		if (boxColliderComponent)
+		if (auto boxColliderComponent = entity["BoxCollider2DComponent"])
 		{
-			auto& bc = deserializedEntity.AddComponent<BoxCollider2DComponent>();
-			bc.Offset = boxColliderComponent["Offset"].as<glm::vec2>();
-			bc.Size = boxColliderComponent["Size"].as<glm::vec2>();
-			bc.Density = boxColliderComponent["Density"].as<float>();
-			bc.Friction = boxColliderComponent["Friction"].as<float>();
-			bc.Restitution = boxColliderComponent["Restitution"].as<float>();
-			bc.RestitutionThreshold = boxColliderComponent["RestitutionThreshold"].as<float>();
+			if (boxColliderComponent)
+			{
+				auto& bc = deserializedEntity.AddComponent<BoxCollider2DComponent>();
+				bc.Offset = boxColliderComponent["Offset"].as<glm::vec2>();
+				bc.Size = boxColliderComponent["Size"].as<glm::vec2>();
+				bc.Density = boxColliderComponent["Density"].as<float>();
+				bc.Friction = boxColliderComponent["Friction"].as<float>();
+				bc.Restitution = boxColliderComponent["Restitution"].as<float>();
+				bc.RestitutionThreshold = boxColliderComponent["RestitutionThreshold"].as<float>();
+			}
 		}
+		
 
-		auto circleCollider2DComponent = entity["CircleCollider2DComponent"];
-		if (circleCollider2DComponent)
+		if (auto circleCollider2DComponent = entity["CircleCollider2DComponent"])
 		{
-			auto& cc2d = deserializedEntity.AddComponent<CircleCollider2DComponent>();
-			cc2d.Offset = circleCollider2DComponent["Offset"].as<glm::vec2>();
-			cc2d.Radius = circleCollider2DComponent["Radius"].as<float>();
-			cc2d.Density = circleCollider2DComponent["Density"].as<float>();
-			cc2d.Friction = circleCollider2DComponent["Friction"].as<float>();
-			cc2d.Restitution = circleCollider2DComponent["Restitution"].as<float>();
-			cc2d.RestitutionThreshold = circleCollider2DComponent["RestitutionThreshold"].as<float>();
+			if (circleCollider2DComponent)
+			{
+				auto& cc2d = deserializedEntity.AddComponent<CircleCollider2DComponent>();
+				cc2d.Offset = circleCollider2DComponent["Offset"].as<glm::vec2>();
+				cc2d.Radius = circleCollider2DComponent["Radius"].as<float>();
+				cc2d.Density = circleCollider2DComponent["Density"].as<float>();
+				cc2d.Friction = circleCollider2DComponent["Friction"].as<float>();
+				cc2d.Restitution = circleCollider2DComponent["Restitution"].as<float>();
+				cc2d.RestitutionThreshold = circleCollider2DComponent["RestitutionThreshold"].as<float>();
+			}
 		}
 
 		return true;

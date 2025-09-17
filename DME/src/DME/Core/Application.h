@@ -21,7 +21,7 @@ namespace DME
 
 		const char* operator[](int index) const
 		{
-			DME_CORE_ASSERT(index < Count);
+			DME_CORE_ASSERT(index < Count)
 			return Args[index];
 		}
 	};
