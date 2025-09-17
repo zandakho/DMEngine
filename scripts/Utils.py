@@ -115,4 +115,4 @@ def UnzipFile(filepath, deleteZipFile=True):
     sys.stdout.write('\n')
 
     if deleteZipFile:
-        os.remove(zipFilePath) # delete zip file
+        os.remove(zipFilePath)

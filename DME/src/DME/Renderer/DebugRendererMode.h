@@ -1,5 +1,9 @@
 #pragma once
 
+#include "DME/Events/KeyEvent.h"
+
+#include "DME/Core/Layer.h"
+
 namespace DME
 {
 	enum class DebugRendererMode
@@ -9,8 +13,21 @@ namespace DME
 		Point = 2
 	};
 
+	class DebugRenderer : public Layer
+	{
+	public: // Constructors and Destructors
 
-	extern std::string DebugModeToString(DebugRendererMode mode);
+		DebugRenderer();
+
+	public: // Helper functions
+
+		std::string DebugModeToString(DebugRendererMode mode);
+
+
+		bool OnKeyPressed(KeyPressedEvent& event);
+
+	};
 
 	extern DebugRendererMode s_DebugRendererMode;
+
 }

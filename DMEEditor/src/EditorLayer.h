@@ -6,6 +6,8 @@
 #include "Panels/SceneHierarchyPanel.h"
 #include "Panels/PropertiesPanel.h"
 
+#include "DME/Renderer/DebugRendererMode.h"
+
 #include "DME/Renderer/EditorCamera.h"
 #include "DME/ImGui/ImGuiDMEEditor.h"
 
@@ -134,6 +136,10 @@ namespace DME
 		bool m_DebugWindow = false;
 		bool m_DemoWindow = false;
 		bool m_RendererStatsWindow = false;
+
+	private: // For debug
+
+		DebugRenderer m_DebugRenderer;
 
 	};
 

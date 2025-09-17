@@ -2,13 +2,9 @@
 
 #include "EditorLayer.h"
 
-#include "Panels/FontLibrary.h"
-
 #include "DME/Scene/SceneSerializer.h"
 
 #include "DME/Utils/PlatformUtils.h"
-
-#include "DME/Renderer/DebugRendererMode.h"
 
 #include "DME/Math/Math.h"
 
@@ -152,19 +148,6 @@ namespace DME
 			m_HoveredEntity = pixelData == -1 ? Entity() : Entity(static_cast<entt::entity>(pixelData), m_ActiveScene.get());
 		}
 
-		if (Input::IsKeyPressed(Key::F1))
-		{
-			s_DebugRendererMode = DebugRendererMode::Normal;
-		}
-		else if (Input::IsKeyPressed(Key::F2))
-		{
-			s_DebugRendererMode = DebugRendererMode::Wireframe;
-		}
-		else if (Input::IsKeyPressed(Key::F3))
-		{
-			s_DebugRendererMode = DebugRendererMode::Point;
-		}
-
 		OnOverlayRender();
 
 		m_Framebuffer->UnBind();
@@ -287,6 +270,10 @@ namespace DME
 
 		dispatcher.Dispatch<KeyPressedEvent>(DME_BIND_EVENT_FN(m_PropertiesPanel.OnKeyPressed));
 		dispatcher.Dispatch<MouseButtonPressedEvent>(DME_BIND_EVENT_FN(m_PropertiesPanel.OnMouseButtonPressed));
+
+		if (m_SceneState == SceneState::Play)
+			dispatcher.Dispatch<KeyPressedEvent>(DME_BIND_EVENT_FN(m_DebugRenderer.OnKeyPressed));
+
 		
 	}
 
@@ -555,9 +542,11 @@ namespace DME
 			{
 				ImGui::SeparatorText("View mode");
 
+				ImGui::BeginDisabled(m_SceneState != SceneState::Play);
 				if (ImGuiDMEEditor::MenuItemEx("Default", nullptr, nullptr, s_DebugRendererMode == DebugRendererMode::Normal)) s_DebugRendererMode = DebugRendererMode::Normal;
 				if (ImGuiDMEEditor::MenuItemEx("Wireframe", nullptr, nullptr, s_DebugRendererMode == DebugRendererMode::Wireframe)) s_DebugRendererMode = DebugRendererMode::Wireframe;
 				if (ImGuiDMEEditor::MenuItemEx("Point", nullptr, nullptr, s_DebugRendererMode == DebugRendererMode::Point)) s_DebugRendererMode = DebugRendererMode::Point;
+				ImGui::EndDisabled();
 
 				ImGui::EndMenu();
 			}
@@ -868,7 +857,7 @@ namespace DME
 		ImGui::Begin("Debug Window");
 
 		ImGui::Text("Focus: %s\nHover: %s\nDock: %s", m_ViewportFocused ? "Focused" : "No", m_ViewportHovered ? "Hovered" : "No", m_ViewportDocked ? "Docked" : "No");
-		ImGui::Text("Debug mode: %s", DebugModeToString(s_DebugRendererMode).c_str());
+		ImGui::Text("Debug mode: %s", m_DebugRenderer.DebugModeToString(s_DebugRendererMode).c_str());
 		ImGui::Text("Viewport for EC: %s", m_EditorCamera.GetViewportStatusAsString().c_str());
 
 		ImGui::End();

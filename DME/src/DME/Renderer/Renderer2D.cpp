@@ -169,7 +169,6 @@ namespace DME
 		s_Data.CircleShader = Shader::Create("assets/shaders/Renderer2D_Circle.glsl");
 		s_Data.LineShader = Shader::Create("assets/shaders/Renderer2D_Line.glsl");
 
-		// Set first texture slot to 0
 		s_Data.TextureSlots[0] = s_Data.WhiteTexture;
 
 		s_Data.QuadVertexPositions[0] = { -0.5f, -0.5f, 0.0f, 1.0f };
@@ -191,6 +190,26 @@ namespace DME
 	{
 		DME_PROFILE_FUNCTION()
 
+		switch (s_DebugRendererMode)
+		{
+			case DebugRendererMode::Normal:
+				glPolygonMode(GL_FRONT_AND_BACK, GL_FILL);
+				break;
+
+			case DebugRendererMode::Wireframe:
+				glPolygonMode(GL_FRONT_AND_BACK, GL_LINE);
+				glLineWidth(2.0f);
+				break;
+			case DebugRendererMode::Point:
+				glPolygonMode(GL_FRONT_AND_BACK, GL_POINT);
+				glPointSize(3.0f);
+				break;
+
+			default:
+				break;
+
+		}
+
 		s_Data.CameraBuffer.ViewProjection = camera.GetViewProjectionMatrix();
 		s_Data.CameraUniformBuffer->SetData(&s_Data.CameraBuffer, sizeof(Renderer2DData::CameraData));
 
@@ -200,6 +219,26 @@ namespace DME
 	void Renderer2D::BeginScene(const Camera& camera, const glm::mat4& transform)
 	{
 		DME_PROFILE_FUNCTION()
+
+		switch (s_DebugRendererMode)
+		{
+			case DebugRendererMode::Normal:
+				glPolygonMode(GL_FRONT_AND_BACK, GL_FILL);
+				break;
+
+			case DebugRendererMode::Wireframe:
+				glPolygonMode(GL_FRONT_AND_BACK, GL_LINE);
+				glLineWidth(2.0f);
+				break;
+			case DebugRendererMode::Point:
+				glPolygonMode(GL_FRONT_AND_BACK, GL_POINT);
+				glPointSize(3.0f);
+				break;
+
+			default:
+				break;
+
+		}
 
 		s_Data.CameraBuffer.ViewProjection = camera.GetProjection() * glm::inverse(transform);
 		s_Data.CameraUniformBuffer->SetData(&s_Data.CameraBuffer, sizeof(Renderer2DData::CameraData));
@@ -211,19 +250,26 @@ namespace DME
 	{
 		DME_PROFILE_FUNCTION()
 
-		if (s_DebugRendererMode == DebugRendererMode::Normal)
-			glPolygonMode(GL_FRONT_AND_BACK, GL_FILL);
-		else if (s_DebugRendererMode == DebugRendererMode::Wireframe)
+		switch (s_DebugRendererMode)
 		{
-			glPolygonMode(GL_FRONT_AND_BACK, GL_LINE);
-			glLineWidth(2.0f);
-		}
-		else if (s_DebugRendererMode == DebugRendererMode::Point)
-		{
-			glPolygonMode(GL_FRONT_AND_BACK, GL_POINT);
-			glPointSize(3.0f);
-		}
+			case DebugRendererMode::Normal:
+				glPolygonMode(GL_FRONT_AND_BACK, GL_FILL);
+				break;
 
+			case DebugRendererMode::Wireframe:
+				glPolygonMode(GL_FRONT_AND_BACK, GL_LINE);
+				glLineWidth(2.0f);
+				break;
+			case DebugRendererMode::Point:
+				glPolygonMode(GL_FRONT_AND_BACK, GL_POINT);
+				glPointSize(3.0f);
+				break;
+
+			default:
+				break;
+
+		}
+		
 		s_Data.CameraBuffer.ViewProjection = camera.GetViewProjection();
 		s_Data.CameraUniformBuffer->SetData(&s_Data.CameraBuffer, sizeof(Renderer2DData::CameraData));
 
