@@ -1,353 +1,6 @@
 Scene: Untitled
 Entities:
-  - Entity: 12380076561095660967
-    TagComponent:
-      Tag: Empty Entity
-    TransformComponent:
-      Position: [0, 0, 0]
-      Rotation: [0, 0, 0]
-      Scale: [1.00000011e-06, 1, 1]
-  - Entity: 2759062585424000497
-    TagComponent:
-      Tag: White Cube
-    TransformComponent:
-      Position: [4.95216846, 8.09744644, -3.7252903e-09]
-      Rotation: [0, 0, 0]
-      Scale: [1, 1, 1]
-    SpriteRendererComponent:
-      Color: [1, 1, 1, 1]
-      TilingFactor: 1
-    Rigidbody2DComponent:
-      BodyType: Dynamic
-      FixedRotation: false
-    BoxCollider2DComponent:
-      Offset: [0, 0]
-      Size: [0.5, 0.5]
-      Density: 1
-      Friction: 0.5
-      Restitution: 0
-      RestitutionThreshold: 0.5
-  - Entity: 5558073702785370064
-    TagComponent:
-      Tag: Floor9
-    TransformComponent:
-      Position: [14.3990278, 5.813097, -9.31322575e-10]
-      Rotation: [0, 0, -0.745279968]
-      Scale: [2.52807617, 0.417280495, 1]
-    SpriteRendererComponent:
-      Color: [0.321568638, 0.321568638, 0.321568638, 1]
-      TilingFactor: 1
-    Rigidbody2DComponent:
-      BodyType: Static
-      FixedRotation: false
-    BoxCollider2DComponent:
-      Offset: [0, 0]
-      Size: [0.5, 0.5]
-      Density: 1
-      Friction: 0.5
-      Restitution: 0
-      RestitutionThreshold: 0.5
-  - Entity: 14422655583492262614
-    TagComponent:
-      Tag: Floor6
-    TransformComponent:
-      Position: [8.37195015, 2.00305581, 0]
-      Rotation: [0, 0, -1.17909837]
-      Scale: [3, 3.09819031, 1]
-    SpriteRendererComponent:
-      Color: [0.321568638, 0.321568638, 0.321568638, 1]
-      TexturePath: assets\textures\SymbolWhiteAlphaBG.png
-      TilingFactor: 1
-    Rigidbody2DComponent:
-      BodyType: Static
-      FixedRotation: false
-    BoxCollider2DComponent:
-      Offset: [0, 0]
-      Size: [0.5, 0.5]
-      Density: 1
-      Friction: 0.5
-      Restitution: 0
-      RestitutionThreshold: 0.5
-  - Entity: 10105439137964323450
-    TagComponent:
-      Tag: Floor9
-    TransformComponent:
-      Position: [16.6490002, 11.8129997, 0]
-      Rotation: [0, 0, -0.745279968]
-      Scale: [2.52807617, 0.417280495, 1]
-    SpriteRendererComponent:
-      Color: [0.321568638, 0.321568638, 0.321568638, 1]
-      TilingFactor: 1
-    Rigidbody2DComponent:
-      BodyType: Static
-      FixedRotation: false
-    BoxCollider2DComponent:
-      Offset: [0, 0]
-      Size: [0.5, 0.5]
-      Density: 1
-      Friction: 0.5
-      Restitution: 0
-      RestitutionThreshold: 0.5
-  - Entity: 14843974064949454636
-    TagComponent:
-      Tag: Camera
-    TransformComponent:
-      Position: [5.35867357, 4.06993675, 65.9689941]
-      Rotation: [0, 0, 0]
-      Scale: [0.999999762, 1, 0.999999762]
-    CameraComponent:
-      Camera:
-        ProjectionType: 0
-        PerspectiveFOV: 0.52359879
-        PerspectiveNear: 0.00999999978
-        PerspectiveFar: 1000
-        OrthographicSize: 10
-        OrthographicNear: -1
-        OrthographicFar: 1
-      Primary: true
-      FixedAspectRatio: false
-  - Entity: 9059426172438972214
-    TagComponent:
-      Tag: GreenCube
-    TransformComponent:
-      Position: [-0.687578797, 13.5712748, 9.31322575e-10]
-      Rotation: [0, 0, 0]
-      Scale: [0.5, 0.5, 1]
-    SpriteRendererComponent:
-      Color: [0, 1, 0, 1]
-      TilingFactor: 1
-    Rigidbody2DComponent:
-      BodyType: Dynamic
-      FixedRotation: false
-    BoxCollider2DComponent:
-      Offset: [0, 0]
-      Size: [0.5, 0.5]
-      Density: 1
-      Friction: 0.5
-      Restitution: 0.800000012
-      RestitutionThreshold: 0.5
-  - Entity: 4523503322346592078
-    TagComponent:
-      Tag: Floor2
-    TransformComponent:
-      Position: [2.42494678, 3.21874857, 0]
-      Rotation: [0, 0, 0.610496342]
-      Scale: [2.78694415, 0.295416623, 0.999999523]
-    SpriteRendererComponent:
-      Color: [0.321568638, 0.321568638, 0.321568638, 1]
-      TilingFactor: 1
-    Rigidbody2DComponent:
-      BodyType: Static
-      FixedRotation: false
-    BoxCollider2DComponent:
-      Offset: [0, 0]
-      Size: [0.5, 0.5]
-      Density: 1
-      Friction: 0.5
-      Restitution: 0
-      RestitutionThreshold: 0.5
-  - Entity: 309837349742238733
-    TagComponent:
-      Tag: Floor1
-    TransformComponent:
-      Position: [-2.00714874, 0.527221203, 4.65661287e-10]
-      Rotation: [0, 0, -0.484536946]
-      Scale: [3.10690999, 0.331478566, 1]
-    SpriteRendererComponent:
-      Color: [0.321568638, 0.321568638, 0.321568638, 1]
-      TilingFactor: 1
-    Rigidbody2DComponent:
-      BodyType: Static
-      FixedRotation: false
-    BoxCollider2DComponent:
-      Offset: [0, 0]
-      Size: [0.5, 0.5]
-      Density: 1
-      Friction: 0.5
-      Restitution: 0
-      RestitutionThreshold: 0.5
-  - Entity: 9362825748217489317
-    TagComponent:
-      Tag: Floor3
-    TransformComponent:
-      Position: [1.9376812, -2.05931902, 0]
-      Rotation: [0, 0, 0.706920981]
-      Scale: [4.15142059, 0.383691698, 1]
-    SpriteRendererComponent:
-      Color: [0.321568638, 0.321568638, 0.321568638, 1]
-      TilingFactor: 1
-    Rigidbody2DComponent:
-      BodyType: Static
-      FixedRotation: false
-    BoxCollider2DComponent:
-      Offset: [0, 0]
-      Size: [0.5, 0.5]
-      Density: 1
-      Friction: 0.5
-      Restitution: 0
-      RestitutionThreshold: 0.5
-  - Entity: 12194854150837310757
-    TagComponent:
-      Tag: BoxLeft
-    TransformComponent:
-      Position: [-7.18137455, 3.96763325, 0]
-      Rotation: [0, 0, 1.57079637]
-      Scale: [20.4984093, 0.43623051, 1]
-    SpriteRendererComponent:
-      Color: [0.321568638, 0.321568638, 0.321568638, 1]
-      TilingFactor: 1
-    Rigidbody2DComponent:
-      BodyType: Dynamic
-      FixedRotation: false
-    BoxCollider2DComponent:
-      Offset: [0, 0]
-      Size: [0.5, 0.5]
-      Density: 1
-      Friction: 0.5
-      Restitution: 0
-      RestitutionThreshold: 0.5
-  - Entity: 2829120995867505658
-    TagComponent:
-      Tag: BoxBottom
-    TransformComponent:
-      Position: [7.11654854, -6.4940567, 0]
-      Rotation: [0, 0, 0]
-      Scale: [29.0776348, 0.435806721, 1]
-    SpriteRendererComponent:
-      Color: [0.321568638, 0.321568638, 0.321568638, 1]
-      TilingFactor: 1
-    Rigidbody2DComponent:
-      BodyType: Static
-      FixedRotation: false
-    BoxCollider2DComponent:
-      Offset: [0, 0]
-      Size: [0.5, 0.5]
-      Density: 1
-      Friction: 0.5
-      Restitution: 0
-      RestitutionThreshold: 0.5
-  - Entity: 7436079829637743168
-    TagComponent:
-      Tag: BoxRight
-    TransformComponent:
-      Position: [21.3642502, 7.03683567, -6.10351562e-05]
-      Rotation: [0, 0, 0]
-      Scale: [0.637662351, 26.6391544, 1]
-    SpriteRendererComponent:
-      Color: [0.321568638, 0.321568638, 0.321568638, 1]
-      TilingFactor: 1
-    Rigidbody2DComponent:
-      BodyType: Static
-      FixedRotation: false
-    BoxCollider2DComponent:
-      Offset: [0, 0]
-      Size: [0.5, 0.5]
-      Density: 1
-      Friction: 0.5
-      Restitution: 0
-      RestitutionThreshold: 0.5
-  - Entity: 11808215099131669239
-    TagComponent:
-      Tag: CircleYellow
-    TransformComponent:
-      Position: [13.9592552, 14.4758596, -0.000122073572]
-      Rotation: [0, 0, 0]
-      Scale: [1, 1, 1]
-    CircleRendererComponent:
-      Color: [1, 1, 0, 1]
-      Thickness: 1
-      Fade: 0.688000023
-    Rigidbody2DComponent:
-      BodyType: Dynamic
-      FixedRotation: false
-    CircleCollider2DComponent:
-      Offset: [0, 0]
-      Radius: 0.5
-      Density: 1
-      Friction: 0.5
-      Restitution: 0.800000012
-      RestitutionThreshold: 0.5
-  - Entity: 7018284400340842788
-    TagComponent:
-      Tag: Floor
-    TransformComponent:
-      Position: [-2.25796056, 4.73730898, 0]
-      Rotation: [0, 0, -0.299764127]
-      Scale: [2.34816527, 0.302564979, 1]
-    SpriteRendererComponent:
-      Color: [0.319999993, 0.319999993, 0.319999993, 1]
-      TilingFactor: 1
-    Rigidbody2DComponent:
-      BodyType: Static
-      FixedRotation: false
-    BoxCollider2DComponent:
-      Offset: [0, 0]
-      Size: [0.5, 0.5]
-      Density: 0.270000011
-      Friction: 0.119999997
-      Restitution: 0
-      RestitutionThreshold: 0.5
-  - Entity: 10871423642339650850
-    TagComponent:
-      Tag: RedCube
-    TransformComponent:
-      Position: [5.36238813, 11.070488, 0]
-      Rotation: [0, 0, 0]
-      Scale: [1, 1, 1]
-    SpriteRendererComponent:
-      Color: [1, 0, 0, 1]
-      TilingFactor: 1
-    Rigidbody2DComponent:
-      BodyType: Dynamic
-      FixedRotation: false
-    BoxCollider2DComponent:
-      Offset: [0, 0]
-      Size: [0.5, 0.5]
-      Density: 1
-      Friction: 0.5
-      Restitution: 0.720000029
-      RestitutionThreshold: 0.5
-  - Entity: 9856960862819594796
-    TagComponent:
-      Tag: Floor5
-    TransformComponent:
-      Position: [7.99679899, -1.70507598, 0]
-      Rotation: [0, 0, -0.575170875]
-      Scale: [3.019907, 0.457583189, 1]
-    SpriteRendererComponent:
-      Color: [0.321568638, 0.321568638, 0.321568638, 1]
-      TilingFactor: 1
-    Rigidbody2DComponent:
-      BodyType: Static
-      FixedRotation: false
-    BoxCollider2DComponent:
-      Offset: [0, 0]
-      Size: [0.5, 0.5]
-      Density: 1
-      Friction: 0.5
-      Restitution: 0
-      RestitutionThreshold: 0.5
-  - Entity: 17250155162700866017
-    TagComponent:
-      Tag: Floor7
-    TransformComponent:
-      Position: [13.5974579, 1.29422045, 0]
-      Rotation: [0, 0, 0.547790587]
-      Scale: [1.60693049, 0.526221573, 1]
-    SpriteRendererComponent:
-      Color: [0.321568638, 0.321568638, 0.321568638, 1]
-      TilingFactor: 1
-    Rigidbody2DComponent:
-      BodyType: Static
-      FixedRotation: false
-    BoxCollider2DComponent:
-      Offset: [0, 0]
-      Size: [0.5, 0.5]
-      Density: 1
-      Friction: 0.5
-      Restitution: 0
-      RestitutionThreshold: 0.5
-  - Entity: 11159406380864897391
+  - Entity: 2204273222620174345
     TagComponent:
       Tag: CircleBlue
     TransformComponent:
@@ -368,7 +21,347 @@ Entities:
       Friction: 0.5
       Restitution: 0.800000012
       RestitutionThreshold: 0.5
-  - Entity: 8492035363311162809
+  - Entity: 3563056360769851768
+    TagComponent:
+      Tag: Floor7
+    TransformComponent:
+      Position: [13.5974579, 1.29422045, 0]
+      Rotation: [0, 0, 0.547790587]
+      Scale: [1.60693049, 0.526221573, 1]
+    SpriteRendererComponent:
+      Color: [0.321568638, 0.321568638, 0.321568638, 1]
+      TilingFactor: 1
+    Rigidbody2DComponent:
+      BodyType: Static
+      FixedRotation: false
+    BoxCollider2DComponent:
+      Offset: [0, 0]
+      Size: [0.5, 0.5]
+      Density: 1
+      Friction: 0.5
+      Restitution: 0
+      RestitutionThreshold: 0.5
+  - Entity: 7688612309069991720
+    TagComponent:
+      Tag: Floor5
+    TransformComponent:
+      Position: [7.99679899, -1.70507598, 0]
+      Rotation: [0, 0, -0.575170875]
+      Scale: [3.019907, 0.457583189, 1]
+    SpriteRendererComponent:
+      Color: [0.321568638, 0.321568638, 0.321568638, 1]
+      TilingFactor: 1
+    Rigidbody2DComponent:
+      BodyType: Static
+      FixedRotation: false
+    BoxCollider2DComponent:
+      Offset: [0, 0]
+      Size: [0.5, 0.5]
+      Density: 1
+      Friction: 0.5
+      Restitution: 0
+      RestitutionThreshold: 0.5
+  - Entity: 8983371434290737048
+    TagComponent:
+      Tag: RedCube
+    TransformComponent:
+      Position: [5.36238813, 11.070488, 0]
+      Rotation: [0, 0, 0]
+      Scale: [1, 1, 1]
+    SpriteRendererComponent:
+      Color: [1, 0, 0, 1]
+      TilingFactor: 1
+    Rigidbody2DComponent:
+      BodyType: Dynamic
+      FixedRotation: false
+    BoxCollider2DComponent:
+      Offset: [0, 0]
+      Size: [0.5, 0.5]
+      Density: 1
+      Friction: 0.5
+      Restitution: 0.720000029
+      RestitutionThreshold: 0.5
+  - Entity: 3984377415709352500
+    TagComponent:
+      Tag: Floor
+    TransformComponent:
+      Position: [-2.25796056, 4.73730898, 0]
+      Rotation: [0, 0, -0.299764127]
+      Scale: [2.34816527, 0.302564979, 1]
+    SpriteRendererComponent:
+      Color: [0.319999993, 0.319999993, 0.319999993, 1]
+      TilingFactor: 1
+    Rigidbody2DComponent:
+      BodyType: Static
+      FixedRotation: false
+    BoxCollider2DComponent:
+      Offset: [0, 0]
+      Size: [0.5, 0.5]
+      Density: 0.270000011
+      Friction: 0.119999997
+      Restitution: 0
+      RestitutionThreshold: 0.5
+  - Entity: 5424400336149171230
+    TagComponent:
+      Tag: CircleYellow
+    TransformComponent:
+      Position: [13.9592552, 14.4758596, -0.000122073572]
+      Rotation: [0, 0, 0]
+      Scale: [1, 1, 1]
+    CircleRendererComponent:
+      Color: [1, 1, 0, 1]
+      Thickness: 1
+      Fade: 0.688000023
+    Rigidbody2DComponent:
+      BodyType: Dynamic
+      FixedRotation: false
+    CircleCollider2DComponent:
+      Offset: [0, 0]
+      Radius: 0.5
+      Density: 1
+      Friction: 0.5
+      Restitution: 0.800000012
+      RestitutionThreshold: 0.5
+  - Entity: 10540996783537642337
+    TagComponent:
+      Tag: BoxRight
+    TransformComponent:
+      Position: [21.3642502, 7.03683567, -6.10351562e-05]
+      Rotation: [0, 0, 0]
+      Scale: [0.637662351, 26.6391544, 1]
+    SpriteRendererComponent:
+      Color: [0.321568638, 0.321568638, 0.321568638, 1]
+      TilingFactor: 1
+    Rigidbody2DComponent:
+      BodyType: Static
+      FixedRotation: false
+    BoxCollider2DComponent:
+      Offset: [0, 0]
+      Size: [0.5, 0.5]
+      Density: 1
+      Friction: 0.5
+      Restitution: 0
+      RestitutionThreshold: 0.5
+  - Entity: 2690807247827543701
+    TagComponent:
+      Tag: BoxBottom
+    TransformComponent:
+      Position: [7.11654854, -6.4940567, 0]
+      Rotation: [0, 0, 0]
+      Scale: [29.0776348, 0.435806721, 1]
+    SpriteRendererComponent:
+      Color: [0.321568638, 0.321568638, 0.321568638, 1]
+      TilingFactor: 1
+    Rigidbody2DComponent:
+      BodyType: Static
+      FixedRotation: false
+    BoxCollider2DComponent:
+      Offset: [0, 0]
+      Size: [0.5, 0.5]
+      Density: 1
+      Friction: 0.5
+      Restitution: 0
+      RestitutionThreshold: 0.5
+  - Entity: 9149257653773480722
+    TagComponent:
+      Tag: BoxLeft
+    TransformComponent:
+      Position: [-7.18137455, 3.96763325, 0]
+      Rotation: [0, 0, 1.57079637]
+      Scale: [20.4984093, 0.43623051, 1]
+    SpriteRendererComponent:
+      Color: [0.321568638, 0.321568638, 0.321568638, 1]
+      TilingFactor: 1
+    Rigidbody2DComponent:
+      BodyType: Dynamic
+      FixedRotation: false
+    BoxCollider2DComponent:
+      Offset: [0, 0]
+      Size: [0.5, 0.5]
+      Density: 1
+      Friction: 0.5
+      Restitution: 0
+      RestitutionThreshold: 0.5
+  - Entity: 1443016492099378987
+    TagComponent:
+      Tag: Floor3
+    TransformComponent:
+      Position: [1.9376812, -2.05931902, 0]
+      Rotation: [0, 0, 0.706920981]
+      Scale: [4.15142059, 0.383691698, 1]
+    SpriteRendererComponent:
+      Color: [0.321568638, 0.321568638, 0.321568638, 1]
+      TilingFactor: 1
+    Rigidbody2DComponent:
+      BodyType: Static
+      FixedRotation: false
+    BoxCollider2DComponent:
+      Offset: [0, 0]
+      Size: [0.5, 0.5]
+      Density: 1
+      Friction: 0.5
+      Restitution: 0
+      RestitutionThreshold: 0.5
+  - Entity: 5020764981811369007
+    TagComponent:
+      Tag: Floor1
+    TransformComponent:
+      Position: [-2.00714874, 0.527221203, 4.65661287e-10]
+      Rotation: [0, 0, -0.484536946]
+      Scale: [3.10690999, 0.331478566, 1]
+    SpriteRendererComponent:
+      Color: [0.321568638, 0.321568638, 0.321568638, 1]
+      TilingFactor: 1
+    Rigidbody2DComponent:
+      BodyType: Static
+      FixedRotation: false
+    BoxCollider2DComponent:
+      Offset: [0, 0]
+      Size: [0.5, 0.5]
+      Density: 1
+      Friction: 0.5
+      Restitution: 0
+      RestitutionThreshold: 0.5
+  - Entity: 9128847311556194341
+    TagComponent:
+      Tag: Floor2
+    TransformComponent:
+      Position: [2.42494678, 3.21874857, 0]
+      Rotation: [0, -0, 0.610496342]
+      Scale: [2.16286206, 0.267330617, 0.999999523]
+    SpriteRendererComponent:
+      Color: [0.321568638, 0.321568638, 0.321568638, 1]
+      TilingFactor: 1
+    Rigidbody2DComponent:
+      BodyType: Static
+      FixedRotation: false
+    BoxCollider2DComponent:
+      Offset: [0, 0]
+      Size: [0.5, 0.5]
+      Density: 1
+      Friction: 0.5
+      Restitution: 0
+      RestitutionThreshold: 0.5
+  - Entity: 3075612518506477327
+    TagComponent:
+      Tag: GreenCube
+    TransformComponent:
+      Position: [-0.687578797, 13.5712748, 9.31322575e-10]
+      Rotation: [0, 0, 0]
+      Scale: [0.5, 0.5, 1]
+    SpriteRendererComponent:
+      Color: [0, 1, 0, 1]
+      TilingFactor: 1
+    Rigidbody2DComponent:
+      BodyType: Dynamic
+      FixedRotation: false
+    BoxCollider2DComponent:
+      Offset: [0, 0]
+      Size: [0.5, 0.5]
+      Density: 1
+      Friction: 0.5
+      Restitution: 0.800000012
+      RestitutionThreshold: 0.5
+  - Entity: 13128739471296746095
+    TagComponent:
+      Tag: Camera
+    TransformComponent:
+      Position: [5.35867357, 4.06993675, 65.9689941]
+      Rotation: [0, 0, 0]
+      Scale: [0.999999762, 1, 0.999999762]
+    CameraComponent:
+      Camera:
+        ProjectionType: 0
+        PerspectiveFOV: 0.52359879
+        PerspectiveNear: 0.00999999978
+        PerspectiveFar: 1000
+        OrthographicSize: 10
+        OrthographicNear: -1
+        OrthographicFar: 1
+      Primary: true
+      FixedAspectRatio: false
+  - Entity: 11299651058732297267
+    TagComponent:
+      Tag: Floor9
+    TransformComponent:
+      Position: [16.6490002, 11.8129997, 0]
+      Rotation: [0, 0, -0.745279968]
+      Scale: [2.52807617, 0.417280495, 1]
+    SpriteRendererComponent:
+      Color: [0.321568638, 0.321568638, 0.321568638, 1]
+      TilingFactor: 1
+    Rigidbody2DComponent:
+      BodyType: Static
+      FixedRotation: false
+    BoxCollider2DComponent:
+      Offset: [0, 0]
+      Size: [0.5, 0.5]
+      Density: 1
+      Friction: 0.5
+      Restitution: 0
+      RestitutionThreshold: 0.5
+  - Entity: 11417726124780185563
+    TagComponent:
+      Tag: Floor6
+    TransformComponent:
+      Position: [8.37195015, 2.00305581, 0]
+      Rotation: [0, 0, -1.17909837]
+      Scale: [3, 3.09819031, 1]
+    SpriteRendererComponent:
+      Color: [0.321568638, 0.321568638, 0.321568638, 1]
+      TexturePath: assets\textures\SymbolWhiteAlphaBG.png
+      TilingFactor: 1
+    Rigidbody2DComponent:
+      BodyType: Static
+      FixedRotation: false
+    BoxCollider2DComponent:
+      Offset: [0, 0]
+      Size: [0.5, 0.5]
+      Density: 1
+      Friction: 0.5
+      Restitution: 0
+      RestitutionThreshold: 0.5
+  - Entity: 4573629574582922630
+    TagComponent:
+      Tag: Floor9
+    TransformComponent:
+      Position: [14.3990278, 5.813097, -9.31322575e-10]
+      Rotation: [0, 0, -0.745279968]
+      Scale: [2.52807617, 0.417280495, 1]
+    SpriteRendererComponent:
+      Color: [0.321568638, 0.321568638, 0.321568638, 1]
+      TilingFactor: 1
+    Rigidbody2DComponent:
+      BodyType: Static
+      FixedRotation: false
+    BoxCollider2DComponent:
+      Offset: [0, 0]
+      Size: [0.5, 0.5]
+      Density: 1
+      Friction: 0.5
+      Restitution: 0
+      RestitutionThreshold: 0.5
+  - Entity: 16904961830780094950
+    TagComponent:
+      Tag: White Cube
+    TransformComponent:
+      Position: [3.17714643, 8.07971668, -3.65828079e-09]
+      Rotation: [0, -0, 0]
+      Scale: [1, 1, 1]
+    SpriteRendererComponent:
+      Color: [1, 1, 1, 1]
+      TilingFactor: 1
+    Rigidbody2DComponent:
+      BodyType: Dynamic
+      FixedRotation: false
+    BoxCollider2DComponent:
+      Offset: [0, 0]
+      Size: [0.5, 0.5]
+      Density: 1
+      Friction: 0.5
+      Restitution: 0
+      RestitutionThreshold: 0.5
+  - Entity: 14080429379464200682
     TagComponent:
       Tag: Floor8
     TransformComponent:
@@ -388,10 +381,3 @@ Entities:
       Friction: 0.5
       Restitution: 0
       RestitutionThreshold: 0.5
-  - Entity: 6499730777606408615
-    TagComponent:
-      Tag: Empty Entity
-    TransformComponent:
-      Position: [0, 0, 0]
-      Rotation: [0, 0, 0]
-      Scale: [1, 1, 1]

@@ -46,6 +46,9 @@ namespace DME
 		m_IconRotate = Texture2D::Create("Resources/Icons/Viewport/Viewport_Rotate_Img.png");
 		m_IconScale = Texture2D::Create("Resources/Icons/Viewport/Viewport_Resize_Img.png");
 
+		m_IconLocal = Texture2D::Create("Resources/Icons/Viewport/Viewport_Local_Img.png");
+		m_IconWorld = Texture2D::Create("Resources/Icons/Viewport/Viewport_World_Img.png");
+
 		m_SettingButton = Texture2D::Create("Resources/Icons/Editor/SettingsIcon_Img.png");
 
 		FramebufferSpecification fbSpec;
@@ -298,7 +301,6 @@ namespace DME
 
 		switch (event.GetKeyCode())
 		{
-			default:
 			case Key::N:
 			{
 				if (control)
@@ -334,43 +336,56 @@ namespace DME
 				break;
 			}
 
-			if (m_ViewportFocused && m_SceneState == SceneState::Edit)
+			case Key::Q:
 			{
-				case Key::Q:
+				if (m_ViewportFocused && m_SceneState == SceneState::Edit)
 				{
 					if (!ImGuizmo::IsUsing())
 						m_GizmoType = -1;
 					break;
 				}
+					
+			}
 
-				case Key::W:
+			case Key::W:
+			{
+
+				if(m_ViewportFocused && m_SceneState == SceneState::Edit)
 				{
 					if (!ImGuizmo::IsUsing())
 						m_GizmoType = ImGuizmo::OPERATION::TRANSLATE;
 					break;
 				}
+			}
 
-				case Key::E:
+			case Key::E:
+			{
+				if (m_ViewportFocused && m_SceneState == SceneState::Edit)
 				{
 					if (!ImGuizmo::IsUsing())
 						m_GizmoType = ImGuizmo::OPERATION::ROTATE;
 					break;
 				}
+			}
 
-				case Key::R:
+			case Key::R:
+			{
+				if (m_ViewportFocused && m_SceneState == SceneState::Edit)
 				{
 					if (!ImGuizmo::IsUsing())
 						m_GizmoType = ImGuizmo::OPERATION::SCALE;
 					break;
 				}
-
-				case Key::Delete:
-				{
-					if (m_SceneHierarchyPanel.GetSelectedEntity())
-						DME_CORE_WARNING("Delete entity: {0}", m_SceneHierarchyPanel.GetSelectedEntity().GetName())
-					DeleteSelectedEntity();
-				}
 			}
+
+			case Key::Delete:
+			{
+				if (m_SceneHierarchyPanel.GetSelectedEntity())
+					DME_CORE_WARNING("Delete entity: {0}", m_SceneHierarchyPanel.GetSelectedEntity().GetName())
+				DeleteSelectedEntity();
+					break;
+			}
+				
 		}
 		return false;
 	}
@@ -379,7 +394,6 @@ namespace DME
 	{
 		switch (event.GetMouseButton())
 		{
-			default:
 			case Mouse::ButtonLeft:
 			{
 				if (m_ViewportHovered && !ImGuizmo::IsOver() && !Input::IsKeyPressed(Key::LeftShift))
@@ -431,48 +445,57 @@ namespace DME
 
 		}
 
-		ImGui::PopStyleColor();
 		ImGui::EndChild();
-
-		bool toolbarEnabled = static_cast<bool>(m_ActiveScene);
+		ImGui::PopStyleColor();
 	}
 
 	void EditorLayer::GizmosToolbar()
 	{
 		ImGui::PushStyleColor(ImGuiCol_FrameBg, ImVec4(0.11f, 0.11f, 0.11f, 0.5f));
+
 		ImGui::SetNextWindowPos(ImVec2(ImGui::GetWindowPos().x + 15, ImGui::GetWindowPos().y + 40));
-		if (ImGui::BeginChild("Control panel", ImVec2(130, 35), ImGuiChildFlags_FrameStyle, ImGuiWindowFlags_NoDecoration | ImGuiWindowFlags_NoDocking | ImGuiWindowFlags_NoMove | ImGuiWindowFlags_NoScrollbar | ImGuiWindowFlags_NoScrollWithMouse))
-		{
-			ImGui::PopStyleColor();
+		ImGui::BeginChild("Move Control Panel", ImVec2(135, 35), ImGuiChildFlags_FrameStyle, ImGuiWindowFlags_NoDecoration | ImGuiWindowFlags_NoDocking | ImGuiWindowFlags_NoMove | ImGuiWindowFlags_NoScrollbar | ImGuiWindowFlags_NoScrollWithMouse);
 
-			ImGui::PushFont(ImGui::GetIO().Fonts->Fonts[FontLibrary::OpenSansBold_21]);
+		ImGui::PushStyleVar(ImGuiStyleVar_FramePadding, ImVec2(9, 5));
 
-			ImGui::PushStyleColor(ImGuiCol_Button, ImVec4(0.2f, 0.2f, 0.2f, 0.5f));
-			ImGui::PushStyleColor(ImGuiCol_ButtonHovered, ImVec4(0.7f, 0.7f, 0.7f, 0.5f));
-			ImGui::PushStyleColor(ImGuiCol_Text, ImVec4(1.0f, 1.0f, 1.0f, 1.0f));
-			ImGui::PushStyleVar(ImGuiStyleVar_FramePadding, ImVec2(9, 5));
-			ImGui::PushStyleColor(ImGuiCol_Button, m_GizmoType == -1 ? ImVec4(0.2f, 0.6f, 0.9f, 0.5f) : ImVec4(0.2f, 0.2f, 0.2f, 0.5f));
-			if (ImGuiDMEEditor::IconButton("##Cursor", reinterpret_cast<ImTextureID*>(static_cast<uintptr_t>(m_IconCursor->GetRendererID())), { 25, 25 })) m_GizmoType = -1; ImGui::SameLine();
-			ImGui::PopStyleColor();
-			ImGui::PushStyleColor(ImGuiCol_Button, m_GizmoType == ImGuizmo::OPERATION::TRANSLATE ? ImVec4(0.2f, 0.6f, 0.9f, 0.5f) : ImVec4(0.2f, 0.2f, 0.2f, 0.5f));
-			if (ImGuiDMEEditor::IconButton("##Move", reinterpret_cast<ImTextureID*>(static_cast<uintptr_t>(m_IconMove->GetRendererID())), { 25, 25 })) m_GizmoType = ImGuizmo::OPERATION::TRANSLATE; ImGui::SameLine();
-			ImGui::PopStyleColor();
-			ImGui::PushStyleColor(ImGuiCol_Button, m_GizmoType == ImGuizmo::OPERATION::ROTATE ? ImVec4(0.2f, 0.6f, 0.9f, 0.5f) : ImVec4(0.2f, 0.2f, 0.2f, 0.5f));
-			if (ImGuiDMEEditor::IconButton("##Rotate", reinterpret_cast<ImTextureID*>(static_cast<uintptr_t>(m_IconRotate->GetRendererID())), { 25, 25 })) m_GizmoType = ImGuizmo::OPERATION::ROTATE; ImGui::SameLine();
-			ImGui::PopStyleColor();
-			ImGui::PushStyleColor(ImGuiCol_Button, m_GizmoType == ImGuizmo::OPERATION::SCALE ? ImVec4(0.2f, 0.6f, 0.9f, 0.5f) : ImVec4(0.2f, 0.2f, 0.2f, 0.5f));
-			if (ImGuiDMEEditor::IconButton("##Scale", reinterpret_cast<ImTextureID*>(static_cast<uintptr_t>(m_IconScale->GetRendererID())), { 25, 25 })) m_GizmoType = ImGuizmo::OPERATION::SCALE;
-			ImGui::PopStyleColor();
-			ImGui::PopStyleVar();
-			ImGui::PopStyleColor(3);
+		ImGui::PushStyleColor(ImGuiCol_Button, m_GizmoType == -1 ? ImVec4(0.2f, 0.6f, 0.9f, 0.5f) : ImVec4(0.2f, 0.2f, 0.2f, 0.5f));
+		if (ImGuiDMEEditor::IconButton("##Cursor", reinterpret_cast<ImTextureID*>(static_cast<uintptr_t>(m_IconCursor->GetRendererID())), { 25, 25 })) m_GizmoType = -1; ImGui::SameLine();
+		ImGui::PopStyleColor();
 
-			ImGui::PopFont();
+		ImGui::PushStyleColor(ImGuiCol_Button, m_GizmoType == ImGuizmo::OPERATION::TRANSLATE ? ImVec4(0.2f, 0.6f, 0.9f, 0.5f) : ImVec4(0.2f, 0.2f, 0.2f, 0.5f));
+		if (ImGuiDMEEditor::IconButton("##Move", reinterpret_cast<ImTextureID*>(static_cast<uintptr_t>(m_IconMove->GetRendererID())), { 25, 25 })) m_GizmoType = ImGuizmo::OPERATION::TRANSLATE; ImGui::SameLine();
+		ImGui::PopStyleColor();
 
-			ImGui::EndChild();
+		ImGui::PushStyleColor(ImGuiCol_Button, m_GizmoType == ImGuizmo::OPERATION::ROTATE ? ImVec4(0.2f, 0.6f, 0.9f, 0.5f) : ImVec4(0.2f, 0.2f, 0.2f, 0.5f));
+		if (ImGuiDMEEditor::IconButton("##Rotate", reinterpret_cast<ImTextureID*>(static_cast<uintptr_t>(m_IconRotate->GetRendererID())), { 25, 25 })) m_GizmoType = ImGuizmo::OPERATION::ROTATE; ImGui::SameLine();
+		ImGui::PopStyleColor();
 
-		}
+		ImGui::PushStyleColor(ImGuiCol_Button, m_GizmoType == ImGuizmo::OPERATION::SCALE ? ImVec4(0.2f, 0.6f, 0.9f, 0.5f) : ImVec4(0.2f, 0.2f, 0.2f, 0.5f));
+		if (ImGuiDMEEditor::IconButton("##Scale", reinterpret_cast<ImTextureID*>(static_cast<uintptr_t>(m_IconScale->GetRendererID())), { 25, 25 })) m_GizmoType = ImGuizmo::OPERATION::SCALE;
+		ImGui::PopStyleColor();
 
+		ImGui::PopStyleVar();
 
+		ImGui::EndChild();
+
+		ImGui::SetNextWindowPos(ImVec2(ImGui::GetWindowPos().x + 160, ImGui::GetWindowPos().y + 40));
+		ImGui::BeginChild("Map Control Panel", ImVec2(75, 35), ImGuiChildFlags_FrameStyle, ImGuiWindowFlags_NoDecoration | ImGuiWindowFlags_NoDocking | ImGuiWindowFlags_NoMove | ImGuiWindowFlags_NoScrollbar | ImGuiWindowFlags_NoScrollWithMouse);
+
+		ImGui::PushStyleVar(ImGuiStyleVar_FramePadding, ImVec2(9, 5));
+
+		ImGui::PushStyleColor(ImGuiCol_Button, m_GizmoMode == ImGuizmo::LOCAL ? ImVec4(0.2f, 0.6f, 0.9f, 0.5f) : ImVec4(0.2f, 0.2f, 0.2f, 0.5f));
+		if (ImGuiDMEEditor::IconButton("##Local", reinterpret_cast<ImTextureID*>(static_cast<uintptr_t>(m_IconLocal->GetRendererID())), { 25, 25 })) m_GizmoMode = ImGuizmo::LOCAL; ImGui::SameLine();
+		ImGui::PopStyleColor();
+
+		ImGui::PushStyleColor(ImGuiCol_Button, m_GizmoMode == ImGuizmo::WORLD ? ImVec4(0.2f, 0.6f, 0.9f, 0.5f) : ImVec4(0.2f, 0.2f, 0.2f, 0.5f));
+		if (ImGuiDMEEditor::IconButton("##World", reinterpret_cast<ImTextureID*>(static_cast<uintptr_t>(m_IconWorld->GetRendererID())), { 25, 25 })) m_GizmoMode = ImGuizmo::WORLD;
+		ImGui::PopStyleColor();
+
+		ImGui::PopStyleVar();
+
+		ImGui::EndChild();
+
+		ImGui::PopStyleColor();
 	}
 
 	void EditorLayer::UITabBar()
@@ -515,15 +538,15 @@ namespace DME
 			if (ImGui::BeginMenu("Window"))
 			{
 				ImGui::SeparatorText("Main");
-				ImGui::Checkbox("Scene Hierarchy", &m_SceneHierarchyWindow);
-				ImGui::Checkbox("Viewport", &m_ViewportWindow);
+				ImGui::Checkbox("Scene Hierarchy##Window", &m_SceneHierarchyWindow);
+				ImGui::Checkbox("Viewport##Window", &m_ViewportWindow);
 
 				ImGui::SeparatorText("Other");
-				ImGui::Checkbox("Settings", &m_SettingsWindow);
-				ImGui::Checkbox("Debug", &m_DebugWindow);
-				ImGui::Checkbox("Demo", &m_DemoWindow);
-				ImGui::Checkbox("Renderer Stats", &m_RendererStatsWindow);
-				ImGui::Checkbox("Console", &m_ConsoleWindow);
+				ImGui::Checkbox("Settings##Window", &m_SettingsWindow);
+				ImGui::Checkbox("Debug##Window", &m_DebugWindow);
+				ImGui::Checkbox("Demo##Window", &m_DemoWindow);
+				ImGui::Checkbox("Renderer Stats##Window", &m_RendererStatsWindow);
+				ImGui::Checkbox("Console##Window", &m_ConsoleWindow);
 
 				ImGui::EndMenu();
 			}
@@ -760,9 +783,8 @@ namespace DME
 	// Windows
 	void EditorLayer::ViewportWindow()
 	{
-		ImGui::PushStyleVar(ImGuiStyleVar_WindowPadding, ImVec2(3.5f, 3.5f));
+		ImGui::PushStyleVar(ImGuiStyleVar_WindowPadding, ImVec2(1.5f, 1.5f));
 		ImGui::Begin("Viewport", nullptr, ImGuiWindowFlags_NoCollapse);
-		ImGui::PopStyleVar();
 
 		auto viewportMinRegion = ImGui::GetWindowContentRegionMin();
 		auto viewportMaxRegion = ImGui::GetWindowContentRegionMax();
@@ -800,9 +822,11 @@ namespace DME
 		Entity selectedEntity = m_SceneHierarchyPanel.GetSelectedEntity();
 		if (selectedEntity && m_GizmoType != -1)
 		{
+			ImGui::PushID("Viewport");
 			ImGuizmo::SetOrthographic(false);
-			ImGuizmo::SetDrawlist();
+			ImGuizmo::SetDrawlist(ImGui::GetWindowDrawList());
 			ImGuizmo::SetRect(m_ViewportBounds[0].x, m_ViewportBounds[0].y, m_ViewportBounds[1].x - m_ViewportBounds[0].x, m_ViewportBounds[1].y - m_ViewportBounds[0].y);
+			ImGui::PopID();
 
 			const glm::mat4& cameraProjection = m_EditorCamera.GetProjection();
 			glm::mat4 cameraView = m_EditorCamera.GetViewMatrix();
@@ -810,16 +834,12 @@ namespace DME
 			auto& tc = selectedEntity.GetComponent<TransformComponent>();
 			glm::mat4 transform = tc.GetTransform();
 
-
 			bool snap = Input::IsKeyPressed(Key::LeftControl);
-			float snapValue = 0.5f;
-			if (m_GizmoType == ImGuizmo::OPERATION::ROTATE)
-				snapValue = 45.0f;
-
+			float snapValue = (m_GizmoType == ImGuizmo::ROTATE) ? 45.0f : 0.5f;
 			float snapValues[3] = { snapValue, snapValue, snapValue };
 
 			ImGuizmo::Manipulate(glm::value_ptr(cameraView), glm::value_ptr(cameraProjection),
-				static_cast<ImGuizmo::OPERATION>(m_GizmoType), ImGuizmo::LOCAL, glm::value_ptr(transform),
+				static_cast<ImGuizmo::OPERATION>(m_GizmoType), static_cast<ImGuizmo::MODE>(m_GizmoMode), glm::value_ptr(transform),
 				nullptr, snap ? snapValues : nullptr);
 
 			if (ImGuizmo::IsUsing())
@@ -829,6 +849,8 @@ namespace DME
 
 				if (tc.Position != translation || tc.Rotation != rotation || tc.Scale != scale)
 				{
+					glm::vec3 translation, rotation, scale;
+					math::DecomposeTransform(transform, translation, rotation, scale);
 					tc.Position = translation;
 					tc.Rotation = rotation;
 					tc.Scale = scale;
@@ -838,6 +860,7 @@ namespace DME
 		}
 
 		ImGui::End();
+		ImGui::PopStyleVar();
 	}
 
 	void EditorLayer::DebugWindow()

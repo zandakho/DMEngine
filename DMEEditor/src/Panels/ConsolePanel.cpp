@@ -11,19 +11,24 @@ namespace DME
 
 	ConsolePanel::ConsolePanel() {}
 
-	Ref<Texture2D> ConsolePanel::GetTextureFullPack() const
+	bool ConsolePanel::GetTextureFullPack() const
 	{
-		return m_SettingButton;
+		return m_SettingsIcon && m_MagnifyingIcon && m_FilterIcon && m_BrushIcon;
 	}
 
 	void ConsolePanel::ClearTexturePack()
 	{
-		m_SettingButton = nullptr;
+		m_SettingsIcon = nullptr;
+		m_MagnifyingIcon = nullptr;
+		m_FilterIcon = nullptr;
 	}
 	
 	void ConsolePanel::OnAttach()
 	{
-		m_SettingButton = Texture2D::Create("Resources/Icons/Console/SettingsIcon_Img.png");
+		m_SettingsIcon = Texture2D::Create("Resources/Icons/Console/SettingsIcon_Img.png");
+		m_MagnifyingIcon = Texture2D::Create("Resources/Icons/Console/MagnifyingGlassIcon_Img.png");
+		m_FilterIcon = Texture2D::Create("Resources/Icons/Console/FilterIcon_Img.png");
+		m_BrushIcon = Texture2D::Create("Resources/Icons/Console/BrushIcon_Img.png");
 	}
 
 	void ConsolePanel::OnDetach()
@@ -41,19 +46,39 @@ namespace DME
 		static int currentLevel = 0;
 		static float ConsoleWindowFontScale = 1.0f;
 
+		static ImGuiTextFilter logFilter;
+
 		if (ImGui::Begin("Console"))
 		{
+			if (ImGuiDMEEditor::IconButton("##ConsoleFilterButton", reinterpret_cast<ImTextureID*>(static_cast<uintptr_t>(m_FilterIcon->GetRendererID())), { 28, 28 })) ImGui::OpenPopup("ConsoleFilterWindow");
 
-			if (ImGuiDMEEditor::IconButton("##ConsoleSettingsButton", reinterpret_cast<ImTextureID*>(static_cast<uintptr_t>(m_SettingButton->GetRendererID())), { 30, 30 }))
-				ImGui::OpenPopup("ConsoleSettingsWindow");
+			ImGui::SameLine();
 
-			if (ImGui::BeginPopup("ConsoleSettingsWindow", ImGuiWindowFlags_NoMove))
+			if (ImGuiDMEEditor::IconButton("##ConsoleSettingsButton", reinterpret_cast<ImTextureID*>(static_cast<uintptr_t>(m_SettingsIcon->GetRendererID())), { 28, 28 })) ImGui::OpenPopup("ConsoleSettingsWindow");
+
+			ImGui::SameLine();
+
+			ImGui::PushStyleVarX(ImGuiStyleVar_ItemSpacing, -28.0f);
+			ImGui::SetNextItemWidth(300.0f);
+			logFilter.Draw("##Filter");
+
+			ImGui::SameLine();
+
+			ImGui::PushStyleColor(ImGuiCol_Button, ImVec4(0, 0, 0, 0));
+			ImGui::PushStyleColor(ImGuiCol_ButtonHovered, ImVec4(0, 0, 0, 0));
+			ImGui::PushStyleColor(ImGuiCol_ButtonActive, ImVec4(0, 0, 0, 0));
+
+			ImGuiDMEEditor::IconButton("##MagnifyingGlass", reinterpret_cast<ImTextureID*>(static_cast<uint64_t>(m_MagnifyingIcon->GetRendererID())), { 28, 28 });
+
+			ImGui::PopStyleColor(3);
+			ImGui::PopStyleVar();
+
+			ImGui::SameLine();
+
+			if (ImGuiDMEEditor::IconButton("##ClearButton", reinterpret_cast<ImTextureID*>(static_cast<uint64_t>(m_BrushIcon->GetRendererID())), { 28, 28 })) DME::Log::m_ImGuiSink->Clear();
+
+			if (ImGui::BeginPopup("ConsoleFilterWindow", ImGuiWindowFlags_NoMove))
 			{
-
-				if (ImGui::Button("Clear")) DME::Log::m_ImGuiSink->Clear();
-
-				ImGui::SliderFloat("ConsoleWindowFontScale", &ConsoleWindowFontScale, 0.5f, 1.5f, "%.1f");
-
 				if (ImGui::BeginCombo("Log Level", levels[currentLevel]))
 				{
 					for (int n = 0; n < IM_ARRAYSIZE(levels); n++)
@@ -64,11 +89,11 @@ namespace DME
 							currentLevel = n;
 							switch (n)
 							{
-								case 0: DME::LogSettings::m_LogFilter = spdlog::level::trace;    break;
-								case 1: DME::LogSettings::m_LogFilter = spdlog::level::info;     break;
-								case 2: DME::LogSettings::m_LogFilter = spdlog::level::warn;     break;
-								case 3: DME::LogSettings::m_LogFilter = spdlog::level::err;      break;
-								case 4: DME::LogSettings::m_LogFilter = spdlog::level::critical; break;
+							case 0: DME::LogSettings::m_LogFilter = spdlog::level::trace;    break;
+							case 1: DME::LogSettings::m_LogFilter = spdlog::level::info;     break;
+							case 2: DME::LogSettings::m_LogFilter = spdlog::level::warn;     break;
+							case 3: DME::LogSettings::m_LogFilter = spdlog::level::err;      break;
+							case 4: DME::LogSettings::m_LogFilter = spdlog::level::critical; break;
 							}
 						}
 						if (isSelected)
@@ -80,41 +105,48 @@ namespace DME
 				ImGui::EndPopup();
 			}
 
-			if (ImGui::BeginChild("Logs"))
+			if (ImGui::BeginPopup("ConsoleSettingsWindow", ImGuiWindowFlags_NoMove))
 			{
-				ImGui::SetWindowFontScale(ConsoleWindowFontScale);
-				if (DME::Log::m_ImGuiSink)
+				ImGui::SliderFloat("ConsoleWindowFontScale", &ConsoleWindowFontScale, 0.5f, 1.5f, "%.1f");
+
+				ImGui::EndPopup();
+			}
+
+			ImGui::BeginChild("Logs");
+
+			ImGui::SetWindowFontScale(ConsoleWindowFontScale);
+			if (DME::Log::m_ImGuiSink)
+			{
+				const auto& buffer = DME::Log::m_ImGuiSink->GetBuffer();
+				for (auto& entry : buffer)
 				{
-					const auto& buffer = DME::Log::m_ImGuiSink->GetBuffer();
-					for (auto& entry : buffer)
+					if (currentLevel != 0 && entry.level < DME::LogSettings::m_LogFilter)
+						continue;
+
+					if (!logFilter.PassFilter(entry.message.c_str()))
+						continue;
+
+					ImVec4 color;
+					switch (entry.level)
 					{
-						if (currentLevel != 0)
-						{
-							if (entry.level < DME::LogSettings::m_LogFilter)
-								continue;
-						}
-
-						ImVec4 color;
-						switch (entry.level)
-						{
-							case spdlog::level::trace:    color = ImVec4(1.0f, 1.0f, 1.0f, 1.0f); break;
-							case spdlog::level::info:     color = ImVec4(0.0f, 1.0f, 0.0f, 1.0f); break;
-							case spdlog::level::warn:     color = ImVec4(1.0f, 1.0f, 0.3f, 1.0f); break;
-							case spdlog::level::err:      color = ImVec4(1.0f, 0.4f, 0.4f, 1.0f); break;
-							case spdlog::level::critical: color = ImVec4(1.0f, 0.0f, 0.0f, 1.0f); break;
-						}
-
-						ImGui::PushFont(ImGui::GetIO().Fonts->Fonts[FontLibrary::OpenSansBold_21]);
-						ImGui::PushStyleColor(ImGuiCol_Text, color);
-						ImGui::Text(entry.message.c_str());
-						ImGui::PopStyleColor();
-						ImGui::PopFont();
+						case spdlog::level::trace:    color = ImVec4(1.0f, 1.0f, 1.0f, 1.0f); break;
+						case spdlog::level::info:     color = ImVec4(0.0f, 1.0f, 0.0f, 1.0f); break;
+						case spdlog::level::warn:     color = ImVec4(1.0f, 1.0f, 0.3f, 1.0f); break;
+						case spdlog::level::err:      color = ImVec4(1.0f, 0.4f, 0.4f, 1.0f); break;
+						case spdlog::level::critical: color = ImVec4(1.0f, 0.0f, 0.0f, 1.0f); break;
 					}
 
-					if (ImGui::GetScrollY() >= ImGui::GetScrollMaxY())
-						ImGui::SetScrollHereY(1.0f);
+					ImGui::PushFont(ImGui::GetIO().Fonts->Fonts[FontLibrary::OpenSansBold_21]);
+					ImGui::PushStyleColor(ImGuiCol_Text, color);
+					ImGui::TextUnformatted(entry.message.c_str());
+					ImGui::PopStyleColor();
+					ImGui::PopFont();
 				}
+
+				if (ImGui::GetScrollY() >= ImGui::GetScrollMaxY())
+					ImGui::SetScrollHereY(1.0f);
 			}
+
 			ImGui::EndChild();
 		}
 		ImGui::End();

@@ -16,7 +16,7 @@ namespace DME
 
 	public: // Helpers (Get&Set)
 
-		Ref<Texture2D> GetTextureFullPack() const;
+		bool GetTextureFullPack() const;
 		void ClearTexturePack();
 
 	public: // Layer overrides
@@ -32,7 +32,10 @@ namespace DME
 
 	private: // Textures
 
-		Ref<Texture2D> m_SettingButton;
+		Ref<Texture2D> m_SettingsIcon;
+		Ref<Texture2D> m_MagnifyingIcon;
+		Ref<Texture2D> m_FilterIcon;
+		Ref<Texture2D> m_BrushIcon;
 
 	};
 }

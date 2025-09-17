@@ -113,11 +113,13 @@ namespace DME
 	private: // Gizmos
 
 		int m_GizmoType = -1;
+		int m_GizmoMode = 0;
 
 	private: // Textures
 
 		Ref<Texture2D> m_IconPlay, m_IconSimulate, m_IconStop;
 		Ref<Texture2D> m_IconCursor, m_IconMove, m_IconRotate, m_IconScale;
+		Ref<Texture2D> m_IconLocal, m_IconWorld;
 		Ref<Texture2D> m_SettingButton;
 
 	private: // Window variables

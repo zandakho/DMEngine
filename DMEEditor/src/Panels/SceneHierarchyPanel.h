@@ -59,6 +59,12 @@ namespace DME {
 		Ref<Texture2D> m_DeleteButton;
 
 		std::string m_Search;
+
+	private: // For debug
+
+		bool m_SceneHierarchyWindowFocused;
+		bool m_SceneHierarchyWindowHovered;
+		bool m_SceneHierarchyWindowDocked;
 	};
 
 }
