@@ -17,24 +17,25 @@ namespace DME {
 
 	void PropertiesPanel::OnAttach()
 	{
-
-	}
-
-	void PropertiesPanel::OnDetach()
-	{
-
-	}
-
-	void PropertiesPanel::OnImGuiRender()
-	{
 		m_PlusSmallButtonIcon = Texture2D::Create("Resources/Icons/Properties/Plus_Small_Green_Img.png");
 		m_DeleteButtonIcon = Texture2D::Create("Resources/Icons/Properties/Delete_Button_Img.png");
 		m_SettingsButtonIcon = Texture2D::Create("Resources/Icons/Properties/Settings_Img.png");
 		m_ResetButtonIcon = Texture2D::Create("Resources/Icons/Properties/Reset_Img.png");
+	}
+
+	void PropertiesPanel::OnDetach()
+	{
+		ClearTexturePack();
+	}
+
+	void PropertiesPanel::OnImGuiRender()
+	{
+		if (!GetFulltexturePack()) return;
 
         ImGui::Begin("Properties");
 
-        if (m_SelectedEntity) {
+        if (m_SelectedEntity) 
+		{
             auto& tag = m_SelectedEntity.GetComponent<TagComponent>().Tag;
 
             char buffer[256];
@@ -47,7 +48,8 @@ namespace DME {
             if (ImGuiDMEEditor::IconButtonWithText("ADD##PropertiesPanelButton", reinterpret_cast<ImTextureID*>(static_cast<uint64_t>(m_PlusSmallButtonIcon->GetRendererID()))))
                 ImGui::OpenPopup("AddComponentPopup");
 
-            if (ImGui::BeginPopup("AddComponentPopup")) {
+            if (ImGui::BeginPopup("AddComponentPopup")) 
+			{
                 DisplayAddComponentEntry<CameraComponent>("Camera");
                 DisplayAddComponentEntry<SpriteRendererComponent>("Sprite Renderer");
                 DisplayAddComponentEntry<CircleRendererComponent>("Circle Renderer");
@@ -59,7 +61,8 @@ namespace DME {
 
             ImGui::SeparatorEx(ImGuiSeparatorFlags_Horizontal, 3);
 
-            DrawComponent<TransformComponent>("Transform", m_SelectedEntity, [this](auto& component) {
+            DrawComponent<TransformComponent>("Transform", m_SelectedEntity, [this](auto& component) 
+				{
                 DrawVec3Control("Position", component.Position);
                 glm::vec3 rotation = glm::degrees(component.Rotation);
                 DrawVec3Control("Rotation", rotation);
@@ -264,8 +267,22 @@ namespace DME {
         ImGui::End();
     }
 
+	bool PropertiesPanel::GetFulltexturePack() const
+	{
+		return m_PlusSmallButtonIcon && m_DeleteButtonIcon && m_SettingsButtonIcon && m_ResetButtonIcon;
+	}
+
+	void PropertiesPanel::ClearTexturePack()
+	{
+		m_PlusSmallButtonIcon = nullptr;
+		m_DeleteButtonIcon = nullptr;
+		m_SettingsButtonIcon = nullptr;
+		m_ResetButtonIcon = nullptr;
+	}
+
     template<typename T, typename UFunction>
-    void PropertiesPanel::DrawComponent(const std::string& name, Entity entity, UFunction uifunction) {
+    void PropertiesPanel::DrawComponent(const std::string& name, Entity entity, UFunction uifunction) 
+	{
 		std::string SettingsButton = std::format("##{0}", name.c_str());
 		std::string DeleteButton = std::format("##{0}", name.c_str());
 		std::string DialogWindow = std::format("##{0}", name.c_str());
@@ -299,8 +316,23 @@ namespace DME {
         }
     }
 
+	bool PropertiesPanel::OnKeyPressed(KeyPressedEvent& event) 
+	{
+
+		if (event.IsRepeat())
+			return false;
+
+		return false;
+	}
+
+	bool PropertiesPanel::OnMouseButtonPressed(MouseButtonPressedEvent& event) 
+	{
+		return false;
+	}
+
     template<typename T>
-    void PropertiesPanel::DisplayAddComponentEntry(const std::string& entryName) {
+    void PropertiesPanel::DisplayAddComponentEntry(const std::string& entryName) 
+	{
         if (!m_SelectedEntity.HasComponent<T>()) {
             if (ImGui::MenuItem(entryName.c_str())) {
                 m_SelectedEntity.AddComponent<T>();
@@ -309,7 +341,8 @@ namespace DME {
         }
     }
 
-    void PropertiesPanel::DrawVec3Control(const std::string& label, glm::vec3& values) {
+    void PropertiesPanel::DrawVec3Control(const std::string& label, glm::vec3& values) 
+	{
         ImGui::PushID(label.c_str());
         ImGui::Columns(2);
         ImGui::SetColumnWidth(0, 90.0f);

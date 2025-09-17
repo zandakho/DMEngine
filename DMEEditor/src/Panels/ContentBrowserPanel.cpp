@@ -32,6 +32,9 @@ namespace DME
 	}
 
 	ContentBrowserPanel::ContentBrowserPanel() : m_CurrentDirectory(g_AssetPath)
+	{ }
+
+	void ContentBrowserPanel::OnAttach()
 	{
 		m_FolderIcon = Texture2D::Create("Resources/Icons/ContentBrowser/FolderIcon_Img.png");
 		m_FileIcon = Texture2D::Create("Resources/Icons/ContentBrowser/FileIcon_Img.png");
@@ -44,17 +47,15 @@ namespace DME
 		m_PlusSmallGreenIcon = Texture2D::Create("Resources/Icons/ContentBrowser/PlusSmallGreenIcon_Img.png");
 	}
 
-	void ContentBrowserPanel::OnAttach()
-	{
-	}
-
 	void ContentBrowserPanel::OnDetach()
 	{
-
+		ClearTexturePack();
 	}
 
 	void ContentBrowserPanel::OnImGuiRender()
 	{
+		if (!GetTextureFullPack()) return;
+
 		ImGui::Begin("Content Browser");
 
 		if (m_CurrentDirectory != std::filesystem::path(g_AssetPath))
@@ -312,16 +313,23 @@ namespace DME
 		}
 	}
 
-	void ContentBrowserPanel::OnEvent(Event& event)
+	bool ContentBrowserPanel::GetTextureFullPack() const
 	{
-		EventDispatcher dispatcher(event);
-		dispatcher.Dispatch<KeyPressedEvent>(DME_BIND_EVENT_FN(ContentBrowserPanel::OnKeyPressed));
-		dispatcher.Dispatch<MouseButtonPressedEvent>(DME_BIND_EVENT_FN(ContentBrowserPanel::OnMouseButtonPressed));
+		return m_FileIcon && m_FolderIcon && m_BackButtonIcon && m_SettingsButtonIcon && m_SceneIcon && m_ShadersFVIcon;
 	}
 
-	void ContentBrowserPanel::OnUpdate(TimeStep ts)
+	void ContentBrowserPanel::ClearTexturePack()
 	{
-
+		m_FolderIcon = nullptr;
+		m_FileIcon = nullptr;
+		m_BackButtonIcon = nullptr;
+		m_SettingsButtonIcon = nullptr;
+		m_SceneIcon = nullptr;
+		m_ShadersFVIcon = nullptr;
+		m_CloseFolderIcon = nullptr;
+		m_PlusSmallGreenIcon = nullptr;
+		m_OpenFolderIcon = nullptr;
+		m_TextureCache.clear();
 	}
 
 	bool ContentBrowserPanel::OnKeyPressed(KeyPressedEvent& event)

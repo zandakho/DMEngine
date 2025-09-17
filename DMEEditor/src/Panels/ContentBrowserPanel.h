@@ -10,33 +10,44 @@
 
 namespace DME
 {
-	struct FolderNode {
+	struct FolderNode 
+	{
 		std::filesystem::path path;
 		bool open = false;
 	};
 
 	class ContentBrowserPanel : Layer
 	{
-	public:
-
+	public: // Constructors and Destructors
+		
 		ContentBrowserPanel();
+
+	public: // Helpers (Get&Set)
+
+		bool GetTextureFullPack() const;
+		void ClearTexturePack();
+
+	public: // Layer overrides
 
 		void OnAttach() override;
 		void OnDetach() override;
-
-		void OnEvent(Event& event) override;
-		void OnUpdate(TimeStep ts) override;
 		void OnImGuiRender() override;
+
+	public: // UI
+
 		void DrawDirectoryTree(const std::filesystem::path& directory);
 
-	private:
+	public: // Events
+
 		bool OnKeyPressed(KeyPressedEvent& event);
 		bool OnMouseButtonPressed(MouseButtonPressedEvent& event);
 
-	private:
+	private: // Directory
 		
 		std::filesystem::path m_CurrentDirectory;
 	
+	private: // Textures
+
 		Ref<Texture2D> m_FolderIcon;
 		Ref<Texture2D> m_FileIcon;
 		Ref<Texture2D> m_BackButtonIcon;
@@ -48,6 +59,9 @@ namespace DME
 		Ref<Texture2D> m_OpenFolderIcon;
 
 		std::unordered_map<std::string, Ref<Texture2D>> m_TextureCache;
+
+	private: // Folders
+
 		std::unordered_map<std::string, bool> m_FolderStates;
 
 		char m_NewFolderName[128] = "New Folder";

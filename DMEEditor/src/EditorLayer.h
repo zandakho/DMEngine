@@ -2,8 +2,8 @@
 
 #include <dme.h>
 #include "Panels/SceneHierarchyPanel.h"
-#include "Panels/PropertiesPanel.h"
 #include "Panels/ContentBrowserPanel.h"
+#include "Panels/PropertiesPanel.h"
 
 #include "DME/Renderer/EditorCamera.h"
 #include "DME/ImGui/ImGuiDMEEditor.h"
@@ -13,9 +13,12 @@ namespace DME
 {
 	class EditorLayer : public Layer
 	{
-	public:
+	public: // Constructors and destructors
+
 		EditorLayer();
 		virtual ~EditorLayer() = default;
+
+	public: // Layer overrides
 
 		void OnAttach() override;
 		void OnDetach() override;
@@ -24,9 +27,12 @@ namespace DME
 		void OnImGuiRender() override;
 		void OnDockspace() override;
 		void OnEvent(Event& event) override;
+
+	public: // Overlay render
+
 		void OnOverlayRender();
 
-	private:
+	private: // SceneSerializer functions
 
 		void NewScene();
 		void OpenScene();
@@ -36,53 +42,12 @@ namespace DME
 
 		void SerializeScene(Ref<Scene> scene, const std::filesystem::path& path);
 
-		void OnDuplicateEntity();
+	private: // Helper scene functions
 
+		void OnDuplicateEntity();
 		void DeleteSelectedEntity();
 
-		void OnScenePlay();
-		void OnSceneSimulate();
-		void OnSceneStop();
-
-		void UIToolbar();
-		void GizmosToolbar();
-		void UITabBar();
-		
-		void ViewportWindow();
-		void DebugWindow();
-		void RendererStatsWindow();
-		void ConsoleWindow();
-
-	private:
-		bool OnKeyPressed(KeyPressedEvent& event);
-		bool OnMouseButtonPressed(MouseButtonPressedEvent& e);
-
-	private:
-		OrthographicCameraController m_CameraController;
-
-	private:
-		Ref<VertexArray> m_SquareVA;
-		Ref<Framebuffer> m_Framebuffer;
-		Ref<Shader> m_FlatColorShader;
-		Ref<Scene> m_ActiveScene;
-		Ref<Scene> m_EditorScene;
-		std::filesystem::path m_EditorScenePath;
-		
-	private:
-		SceneHierarchyPanel m_SceneHierarchyPanel;
-		PropertiesPanel m_PropertiesPanel;
-		ContentBrowserPanel m_ContentBrowser;
-		EditorCamera m_EditorCamera;
-		SceneCamera m_SceneCamera;
-
-	private:
-
-		Entity m_HoveredEntity;
-		
-		bool m_BlockViewportEvents = false;
-		bool m_PrimaryCamera = true;
-
-		int m_GizmoType = -1;
+	private: // Scene state
 
 		enum class SceneState
 		{
@@ -91,14 +56,70 @@ namespace DME
 
 		SceneState m_SceneState = SceneState::Edit;
 
+		void OnScenePlay();
+		void OnSceneSimulate();
+		void OnSceneStop();
+
+	private: // UI functions
+
+		void UIToolbar();
+		void GizmosToolbar();
+		void UITabBar();
+
+	private: // Windows
+
+		void ViewportWindow();
+		void DebugWindow();
+		void RendererStatsWindow();
+		void ConsoleWindow();
+
+	public: // Events
+
+		bool OnKeyPressed(KeyPressedEvent& event);
+		bool OnMouseButtonPressed(MouseButtonPressedEvent& e);
+
+	private: // Camera controller
+
+		OrthographicCameraController m_CameraController;
+
+	private: // Framebuffer & Scene
+
+		Ref<Framebuffer> m_Framebuffer;
+		Ref<Scene> m_ActiveScene;
+		Ref<Scene> m_EditorScene;
+		std::filesystem::path m_EditorScenePath;
+
+	private: // Panels
+		SceneHierarchyPanel m_SceneHierarchyPanel;
+		ContentBrowserPanel m_ContentBrowser;
+		PropertiesPanel m_PropertiesPanel;
+
+	private: // Cameras
+
+		EditorCamera m_EditorCamera;
+		SceneCamera m_SceneCamera;
+
+	private: // Entity
+
+		Entity m_HoveredEntity;
+
+	private: // Viewport
+
+		bool m_BlockViewportEvents = false;
+		bool m_PrimaryCamera = true;
+
 		bool m_ViewportFocused = false, m_ViewportHovered = false, m_ViewportHoveredAndFocused = false, m_ViewportDocked = false;
 		bool m_MainWindowUnDocked = false;
 		bool m_MainWindowDocked = true;
 		glm::vec2 m_ViewportBounds[2]{ };
 		glm::vec2 m_ViewportSize = { 0.0f, 0.0f };
-		
+
+	private: // Gizmos
+
+		int m_GizmoType = -1;
+
 	private: // Textures
-		
+
 		Ref<Texture2D> m_IconPlay, m_IconSimulate, m_IconStop;
 		Ref<Texture2D> m_IconCursor, m_IconMove, m_IconRotate, m_IconScale;
 		Ref<Texture2D> m_SettingButton;
@@ -116,7 +137,7 @@ namespace DME
 		bool m_DemoWindow = false;
 		bool m_RendererStatsWindow = false;
 		bool m_ConsoleWindow = true;
-	
+
 	};
 
 }

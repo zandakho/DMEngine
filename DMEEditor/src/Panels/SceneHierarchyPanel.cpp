@@ -18,22 +18,25 @@ namespace DME {
 
 	void SceneHierarchyPanel::OnAttach()
 	{
+		m_PlusSmallButton = Texture2D::Create("Resources/Icons/SceneHieararchy/Plus_Small_Green_Img.png");
+		m_DeleteButton = Texture2D::Create("Resources/Icons/SceneHieararchy/Delete_Button_Img.png");
+
 	}
 
 	void SceneHierarchyPanel::OnDetach()
 	{
-
+		ClearTexturePack();
 	}
 
-	void SceneHierarchyPanel::SetContext(const Ref<Scene>& context) {
+	void SceneHierarchyPanel::SetContext(const Ref<Scene>& context) 
+	{
         m_Context = context;
         m_SelectionContext = {};
     }
 
     void SceneHierarchyPanel::OnImGuiRender() 
     {
-		m_PlusSmallButton = Texture2D::Create("Resources/Icons/SceneHieararchy/Plus_Small_Green_Img.png");
-		m_DeleteButton = Texture2D::Create("Resources/Icons/SceneHieararchy/Delete_Button_Img.png");
+		if (!GetTextureFullPack()) return;
 
         if (!m_Context)
             return;
@@ -70,33 +73,37 @@ namespace DME {
         
     }
 
-    void SceneHierarchyPanel::SetSelectedEntity(Entity entity) {
-        m_SelectionContext = entity;
-    }
-
 	void SceneHierarchyPanel::DeleteSelectedEntity()
 	{
+		if (!GetSelectedEntity()) return;
+
 		GetContext()->DestroyEntity(GetSelectedEntity());
 		ClearSelectedContext();
 	}
 
-	void SceneHierarchyPanel::OnEvent(Event& event) {
-        EventDispatcher dispatcher(event);
-        dispatcher.Dispatch<KeyPressedEvent>(DME_BIND_EVENT_FN(SceneHierarchyPanel::OnKeyPressed));
-        dispatcher.Dispatch<MouseButtonPressedEvent>(DME_BIND_EVENT_FN(SceneHierarchyPanel::OnMouseButtonPressed));
-    }
+	bool SceneHierarchyPanel::GetTextureFullPack() const
+	{
+		return m_PlusSmallButton && m_DeleteButton;
+	}
 
-    void SceneHierarchyPanel::OnUpdate(TimeStep ts) {}
+	void SceneHierarchyPanel::ClearTexturePack()
+	{
+		m_PlusSmallButton = nullptr;
+		m_DeleteButton = nullptr;
+	}
 
-    bool SceneHierarchyPanel::OnKeyPressed(KeyPressedEvent& event) {
+
+    bool SceneHierarchyPanel::OnKeyPressed(KeyPressedEvent& event)
+	{
 
         if (event.IsRepeat())
             return false;
-        
+
         return false;
     }
 
-    bool SceneHierarchyPanel::OnMouseButtonPressed(MouseButtonPressedEvent& event) {
+    bool SceneHierarchyPanel::OnMouseButtonPressed(MouseButtonPressedEvent& event) 
+	{
         return false;
     }
 

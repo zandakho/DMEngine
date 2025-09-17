@@ -1,6 +1,9 @@
 #pragma once
 
 #include "DME/Core/Base.h"
+#include "DME/Events/Event.h"
+#include "DME/Events/KeyEvent.h"
+#include "DME/Events/MouseEvent.h"
 #include "DME/Scene/Scene.h"
 #include "DME/Scene/Entity.h"
 #include "DME/Core/Layer.h"
@@ -10,33 +13,48 @@ namespace DME {
 
     class PropertiesPanel : public Layer
     {
-    public:
+	public: // Constructors and Destructors
         PropertiesPanel() = default;
 
-		virtual void OnAttach() override;
-		virtual void OnDetach() override;
+	public: // Helpers (Get&Set)
+		
+		void SetContext(Entity entity) { m_SelectedEntity = entity; }
+		Entity GetSelectedEntity() const { return m_SelectedEntity; }
 
-        void SetContext(Entity entity) { m_SelectedEntity = entity; }
-        void OnImGuiRender();
+		bool GetFulltexturePack() const;
+		void ClearTexturePack();
 
-    private:
+	public: // Layer overrides
+		void OnAttach() override;
+		void OnDetach() override;
+        void OnImGuiRender() override;
+
+	public: // Events
+		bool OnKeyPressed(KeyPressedEvent& event);
+		bool OnMouseButtonPressed(MouseButtonPressedEvent& event);
+
+    private: // Templates UI
+
         template<typename T, typename UFunction>
         void DrawComponent(const std::string& name, Entity entity, UFunction uifunction);
 
         template<typename T>
         void DisplayAddComponentEntry(const std::string& entryName);
 
-        void DrawVec3Control(const std::string& label, glm::vec3& values);
+	private: // UI
+
+		void DrawVec3Control(const std::string& label, glm::vec3& values);
 
     private:
+
         Entity m_SelectedEntity;
+
+	private: // Textures
 
         Ref<Texture2D> m_PlusSmallButtonIcon;
         Ref<Texture2D> m_DeleteButtonIcon;
         Ref<Texture2D> m_SettingsButtonIcon;
         Ref<Texture2D> m_ResetButtonIcon;
-
-
     };
 
 }
