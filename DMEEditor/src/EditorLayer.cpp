@@ -160,21 +160,21 @@ namespace DME
 
 		EditorLayer::OnDockspace();
 
+		ImGui::BeginDisabled(m_SceneState == SceneState::Play);
 
-		if (m_ConsoleWindow)
-			m_ConsolePanel.OnImGuiRender();
+		if (m_ConsoleWindow) m_ConsolePanel.OnImGuiRender();
 
-		if (m_ContentBrowserWindow)
-			m_ContentBrowserPanel.OnImGuiRender();
+		if (m_ContentBrowserWindow) m_ContentBrowserPanel.OnImGuiRender();
 
-		if (m_SceneHierarchyWindow)
-			m_SceneHierarchyPanel.OnImGuiRender();
+		if (m_SceneHierarchyWindow) m_SceneHierarchyPanel.OnImGuiRender();
 
 		if (m_PropertiesWindow)
 		{
 			m_PropertiesPanel.SetContext(m_SceneHierarchyPanel.GetSelectedEntity());
 			m_PropertiesPanel.OnImGuiRender();
 		}
+
+		ImGui::EndDisabled();
 
 		if (m_ViewportWindow)
 			ViewportWindow();
@@ -339,7 +339,7 @@ namespace DME
 
 				if(m_ViewportFocused && m_SceneState == SceneState::Edit)
 				{
-					if (!ImGuizmo::IsUsing())
+					if (!ImGuizmo::IsUsing() && m_GizmoType != ImGuizmo::OPERATION::TRANSLATE)
 						m_GizmoType = ImGuizmo::OPERATION::TRANSLATE;
 					break;
 				}
@@ -349,17 +349,19 @@ namespace DME
 			{
 				if (m_ViewportFocused && m_SceneState == SceneState::Edit)
 				{
-					if (!ImGuizmo::IsUsing())
+					if (!ImGuizmo::IsUsing() && m_GizmoType != ImGuizmo::OPERATION::ROTATE)
 						m_GizmoType = ImGuizmo::OPERATION::ROTATE;
-					break;
 				}
+
+				break;
+
 			}
 
 			case Key::R:
 			{
 				if (m_ViewportFocused && m_SceneState == SceneState::Edit)
 				{
-					if (!ImGuizmo::IsUsing())
+					if (!ImGuizmo::IsUsing() && m_GizmoType != ImGuizmo::OPERATION::SCALE)
 						m_GizmoType = ImGuizmo::OPERATION::SCALE;
 					break;
 				}
@@ -368,11 +370,14 @@ namespace DME
 			case Key::Delete:
 			{
 				if (m_SceneHierarchyPanel.GetSelectedEntity())
+				{
 					DME_CORE_WARNING("Delete entity: {0}", m_SceneHierarchyPanel.GetSelectedEntity().GetName())
-				DeleteSelectedEntity();
+					DeleteSelectedEntity();
+				}
 					break;
 			}
-				
+
+			default: break;
 		}
 		return false;
 	}
@@ -383,9 +388,13 @@ namespace DME
 		{
 			case Mouse::ButtonLeft:
 			{
-				if (m_ViewportHovered && !ImGuizmo::IsOver() && !Input::IsKeyPressed(Key::LeftShift))
-					m_SceneHierarchyPanel.SetSelectedEntity(m_HoveredEntity);
+				if (m_ViewportFocused && m_ViewportHovered && !ImGuizmo::IsOver() && !Input::IsKeyPressed(Key::LeftShift)) m_SceneHierarchyPanel.SetSelectedEntity(m_HoveredEntity);
+
+				if (!m_ViewportHovered) m_SceneHierarchyPanel.ClearSelectedContext(); break;
+
 			}
+
+			default: break;
 		}
 		return false;
 	}
@@ -524,6 +533,7 @@ namespace DME
 
 			if (ImGui::BeginMenu("Window"))
 			{
+				ImGui::PushStyleVar(ImGuiStyleVar_FramePadding, ImVec2(2, 2));
 				ImGui::SeparatorText("Main");
 				ImGui::Checkbox("Scene Hierarchy##Window", &m_SceneHierarchyWindow);
 				ImGui::Checkbox("Viewport##Window", &m_ViewportWindow);
@@ -535,6 +545,7 @@ namespace DME
 				ImGui::Checkbox("Renderer Stats##Window", &m_RendererStatsWindow);
 				ImGui::Checkbox("Console##Window", &m_ConsoleWindow);
 
+				ImGui::PopStyleVar();
 				ImGui::EndMenu();
 			}
 
@@ -553,6 +564,7 @@ namespace DME
 
 			if (ImGui::BeginMenu("Log"))
 			{
+				ImGui::PushStyleVar(ImGuiStyleVar_FramePadding, ImVec2(2, 2));
 				ImGui::SeparatorText("Core");
 				ImGui::Checkbox("Core Log", &DME::LogSettings::m_GlobalCoreLogger);
 				ImGui::Separator();
@@ -571,6 +583,7 @@ namespace DME
 				ImGui::Checkbox("Default Info", &DME::LogSettings::m_InfoLogger);
 				ImGui::Checkbox("Default Trace", &DME::LogSettings::m_TraceLogger);
 
+				ImGui::PopStyleVar();
 				ImGui::EndMenu();
 			}
 			ImGui::PopStyleColor();
@@ -581,7 +594,6 @@ namespace DME
 
 	}
 
-	// Scene state
 	void EditorLayer::OnScenePlay()
 	{
 		if (m_SceneState == SceneState::Simulate)
@@ -773,7 +785,7 @@ namespace DME
 	void EditorLayer::ViewportWindow()
 	{
 		ImGui::PushStyleVar(ImGuiStyleVar_WindowPadding, ImVec2(1.5f, 1.5f));
-		ImGui::Begin("Viewport", nullptr, ImGuiWindowFlags_NoCollapse);
+		ImGui::Begin("Viewport", nullptr, ImGuiWindowFlags_NoCollapse | ImGuiWindowFlags_NoScrollbar);
 
 		auto viewportMinRegion = ImGui::GetWindowContentRegionMin();
 		auto viewportMaxRegion = ImGui::GetWindowContentRegionMax();
@@ -811,11 +823,12 @@ namespace DME
 		Entity selectedEntity = m_SceneHierarchyPanel.GetSelectedEntity();
 		if (selectedEntity && m_GizmoType != -1)
 		{
-			ImGui::PushID("Viewport");
+
 			ImGuizmo::SetOrthographic(false);
 			ImGuizmo::SetDrawlist(ImGui::GetWindowDrawList());
 			ImGuizmo::SetRect(m_ViewportBounds[0].x, m_ViewportBounds[0].y, m_ViewportBounds[1].x - m_ViewportBounds[0].x, m_ViewportBounds[1].y - m_ViewportBounds[0].y);
-			ImGui::PopID();
+
+			ImGuizmo::SetOverGizmoHotspot(false);
 
 			const glm::mat4& cameraProjection = m_EditorCamera.GetProjection();
 			glm::mat4 cameraView = m_EditorCamera.GetViewMatrix();
@@ -824,7 +837,9 @@ namespace DME
 			glm::mat4 transform = tc.GetTransform();
 
 			bool snap = Input::IsKeyPressed(Key::LeftControl);
-			float snapValue = (m_GizmoType == ImGuizmo::ROTATE) ? 45.0f : 0.5f;
+			float snapValue = (m_GizmoType == ImGuizmo::TRANSLATE) ? 1.0f : 0.1f &&
+							  (m_GizmoType == ImGuizmo::ROTATE) ? 10.0f : 0.5f && 
+							  (m_GizmoType == ImGuizmo::SCALE) ? 1.0f : 0.5f;
 			float snapValues[3] = { snapValue, snapValue, snapValue };
 
 			ImGuizmo::Manipulate(glm::value_ptr(cameraView), glm::value_ptr(cameraProjection),
@@ -874,9 +889,9 @@ namespace DME
 		ImGui::Text("FPS: %i", static_cast<uint16_t>(ImGui::GetIO().Framerate));
 		ImGui::Text("Frame time: %.3f ms", static_cast<uint16_t>(ImGui::GetIO().Framerate) / 1000.0f);
 
-		std::string name = m_HoveredEntity && m_HoveredEntity.HasComponent<TagComponent>() ? m_HoveredEntity.GetComponent<TagComponent>().Tag : "None";
+		std::string HoveredEntityName = m_HoveredEntity && m_HoveredEntity.HasComponent<TagComponent>() ? m_HoveredEntity.GetComponent<TagComponent>().Tag : "None";
 
-		ImGui::Text("Hovered Entity: %s", name.c_str());
+		ImGui::Text("Hovered Entity: %s", HoveredEntityName.c_str());
 
 		ImGui::End();
 	}

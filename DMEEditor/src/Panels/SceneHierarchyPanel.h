@@ -17,9 +17,6 @@ namespace DME {
 		SceneHierarchyPanel() = default;
 		SceneHierarchyPanel(const Ref<Scene>& context);
 
-		void OnAttach() override;
-		void OnDetach() override;
-
 	public: // Helpers (Get&Set)
 
 		void SetContext(const Ref<Scene>& context);
@@ -27,9 +24,7 @@ namespace DME {
 
 		Entity GetSelectedEntity() const { return m_SelectionContext; }
 		void ClearSelectedContext() { m_SelectionContext = {}; }
-		void SetSelectedEntity(Entity entity) { m_SelectionContext = entity; };
-
-		bool SelectionContextIsNull() { return !m_SelectionContext; }
+		void SetSelectedEntity(Entity entity) { m_SelectionContext = entity; }
 
 		void DeleteSelectedEntity();
 
@@ -38,12 +33,14 @@ namespace DME {
 
 	public: // Layer overrides
 
+		void OnAttach() override;
+		void OnDetach() override;
 		void OnImGuiRender() override;
 
 	public: // Events
 
-		bool OnKeyPressed(KeyPressedEvent& event);
-		bool OnMouseButtonPressed(MouseButtonPressedEvent& event);
+		bool OnKeyPressed(const KeyPressedEvent& event);
+		bool OnMouseButtonPressed(const MouseButtonPressedEvent& event);
 
 	public: // UI
 
@@ -65,6 +62,7 @@ namespace DME {
 		bool m_SceneHierarchyWindowFocused;
 		bool m_SceneHierarchyWindowHovered;
 		bool m_SceneHierarchyWindowDocked;
+
 	};
 
 }

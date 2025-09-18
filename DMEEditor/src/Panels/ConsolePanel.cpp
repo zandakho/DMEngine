@@ -59,14 +59,14 @@ namespace DME
 			ImGui::SameLine();
 
 			ImGui::PushStyleVarX(ImGuiStyleVar_ItemSpacing, -28.0f);
-			ImGui::SetNextItemWidth(300.0f);
+			ImGui::SetNextItemWidth(500.0f);
 			logFilter.Draw("##Filter");
 
 			ImGui::SameLine();
 
-			ImGui::PushStyleColor(ImGuiCol_Button, ImVec4(0, 0, 0, 0));
-			ImGui::PushStyleColor(ImGuiCol_ButtonHovered, ImVec4(0, 0, 0, 0));
-			ImGui::PushStyleColor(ImGuiCol_ButtonActive, ImVec4(0, 0, 0, 0));
+			ImGui::PushStyleColor(ImGuiCol_Button, ImVec4(0.118f, 0.118f, 0.118f, 1.000f));
+			ImGui::PushStyleColor(ImGuiCol_ButtonHovered, ImVec4(0.118f, 0.118f, 0.118f, 1.000f));
+			ImGui::PushStyleColor(ImGuiCol_ButtonActive, ImVec4(0.118f, 0.118f, 0.118f, 1.000f));
 
 			ImGuiDMEEditor::IconButton("##MagnifyingGlass", reinterpret_cast<ImTextureID*>(static_cast<uint64_t>(m_MagnifyingIcon->GetRendererID())), { 28, 28 });
 

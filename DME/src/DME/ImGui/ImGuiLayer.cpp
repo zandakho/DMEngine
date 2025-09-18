@@ -28,7 +28,7 @@ namespace DME
 		//io.ConfigFlags |= ImGuiConfigFlags_NavEnableGamepad;
 		io.ConfigFlags |= ImGuiConfigFlags_DockingEnable;
 		io.ConfigFlags |= ImGuiConfigFlags_ViewportsEnable;
-		io.ConfigViewportsNoAutoMerge = false;
+		io.ConfigViewportsNoAutoMerge = true;
 		io.ConfigViewportsNoDefaultParent = false;
 		//io.ConfigFlags |= ImGuiConfigFlags_ViewportsNoTaskBarIcons;
 		//io.ConfigFlags |= ImGuiConfigFlags_ViewportsNoMerge;
@@ -74,7 +74,7 @@ namespace DME
 
 		style.WindowBorderSize = 0.0f;
 		style.ChildBorderSize = 0.0f;
-		style.PopupBorderSize = 0.0f;
+		style.PopupBorderSize = 2.0f;
 		style.FrameBorderSize = 0.0f;
 
 		style.TreeLinesRounding = 1.5f;
@@ -119,7 +119,6 @@ namespace DME
 		ImGui_ImplOpenGL3_NewFrame();
 		ImGui_ImplGlfw_NewFrame();
 		ImGui::NewFrame();
-		ImGuizmo::BeginFrame();
 	}
 
 	void ImGuiLayer::End()

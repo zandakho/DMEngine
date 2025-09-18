@@ -33,6 +33,8 @@ namespace DME {
         m_SelectionContext = {};
     }
 
+	
+
     void SceneHierarchyPanel::OnImGuiRender() 
     {
 		if (!GetTextureFullPack()) return;
@@ -92,8 +94,7 @@ namespace DME {
 		m_DeleteButton = nullptr;
 	}
 
-
-    bool SceneHierarchyPanel::OnKeyPressed(KeyPressedEvent& event)
+    bool SceneHierarchyPanel::OnKeyPressed(const KeyPressedEvent& event)
 	{
         if (event.IsRepeat())
             return false;
@@ -101,7 +102,7 @@ namespace DME {
         return false;
     }
 
-    bool SceneHierarchyPanel::OnMouseButtonPressed(MouseButtonPressedEvent& event) 
+    bool SceneHierarchyPanel::OnMouseButtonPressed(const MouseButtonPressedEvent& event)
 	{
         return false;
     }

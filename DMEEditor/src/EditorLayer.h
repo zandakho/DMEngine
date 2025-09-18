@@ -128,7 +128,7 @@ namespace DME
 
 		bool m_ConsoleWindow = true;
 		bool m_ContentBrowserWindow = true;
-		bool m_SceneHierarchyWindow = true;
+		bool m_SceneHierarchyWindow;
 		bool m_PropertiesWindow = true;
 
 		bool m_ViewportWindow = true;
