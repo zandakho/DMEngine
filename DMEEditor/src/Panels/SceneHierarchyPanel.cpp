@@ -42,7 +42,7 @@ namespace DME {
         if (!m_Context)
             return;
 
-		ImGui::Begin("Scene Hierarchy");
+		ImGui::Begin("Scene Hierarchy", nullptr, ImGuiWindowFlags_NoCollapse);
 
 		m_SceneHierarchyWindowFocused = ImGui::IsWindowFocused();
 		m_SceneHierarchyWindowHovered = ImGui::IsWindowHovered();

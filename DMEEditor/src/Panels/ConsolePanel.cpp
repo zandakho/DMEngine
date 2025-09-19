@@ -48,7 +48,7 @@ namespace DME
 
 		static ImGuiTextFilter logFilter;
 
-		if (ImGui::Begin("Console"))
+		if (ImGui::Begin("Console", nullptr, ImGuiWindowFlags_NoCollapse))
 		{
 			if (ImGuiDMEEditor::IconButton("##ConsoleFilterButton", reinterpret_cast<ImTextureID*>(static_cast<uintptr_t>(m_FilterIcon->GetRendererID())), { 28, 28 })) ImGui::OpenPopup("ConsoleFilterWindow");
 

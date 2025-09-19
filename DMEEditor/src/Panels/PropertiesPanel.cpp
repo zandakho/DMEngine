@@ -32,7 +32,7 @@ namespace DME {
 	{
 		if (!GetFulltexturePack()) return;
 
-        ImGui::Begin("Properties");
+        ImGui::Begin("Properties", nullptr, ImGuiWindowFlags_NoCollapse);
 
         if (m_SelectedEntity) 
 		{

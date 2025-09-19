@@ -55,7 +55,7 @@ namespace DME
 	{
 		if (!GetTextureFullPack()) return;
 
-		ImGui::Begin("Content Browser");
+		ImGui::Begin("Content Browser", nullptr, ImGuiWindowFlags_NoCollapse);
 
 		if (m_CurrentDirectory != std::filesystem::path(g_AssetPath))
 		{

@@ -500,7 +500,6 @@ namespace DME
 		ImGui::PushStyleColor(ImGuiCol_HeaderHovered, ImVec4(0.2f, 0.5f, 0.8f, 0.7f));
 		if (ImGui::BeginMenuBar())
 		{
-			ImGui::PushStyleColor(ImGuiCol_PopupBg, ImVec4(0.05f, 0.05f, 0.05f, 1.0f));
 			if (ImGui::BeginMenu("File"))
 			{
 				if (ImGui::MenuItem("New", "Ctrl+N"))
@@ -586,7 +585,6 @@ namespace DME
 				ImGui::PopStyleVar();
 				ImGui::EndMenu();
 			}
-			ImGui::PopStyleColor();
 
 			ImGui::EndMenuBar();
 			ImGui::PopStyleColor();
@@ -784,8 +782,83 @@ namespace DME
 	// Windows
 	void EditorLayer::ViewportWindow()
 	{
+		ImGui::PushStyleVarY(ImGuiStyleVar_FramePadding, 8.0f);
 		ImGui::PushStyleVar(ImGuiStyleVar_WindowPadding, ImVec2(1.5f, 1.5f));
-		ImGui::Begin("Viewport", nullptr, ImGuiWindowFlags_NoCollapse | ImGuiWindowFlags_NoScrollbar);
+		ImGui::Begin("Viewport", nullptr, ImGuiWindowFlags_NoCollapse | ImGuiWindowFlags_NoScrollbar | ImGuiWindowFlags_MenuBar);
+
+		if (ImGui::BeginMenuBar())
+		{
+
+			ImGui::SetCursorPosY(39.0f);
+
+			ImGui::PushStyleColor(ImGuiCol_Button, m_GizmoType == -1 ? ImVec4(0.2f, 0.6f, 0.9f, 0.5f) : ImVec4(0.2f, 0.2f, 0.2f, 0.5f));
+			if (ImGuiDMEEditor::IconButton("##Cursor", reinterpret_cast<ImTextureID*>(static_cast<uintptr_t>(m_IconCursor->GetRendererID())), { 25, 25 })) m_GizmoType = -1; ImGui::SameLine();
+			ImGui::PopStyleColor();
+
+			ImGui::PushStyleColor(ImGuiCol_Button, m_GizmoType == ImGuizmo::OPERATION::TRANSLATE ? ImVec4(0.2f, 0.6f, 0.9f, 0.5f) : ImVec4(0.2f, 0.2f, 0.2f, 0.5f));
+			if (ImGuiDMEEditor::IconButton("##Move", reinterpret_cast<ImTextureID*>(static_cast<uintptr_t>(m_IconMove->GetRendererID())), { 25, 25 })) m_GizmoType = ImGuizmo::OPERATION::TRANSLATE; ImGui::SameLine();
+			ImGui::PopStyleColor();
+
+			ImGui::PushStyleColor(ImGuiCol_Button, m_GizmoType == ImGuizmo::OPERATION::ROTATE ? ImVec4(0.2f, 0.6f, 0.9f, 0.5f) : ImVec4(0.2f, 0.2f, 0.2f, 0.5f));
+			if (ImGuiDMEEditor::IconButton("##Rotate", reinterpret_cast<ImTextureID*>(static_cast<uintptr_t>(m_IconRotate->GetRendererID())), { 25, 25 })) m_GizmoType = ImGuizmo::OPERATION::ROTATE; ImGui::SameLine();
+			ImGui::PopStyleColor();
+
+			ImGui::PushStyleColor(ImGuiCol_Button, m_GizmoType == ImGuizmo::OPERATION::SCALE ? ImVec4(0.2f, 0.6f, 0.9f, 0.5f) : ImVec4(0.2f, 0.2f, 0.2f, 0.5f));
+			if (ImGuiDMEEditor::IconButton("##Scale", reinterpret_cast<ImTextureID*>(static_cast<uintptr_t>(m_IconScale->GetRendererID())), { 25, 25 })) m_GizmoType = ImGuizmo::OPERATION::SCALE;
+			ImGui::PopStyleColor();
+
+			ImGui::SameLine();
+
+			ImGui::SeparatorEx(ImGuiSeparatorFlags_Vertical, 2.0f);
+
+			ImGui::PushStyleColor(ImGuiCol_Button, m_GizmoMode == ImGuizmo::LOCAL ? ImVec4(0.2f, 0.6f, 0.9f, 0.5f) : ImVec4(0.2f, 0.2f, 0.2f, 0.5f));
+			if (ImGuiDMEEditor::IconButton("##Local", reinterpret_cast<ImTextureID*>(static_cast<uintptr_t>(m_IconLocal->GetRendererID())), { 25, 25 })) m_GizmoMode = ImGuizmo::LOCAL; ImGui::SameLine();
+			ImGui::PopStyleColor();
+
+			ImGui::PushStyleColor(ImGuiCol_Button, m_GizmoMode == ImGuizmo::WORLD ? ImVec4(0.2f, 0.6f, 0.9f, 0.5f) : ImVec4(0.2f, 0.2f, 0.2f, 0.5f));
+			if (ImGuiDMEEditor::IconButton("##World", reinterpret_cast<ImTextureID*>(static_cast<uintptr_t>(m_IconWorld->GetRendererID())), { 25, 25 })) m_GizmoMode = ImGuizmo::WORLD;
+			ImGui::PopStyleColor();
+
+			ImGui::SameLine();
+
+			ImGui::SeparatorEx(ImGuiSeparatorFlags_Vertical, 2.0f);
+
+
+			{
+				ImGui::SetCursorPosY(37.0f);
+				Ref<Texture2D> icon = (m_SceneState == SceneState::Edit || m_SceneState == SceneState::Simulate) ? m_IconPlay : m_IconStop;
+				std::string ButtonID = std::format("Image | {0}", static_cast<uintptr_t>(icon->GetRendererID()));
+				if (ImGuiDMEEditor::IconButton(ButtonID.c_str(), reinterpret_cast<ImTextureID*>(static_cast<uintptr_t>(icon->GetRendererID())), { 28, 28 }))
+				{
+					if (m_SceneState == SceneState::Edit || m_SceneState == SceneState::Simulate)
+						OnScenePlay();
+					else if (m_SceneState == SceneState::Play)
+						OnSceneStop();
+				}
+
+			}
+
+			ImGui::SameLine();
+
+
+			{
+				ImGui::SetCursorPosY(37.0f);
+				Ref<Texture2D> icon = (m_SceneState == SceneState::Edit || m_SceneState == SceneState::Play) ? m_IconSimulate : m_IconStop;
+				std::string ButtonID = std::format("Image | {0}", static_cast<uintptr_t>(icon->GetRendererID()));
+				if (ImGuiDMEEditor::IconButton(ButtonID.c_str(), reinterpret_cast<ImTextureID*>(static_cast<uintptr_t>(icon->GetRendererID())), { 28, 28 }))
+				{
+					if (m_SceneState == SceneState::Edit || m_SceneState == SceneState::Play)
+						OnSceneSimulate();
+					else if (m_SceneState == SceneState::Simulate)
+						OnSceneStop();
+				}
+
+			}
+
+			ImGui::EndMenuBar();
+		}
+
+		ImGui::PopStyleVar();
 
 		auto viewportMinRegion = ImGui::GetWindowContentRegionMin();
 		auto viewportMaxRegion = ImGui::GetWindowContentRegionMax();
@@ -816,9 +889,6 @@ namespace DME
 			}
 			ImGui::EndDragDropTarget();
 		}
-
-		GizmosToolbar();
-		UIToolbar();
 
 		Entity selectedEntity = m_SceneHierarchyPanel.GetSelectedEntity();
 		if (selectedEntity && m_GizmoType != -1)
