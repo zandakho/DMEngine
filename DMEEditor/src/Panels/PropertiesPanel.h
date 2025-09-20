@@ -30,8 +30,13 @@ namespace DME {
         void OnImGuiRender() override;
 
 	public: // Events
-		bool OnKeyPressed(KeyPressedEvent& event);
-		bool OnMouseButtonPressed(MouseButtonPressedEvent& event);
+
+    	static bool OnKeyPressed(const KeyPressedEvent& event);
+		static bool OnMouseButtonPressed(const MouseButtonPressedEvent& event);
+
+    public:
+
+		bool m_PropertiesPanelRender;
 
     private: // Templates UI
 

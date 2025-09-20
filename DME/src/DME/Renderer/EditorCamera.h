@@ -14,6 +14,7 @@ namespace DME {
 	class EditorCamera : public Camera
 	{
 	public:
+
 		EditorCamera() = default;
 		EditorCamera(float fov, float aspectRatio, float nearClip, float farClip);
 
@@ -23,11 +24,11 @@ namespace DME {
 		float GetDistance() const { return m_Distance; }
 		void SetDistance(float distance) { m_Distance = distance; }
 
-		void SetViewportSize(float width, float height) { m_ViewportWidth = width; m_ViewportHeight = height; UpdateProjection(); }
+		void SetViewportSize(float width, float height) { m_ViewportSize.x = width; m_ViewportSize.y = height; UpdateProjection(); }
 
 		const glm::mat4& GetViewMatrix() const { return m_ViewMatrix; }
 		glm::mat4 GetViewProjection() const { return m_Projection * m_ViewMatrix; }
-
+		glm::vec2 GetViewportSize() const { return m_ViewportSize; }
 		glm::vec3 GetUpDirection() const;
 		glm::vec3 GetRightDirection() const;
 		glm::vec3 GetForwardDirection() const;
@@ -37,11 +38,13 @@ namespace DME {
 		float GetPitch() const { return m_Pitch; }
 		float GetYaw() const { return m_Yaw; }
 
-		std::string GetViewportStatusAsString() { return IsViewportActive ? "Active" : "Disable"; }
-		bool GetViewportStatus() { return IsViewportActive; }
 		void SetViewportActive(bool active) { IsViewportActive = active; }
+		bool ViewportStatus() const { return IsViewportActive; }
+
+		std::string GetViewportStatusAsString() const { return IsViewportActive ? "Active" : "Disable"; }
 
 	private:
+
 		void UpdateProjection();
 		void UpdateView();
 
@@ -56,6 +59,7 @@ namespace DME {
 		std::pair<float, float> PanSpeed() const;
 		float RotationSpeed() const;
 		float ZoomSpeed() const;
+
 	private:
 
 		bool IsViewportActive = false;
@@ -71,7 +75,7 @@ namespace DME {
 		float m_Distance = 10.0f;
 		float m_Pitch = 0.0f, m_Yaw = 0.0f;
 
-		float m_ViewportWidth = 1600, m_ViewportHeight = 900;
+		glm::vec2 m_ViewportSize{ 1600, 900 };
 	};
 
 }

@@ -9,7 +9,7 @@
 #include "DME/Renderer/DebugRendererMode.h"
 
 #include "DME/Renderer/EditorCamera.h"
-#include "DME/ImGui/ImGuiDMEEditor.h"
+#include "DME/ImGui/ImGuiDMEEditor.hpp"
 
 
 namespace DME
@@ -69,8 +69,6 @@ namespace DME
 
 	private: // UI functions
 
-		void UIToolbar();
-		void GizmosToolbar();
 		void UITabBar();
 
 	private: // Windows

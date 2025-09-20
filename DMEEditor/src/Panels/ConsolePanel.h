@@ -12,7 +12,7 @@ namespace DME
 	{
 	public: // Constructors and Destructors
 
-		ConsolePanel();
+		ConsolePanel() = default;
 
 	public: // Helpers (Get&Set)
 
@@ -27,8 +27,12 @@ namespace DME
 
 	public: // Events
 
-		bool OnKeyPressed(KeyPressedEvent& event);
-		bool OnMouseButtonPressed(MouseButtonEvent& event);
+		static bool OnKeyPressed(const KeyPressedEvent& event);
+		static bool OnMouseButtonPressed(const MouseButtonEvent& event);
+
+	public:
+
+		bool m_ConsoleRender;
 
 	private: // Textures
 

@@ -4,9 +4,7 @@
 
 #include "DME/Core/Input.h"
 
-#include "DME/ImGui/ImGuiDMEEditor.h"
-
-#define IMGUI_DEFINE_MATH_OPERATORS_IMPLEMENTED
+#include "DME/ImGui/ImGuiDMEEditor.hpp"
 
 #include <ImGui/imgui.h>
 #include <ImGui/imgui_internal.h>
@@ -55,13 +53,23 @@ namespace DME
 	{
 		if (!GetTextureFullPack()) return;
 
-		ImGui::Begin("Content Browser", nullptr, ImGuiWindowFlags_NoCollapse);
+		ImGui::Begin("Content Browser", &m_ContentBrowserRender, ImGuiWindowFlags_NoCollapse);
+
+		ImGui::BeginChild("##Directories", { 100, ImGui::GetContentRegionAvail().y }, ImGuiChildFlags_ResizeX | ImGuiChildFlags_AlwaysUseWindowPadding);
+
+		DrawDirectoryTree(g_AssetPath);
+
+		ImGui::EndChild();
+
+		ImGui::SameLine();
+
+		ImGui::BeginChild("##ContentObjects", ImVec2(ImGui::GetContentRegionAvail().x, ImGui::GetContentRegionAvail().y), ImGuiChildFlags_AlwaysUseWindowPadding);
 
 		if (m_CurrentDirectory != std::filesystem::path(g_AssetPath))
 		{
 			if (ImGuiDMEEditor::IconButton("##Back button",
 				reinterpret_cast<ImTextureID*>(static_cast<uintptr_t>(m_BackButtonIcon->GetRendererID())),
-				{ 30, 30 }, { 1.0f,1.0f,1.0f,1.0f }))
+				{ 28, 28 }, { 1.0f,1.0f,1.0f,1.0f }))
 			{
 				m_CurrentDirectory = m_CurrentDirectory.parent_path();
 			}
@@ -69,9 +77,6 @@ namespace DME
 
 		ImGui::SameLine();
 
-		ImGui::BeginChild("##ContentChildBrowser", ImVec2(ImGui::GetContentRegionAvail().x - 30, 38));
-
-		ImGui::SetCursorPos({ 10.0f ,5.0f });
 		if (ImGuiDMEEditor::IconButtonWithText("ADD##ContentChildBrowser", reinterpret_cast<ImTextureID*>(static_cast<uint64_t>(m_PlusSmallGreenIcon->GetRendererID()))))
 		{
 			strcpy_s(m_NewFolderName, "New Folder");
@@ -139,15 +144,13 @@ namespace DME
 
 			ImGui::EndPopup();
 		}
-		
-		ImGui::EndChild();
 
 
 		ImGui::SameLine();
 
 		if (ImGuiDMEEditor::IconButton("##Settings",
 			reinterpret_cast<ImTextureID*>(static_cast<uintptr_t>(m_SettingsButtonIcon->GetRendererID())),
-			{ 30, 30 }))
+			{ 28, 28 }))
 			ImGui::OpenPopup("##SettingsWindow");
 
 		if (ImGui::BeginPopup("##SettingsWindow"))
@@ -158,15 +161,7 @@ namespace DME
 			ImGui::EndPopup();
 		}
 
-		ImGui::BeginChild("##Directories", { 100, ImGui::GetContentRegionAvail().y }, ImGuiChildFlags_ResizeX | ImGuiChildFlags_AlwaysUseWindowPadding);
-
-		DrawDirectoryTree(g_AssetPath);
-
-		ImGui::EndChild();
-
-		ImGui::SameLine();
-
-		ImGui::BeginChild("##ContentObjects", ImVec2(ImGui::GetContentRegionAvail().x, ImGui::GetContentRegionAvail().y));
+		ImGui::SeparatorEx(ImGuiSeparatorFlags_Horizontal, 2.0f);
 
 		float cellSize = thumbnailSize + padding;
 		float panelWidth = ImGui::GetContentRegionAvail().x;
@@ -331,7 +326,7 @@ namespace DME
 		m_TextureCache.clear();
 	}
 
-	bool ContentBrowserPanel::OnKeyPressed(KeyPressedEvent& event)
+	bool ContentBrowserPanel::OnKeyPressed(const KeyPressedEvent& event)
 	{
 		if (event.IsRepeat())
 			return false;
@@ -350,7 +345,7 @@ namespace DME
 		return false;
 	}
 
-	bool ContentBrowserPanel::OnMouseButtonPressed(MouseButtonPressedEvent& event)
+	bool ContentBrowserPanel::OnMouseButtonPressed(const MouseButtonPressedEvent& event)
 	{
 		return false;
 	}

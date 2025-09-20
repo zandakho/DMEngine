@@ -39,12 +39,16 @@ namespace DME {
 
 	public: // Events
 
-		bool OnKeyPressed(const KeyPressedEvent& event);
-		bool OnMouseButtonPressed(const MouseButtonPressedEvent& event);
+		static bool OnKeyPressed(const KeyPressedEvent& event);
+		static bool OnMouseButtonPressed(const MouseButtonPressedEvent& event);
 
 	public: // UI
 
 		void DrawEntityNode(Entity entity);
+
+	public:
+
+		bool m_SceneHierarchyRender;
 
 	private: // Context
 
@@ -62,6 +66,7 @@ namespace DME {
 		bool m_SceneHierarchyWindowFocused;
 		bool m_SceneHierarchyWindowHovered;
 		bool m_SceneHierarchyWindowDocked;
+
 
 	};
 

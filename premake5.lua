@@ -23,6 +23,7 @@ workspace "DME"
     }
 
 outputdir = "%{cfg.buildcfg}-%{cfg.system}-%{cfg.architecture}"
+HideConsole = false;
 
 group "Vendor"
     include "vendor/premake"

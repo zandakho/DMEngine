@@ -2,12 +2,10 @@
 
 #include "PropertiesPanel.h"
 #include "DME/Scene/Components.h"
-#include "FontLibrary.h"
 
-#include "DME/ImGui/ImGuiDMEEditor.h"
 
-#include <ImGui/imgui.h>
-#include <ImGui/imgui_internal.h>
+#include "DME/ImGui/ImGuiDMEEditor.hpp"
+
 #include <glm/gtc/type_ptr.hpp>
 
 namespace DME {
@@ -32,7 +30,7 @@ namespace DME {
 	{
 		if (!GetFulltexturePack()) return;
 
-        ImGui::Begin("Properties", nullptr, ImGuiWindowFlags_NoCollapse);
+        ImGui::Begin("Properties", &m_PropertiesPanelRender, ImGuiWindowFlags_NoCollapse);
 
         if (m_SelectedEntity) 
 		{
@@ -316,7 +314,7 @@ namespace DME {
         }
     }
 
-	bool PropertiesPanel::OnKeyPressed(KeyPressedEvent& event) 
+	bool PropertiesPanel::OnKeyPressed(const KeyPressedEvent& event) 
 	{
 
 		if (event.IsRepeat())
@@ -325,7 +323,7 @@ namespace DME {
 		return false;
 	}
 
-	bool PropertiesPanel::OnMouseButtonPressed(MouseButtonPressedEvent& event) 
+	bool PropertiesPanel::OnMouseButtonPressed(const MouseButtonPressedEvent& event) 
 	{
 		return false;
 	}

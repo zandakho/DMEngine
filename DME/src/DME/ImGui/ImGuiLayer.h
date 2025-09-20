@@ -2,9 +2,7 @@
 
 #include "DME/Core/Layer.h"
 
-#include "DME/Events/ApplicationEvent.h"
-#include "DME/Events/MouseEvent.h"
-#include "DME/Events/KeyEvent.h"
+#include "DME/Events/Event.h"
 
 namespace DME
 {

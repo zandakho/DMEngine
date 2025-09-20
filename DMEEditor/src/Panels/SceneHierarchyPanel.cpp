@@ -2,7 +2,7 @@
 #include "SceneHierarchyPanel.h"
 #include "DME/Scene/Components.h"
 
-#include "DME/ImGui/ImGuiDMEEditor.h"
+#include "DME/ImGui/ImGuiDMEEditor.hpp"
 
 #include <ImGui/imgui.h>
 
@@ -35,14 +35,12 @@ namespace DME {
 
 	
 
-    void SceneHierarchyPanel::OnImGuiRender() 
-    {
+	void SceneHierarchyPanel::OnImGuiRender()
+	{
 		if (!GetTextureFullPack()) return;
+		if (!m_Context) return;
 
-        if (!m_Context)
-            return;
-
-		ImGui::Begin("Scene Hierarchy", nullptr, ImGuiWindowFlags_NoCollapse);
+		ImGui::Begin("Scene Hierarchy", &m_SceneHierarchyRender, ImGuiWindowFlags_NoCollapse);
 
 		m_SceneHierarchyWindowFocused = ImGui::IsWindowFocused();
 		m_SceneHierarchyWindowHovered = ImGui::IsWindowHovered();
@@ -55,6 +53,7 @@ namespace DME {
 
 		if (ImGui::IsMouseClicked(1) && m_SceneHierarchyWindowFocused)
 			ImGui::OpenPopup("AddEntityPopup");
+
 		if (ImGui::BeginPopup("AddEntityPopup"))
 		{
 			if (ImGuiDMEEditor::IconButtonWithText("ADD##CreateEntityButton", reinterpret_cast<ImTextureID*>(static_cast<uintptr_t>(m_PlusSmallButton->GetRendererID()))))
@@ -73,7 +72,7 @@ namespace DME {
 			m_SelectionContext = {};
 
 		ImGui::End();
-    }
+	}
 
 	void SceneHierarchyPanel::DeleteSelectedEntity()
 	{
@@ -117,7 +116,9 @@ namespace DME {
             | ImGuiTreeNodeFlags_OpenOnDoubleClick
             | ImGuiTreeNodeFlags_Framed;
 
+		ImGui::PushStyleVar(ImGuiStyleVar_FramePadding, ImVec2(10, 2));
         ImGui::PushStyleColor(ImGuiCol_Header, (m_SelectionContext == entity) ? ImGui::GetColorU32(ImVec4(0.2f, 0.6f, 0.9f, 0.5f)) : ImGui::GetColorU32(ImGuiCol_Header));
+        ImGui::PushStyleColor(ImGuiCol_HeaderHovered, (m_SelectionContext == entity) ? ImGui::GetColorU32(ImVec4(0.3f, 0.7f, 1.0f, 0.6f)) : ImGui::GetColorU32(ImGuiCol_HeaderHovered));
         bool opened = ImGui::TreeNodeEx(reinterpret_cast<const void*>(static_cast<uint64_t>(entity.GetUUID())), flags, tag.c_str());
 
         if (ImGui::IsItemClicked())
@@ -133,7 +134,7 @@ namespace DME {
 
         if (opened)
             ImGui::TreePop();
-		ImGui::PopStyleColor();
+		ImGui::PopStyleColor(2);
 
         if (entityDeleted) {
             bool isSelected = (GetSelectedEntity() == entity);
@@ -141,5 +142,7 @@ namespace DME {
             if (isSelected)
                 ClearSelectedContext();
         }
+
+		ImGui::PopStyleVar();
     }
 }

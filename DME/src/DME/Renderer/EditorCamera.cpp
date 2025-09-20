@@ -21,7 +21,7 @@ namespace DME
 
 	void EditorCamera::UpdateProjection()
 	{
-		m_AspectRatio = m_ViewportWidth / m_ViewportHeight;
+		m_AspectRatio = m_ViewportSize.x / m_ViewportSize.y;
 		m_Projection = glm::perspective(glm::radians(m_FOV), m_AspectRatio, m_NearClip, m_FarClip);
 	}
 
@@ -36,10 +36,10 @@ namespace DME
 
 	std::pair<float, float> EditorCamera::PanSpeed() const
 	{
-		float x = std::min(m_ViewportWidth / 1000.0f, 2.4f);
+		float x = std::min(m_ViewportSize.x / 1000.0f, 2.4f);
 		float xFactor = 0.0366f * (x * x) - 0.1778f * x + 0.3021f;
 
-		float y = std::min(m_ViewportHeight / 1000.0f, 2.4f);
+		float y = std::min(m_ViewportSize.y / 1000.0f, 2.4f);
 		float yFactor = 0.0366f * (y * y) - 0.1778f * y + 0.3021f;
 
 		return { xFactor, yFactor };
@@ -89,11 +89,14 @@ namespace DME
 
 	bool EditorCamera::OnMouseScroll(MouseScrolledEvent& e)
 	{
-		if (Input::IsKeyPressed(Key::LeftShift) || Input::IsKeyPressed(Key::RightShift))
+		if (IsViewportActive)
 		{
-			float delta = e.GetOffsetY() * 0.1f;
-			MouseZoom(delta);
-			UpdateView();
+			if (Input::IsKeyPressed(Key::LeftShift) || Input::IsKeyPressed(Key::RightShift))
+			{
+				float delta = e.GetOffsetY() * 0.1f;
+				MouseZoom(delta);
+				UpdateView();
+			}
 		}
 			
 		return false;

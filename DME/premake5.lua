@@ -15,6 +15,7 @@ project "DME"
     files
     {
         "src/**.h",
+        "src/**.hpp",
         "src/**.cpp",
         "vendor/stb/**.h",
         "vendor/stb/**.cpp",

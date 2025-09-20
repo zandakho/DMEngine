@@ -10,7 +10,6 @@
 
 #include <GLFW/glfw3.h>
 
-
 namespace DME
 {
 

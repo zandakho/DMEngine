@@ -162,13 +162,13 @@ namespace DME
 
 		ImGui::BeginDisabled(m_SceneState == SceneState::Play);
 
-		if (m_ConsoleWindow) m_ConsolePanel.OnImGuiRender();
+		if (m_ConsolePanel.m_ConsoleRender) m_ConsolePanel.OnImGuiRender();
 
-		if (m_ContentBrowserWindow) m_ContentBrowserPanel.OnImGuiRender();
+		if (m_ContentBrowserPanel.m_ContentBrowserRender) m_ContentBrowserPanel.OnImGuiRender();
 
-		if (m_SceneHierarchyWindow) m_SceneHierarchyPanel.OnImGuiRender();
+		if (m_SceneHierarchyPanel.m_SceneHierarchyRender) m_SceneHierarchyPanel.OnImGuiRender();
 
-		if (m_PropertiesWindow)
+		if (m_PropertiesPanel.m_PropertiesPanelRender)
 		{
 			m_PropertiesPanel.SetContext(m_SceneHierarchyPanel.GetSelectedEntity());
 			m_PropertiesPanel.OnImGuiRender();
@@ -188,56 +188,56 @@ namespace DME
 
 	void EditorLayer::OnDockspace()
 	{
-		static bool dockspaceOpen = true;
-		static bool opt_fullscreen = true;
-		static bool opt_padding = false;
-		static ImGuiDockNodeFlags dockspace_flags = ImGuiDockNodeFlags_None;
 
-		ImGuiWindowFlags window_flags = ImGuiWindowFlags_MenuBar | ImGuiWindowFlags_NoDocking;
-		if (opt_fullscreen)
-		{
-			const ImGuiViewport* viewport = ImGui::GetMainViewport();
-			ImGui::SetNextWindowPos(viewport->WorkPos);
-			ImGui::SetNextWindowSize(viewport->WorkSize);
-			ImGui::SetNextWindowViewport(viewport->ID);
-			ImGui::PushStyleVar(ImGuiStyleVar_WindowRounding, 0.0f);
-			ImGui::PushStyleVar(ImGuiStyleVar_WindowBorderSize, 0.0f);
-			window_flags |= ImGuiWindowFlags_NoTitleBar | ImGuiWindowFlags_NoCollapse | ImGuiWindowFlags_NoResize | ImGuiWindowFlags_NoMove;
-			window_flags |= ImGuiWindowFlags_NoBringToFrontOnFocus | ImGuiWindowFlags_NoNavFocus;
-		}
-		else
-		{
-			dockspace_flags &= ~ImGuiDockNodeFlags_PassthruCentralNode;
-		}
+		ImGui::SetNextWindowPos({ ImGui::GetMainViewport()->WorkPos });
+		ImGui::SetNextWindowSize({ ImGui::GetMainViewport()->WorkSize.x, 90 });
+		ImGui::SetNextWindowViewport(ImGui::GetMainViewport()->ID);
+		ImGui::PushStyleVar(ImGuiStyleVar_WindowPadding, ImVec2(0.0f, 0.0f));
+		ImGui::Begin("TopWindow", nullptr, ImGuiWindowFlags_NoDocking | ImGuiWindowFlags_NoTitleBar | ImGuiWindowFlags_NoCollapse | ImGuiWindowFlags_NoResize | ImGuiWindowFlags_NoMove | ImGuiWindowFlags_MenuBar);
+		ImGui::PopStyleVar();
 
-		if (dockspace_flags & ImGuiDockNodeFlags_PassthruCentralNode)
-			window_flags |= ImGuiWindowFlags_NoBackground;
+		UITabBar();
 
-		if (!opt_padding)
-			ImGui::PushStyleVar(ImGuiStyleVar_WindowPadding, ImVec2(0.0f, 0.0f));
+		ImGui::BeginChild("Child##Top Window", ImGui::GetContentRegionAvail(), ImGuiChildFlags_AlwaysUseWindowPadding | ImGuiChildFlags_Borders);
 
-		ImGui::Begin("DockSpace Demo", &dockspaceOpen, window_flags);
-		if (!opt_padding)
-			ImGui::PopStyleVar();
+		ImGui::Checkbox("Modal", &m_SceneHierarchyWindow);
 
-		if (opt_fullscreen)
-			ImGui::PopStyleVar(2);
+		ImGui::EndChild();
+
+		ImGui::End();
+
+
+		ImGuiWindowFlags window_flags = ImGuiWindowFlags_NoDocking;
+
+		ImGui::SetNextWindowPos({ ImGui::GetMainViewport()->WorkPos.x, ImGui::GetMainViewport()->WorkPos.y + 90 });
+		ImGui::SetNextWindowSize(ImGui::GetMainViewport()->WorkSize);
+		ImGui::SetNextWindowViewport(ImGui::GetMainViewport()->ID);
+		ImGui::PushStyleVar(ImGuiStyleVar_WindowRounding, 0.0f);
+		ImGui::PushStyleVar(ImGuiStyleVar_WindowBorderSize, 0.0f);
+		window_flags |= ImGuiWindowFlags_NoTitleBar | ImGuiWindowFlags_NoCollapse | ImGuiWindowFlags_NoResize | ImGuiWindowFlags_NoMove;
+		window_flags |= ImGuiWindowFlags_NoBringToFrontOnFocus | ImGuiWindowFlags_NoNavFocus;
+
+		ImGui::PushStyleVar(ImGuiStyleVar_WindowPadding, ImVec2(0.0f, 0.0f));
+
+		ImGui::Begin("Dockspace", nullptr, window_flags);
+
+		ImGui::PopStyleVar();
+
+		ImGui::PopStyleVar(2);
 
 		// Submit the DockSpace
 		ImGuiIO& io = ImGui::GetIO();
 		ImGuiStyle& style = ImGui::GetStyle();
-		float minWindowSizeX = style.WindowMinSize.x = 290.0f;
-		float minWindowSizeY = style.WindowMinSize.y = 100.0f;
+		float minWindowSizeX = style.WindowMinSize.x = 200.0f;
+		float minWindowSizeY = style.WindowMinSize.y = 30.0f;
 		if (io.ConfigFlags & ImGuiConfigFlags_DockingEnable)
 		{
 			ImGuiID dockspace_id = ImGui::GetID("MyDockSpace");
-			ImGui::DockSpace(dockspace_id, ImVec2(0.0f, 0.0f), dockspace_flags);
+			ImGui::DockSpace(dockspace_id, ImVec2(0.0f, 0.0f), ImGuiDockNodeFlags_None);
 		}
 
 		style.WindowMinSize.x = minWindowSizeX;
 		style.WindowMinSize.y = minWindowSizeY;
-
-		UITabBar();
 
 		ImGui::End();
 	}
@@ -390,8 +390,6 @@ namespace DME
 			{
 				if (m_ViewportFocused && m_ViewportHovered && !ImGuizmo::IsOver() && !Input::IsKeyPressed(Key::LeftShift)) m_SceneHierarchyPanel.SetSelectedEntity(m_HoveredEntity);
 
-				if (!m_ViewportHovered) m_SceneHierarchyPanel.ClearSelectedContext(); break;
-
 			}
 
 			default: break;
@@ -400,99 +398,6 @@ namespace DME
 	}
 
 	// UI functions
-	void EditorLayer::UIToolbar()
-	{
-		ImGui::PushStyleColor(ImGuiCol_FrameBg, ImVec4(0.11f, 0.11f, 0.11f, 0.5f));
-		ImGui::SetNextWindowPos(ImVec2(static_cast<float>(ImGui::GetWindowPos().x + (ImGui::GetWindowContentRegionMax().x * 0.5 - 70.0f)), static_cast<float>(ImGui::GetWindowPos().y + 40)));
-		ImGui::BeginChild("UI panel", ImVec2(130, 35), ImGuiChildFlags_FrameStyle, ImGuiWindowFlags_NoDecoration | ImGuiWindowFlags_NoDocking | ImGuiWindowFlags_NoMove | ImGuiWindowFlags_NoScrollbar | ImGuiWindowFlags_NoScrollWithMouse);
-
-		{
-			Ref<Texture2D> icon = (m_SceneState == SceneState::Edit || m_SceneState == SceneState::Simulate) ? m_IconPlay : m_IconStop;
-			ImTextureID buttonID = icon->GetRendererID();
-			ImGui::PushStyleVar(ImGuiStyleVar_FramePadding, ImVec2(1, 1));
-			ImGui::SetCursorPosY(ImGui::GetWindowContentRegionMax().y * 0.5f - 12);
-			std::string ButtonID = std::format("Image | {0}", buttonID);
-			if (ImGui::ImageButton(ButtonID.c_str(), buttonID, ImVec2(24, 24), ImVec2(0, 0), ImVec2(1, 1), ImVec4(0, 0, 0, 0)))
-			{
-				if (m_SceneState == SceneState::Edit || m_SceneState == SceneState::Simulate)
-					OnScenePlay();
-				else if (m_SceneState == SceneState::Play)
-					OnSceneStop();
-			}
-			ImGui::PopStyleVar();
-
-		}
-
-		ImGui::SameLine();
-
-		{
-			Ref<Texture2D> icon = (m_SceneState == SceneState::Edit || m_SceneState == SceneState::Play) ? m_IconSimulate : m_IconStop;
-			ImGui::PushStyleVar(ImGuiStyleVar_FramePadding, ImVec2(1, 1));
-			ImGui::SetCursorPosY(ImGui::GetWindowContentRegionMax().y * 0.5f - 12);
-			std::string ButtonID = std::format("Image | {0}", static_cast<uintptr_t>(icon->GetRendererID()));
-			if (ImGui::ImageButton(ButtonID.c_str(), icon->GetRendererID(), ImVec2(24, 24), ImVec2(0, 0), ImVec2(1, 1), ImVec4(0, 0, 0, 0)))
-			{
-				if (m_SceneState == SceneState::Edit || m_SceneState == SceneState::Play)
-					OnSceneSimulate();
-				else if (m_SceneState == SceneState::Simulate)
-					OnSceneStop();
-			}
-			ImGui::PopStyleVar();
-
-		}
-
-		ImGui::EndChild();
-		ImGui::PopStyleColor();
-	}
-
-	void EditorLayer::GizmosToolbar()
-	{
-		ImGui::PushStyleColor(ImGuiCol_FrameBg, ImVec4(0.11f, 0.11f, 0.11f, 0.5f));
-
-		ImGui::SetNextWindowPos(ImVec2(ImGui::GetWindowPos().x + 15, ImGui::GetWindowPos().y + 40));
-		ImGui::BeginChild("Move Control Panel", ImVec2(135, 35), ImGuiChildFlags_FrameStyle, ImGuiWindowFlags_NoDecoration | ImGuiWindowFlags_NoDocking | ImGuiWindowFlags_NoMove | ImGuiWindowFlags_NoScrollbar | ImGuiWindowFlags_NoScrollWithMouse);
-
-		ImGui::PushStyleVar(ImGuiStyleVar_FramePadding, ImVec2(9, 5));
-
-		ImGui::PushStyleColor(ImGuiCol_Button, m_GizmoType == -1 ? ImVec4(0.2f, 0.6f, 0.9f, 0.5f) : ImVec4(0.2f, 0.2f, 0.2f, 0.5f));
-		if (ImGuiDMEEditor::IconButton("##Cursor", reinterpret_cast<ImTextureID*>(static_cast<uintptr_t>(m_IconCursor->GetRendererID())), { 25, 25 })) m_GizmoType = -1; ImGui::SameLine();
-		ImGui::PopStyleColor();
-
-		ImGui::PushStyleColor(ImGuiCol_Button, m_GizmoType == ImGuizmo::OPERATION::TRANSLATE ? ImVec4(0.2f, 0.6f, 0.9f, 0.5f) : ImVec4(0.2f, 0.2f, 0.2f, 0.5f));
-		if (ImGuiDMEEditor::IconButton("##Move", reinterpret_cast<ImTextureID*>(static_cast<uintptr_t>(m_IconMove->GetRendererID())), { 25, 25 })) m_GizmoType = ImGuizmo::OPERATION::TRANSLATE; ImGui::SameLine();
-		ImGui::PopStyleColor();
-
-		ImGui::PushStyleColor(ImGuiCol_Button, m_GizmoType == ImGuizmo::OPERATION::ROTATE ? ImVec4(0.2f, 0.6f, 0.9f, 0.5f) : ImVec4(0.2f, 0.2f, 0.2f, 0.5f));
-		if (ImGuiDMEEditor::IconButton("##Rotate", reinterpret_cast<ImTextureID*>(static_cast<uintptr_t>(m_IconRotate->GetRendererID())), { 25, 25 })) m_GizmoType = ImGuizmo::OPERATION::ROTATE; ImGui::SameLine();
-		ImGui::PopStyleColor();
-
-		ImGui::PushStyleColor(ImGuiCol_Button, m_GizmoType == ImGuizmo::OPERATION::SCALE ? ImVec4(0.2f, 0.6f, 0.9f, 0.5f) : ImVec4(0.2f, 0.2f, 0.2f, 0.5f));
-		if (ImGuiDMEEditor::IconButton("##Scale", reinterpret_cast<ImTextureID*>(static_cast<uintptr_t>(m_IconScale->GetRendererID())), { 25, 25 })) m_GizmoType = ImGuizmo::OPERATION::SCALE;
-		ImGui::PopStyleColor();
-
-		ImGui::PopStyleVar();
-
-		ImGui::EndChild();
-
-		ImGui::SetNextWindowPos(ImVec2(ImGui::GetWindowPos().x + 160, ImGui::GetWindowPos().y + 40));
-		ImGui::BeginChild("Map Control Panel", ImVec2(75, 35), ImGuiChildFlags_FrameStyle, ImGuiWindowFlags_NoDecoration | ImGuiWindowFlags_NoDocking | ImGuiWindowFlags_NoMove | ImGuiWindowFlags_NoScrollbar | ImGuiWindowFlags_NoScrollWithMouse);
-
-		ImGui::PushStyleVar(ImGuiStyleVar_FramePadding, ImVec2(9, 5));
-
-		ImGui::PushStyleColor(ImGuiCol_Button, m_GizmoMode == ImGuizmo::LOCAL ? ImVec4(0.2f, 0.6f, 0.9f, 0.5f) : ImVec4(0.2f, 0.2f, 0.2f, 0.5f));
-		if (ImGuiDMEEditor::IconButton("##Local", reinterpret_cast<ImTextureID*>(static_cast<uintptr_t>(m_IconLocal->GetRendererID())), { 25, 25 })) m_GizmoMode = ImGuizmo::LOCAL; ImGui::SameLine();
-		ImGui::PopStyleColor();
-
-		ImGui::PushStyleColor(ImGuiCol_Button, m_GizmoMode == ImGuizmo::WORLD ? ImVec4(0.2f, 0.6f, 0.9f, 0.5f) : ImVec4(0.2f, 0.2f, 0.2f, 0.5f));
-		if (ImGuiDMEEditor::IconButton("##World", reinterpret_cast<ImTextureID*>(static_cast<uintptr_t>(m_IconWorld->GetRendererID())), { 25, 25 })) m_GizmoMode = ImGuizmo::WORLD;
-		ImGui::PopStyleColor();
-
-		ImGui::PopStyleVar();
-
-		ImGui::EndChild();
-
-		ImGui::PopStyleColor();
-	}
 
 	void EditorLayer::UITabBar()
 	{
@@ -534,15 +439,17 @@ namespace DME
 			{
 				ImGui::PushStyleVar(ImGuiStyleVar_FramePadding, ImVec2(2, 2));
 				ImGui::SeparatorText("Main");
-				ImGui::Checkbox("Scene Hierarchy##Window", &m_SceneHierarchyWindow);
+				ImGui::Checkbox("Console##Window", &m_ConsolePanel.m_ConsoleRender);
+				ImGui::Checkbox("ContentBrowser##Window", &m_ContentBrowserPanel.m_ContentBrowserRender);
 				ImGui::Checkbox("Viewport##Window", &m_ViewportWindow);
+				ImGui::Checkbox("Scene Hierarchy##Window", &m_SceneHierarchyPanel.m_SceneHierarchyRender);
+				ImGui::Checkbox("Properties##Window", &m_PropertiesPanel.m_PropertiesPanelRender);
 
 				ImGui::SeparatorText("Other");
 				ImGui::Checkbox("Settings##Window", &m_SettingsWindow);
 				ImGui::Checkbox("Debug##Window", &m_DebugWindow);
 				ImGui::Checkbox("Demo##Window", &m_DemoWindow);
 				ImGui::Checkbox("Renderer Stats##Window", &m_RendererStatsWindow);
-				ImGui::Checkbox("Console##Window", &m_ConsoleWindow);
 
 				ImGui::PopStyleVar();
 				ImGui::EndMenu();
@@ -585,11 +492,9 @@ namespace DME
 				ImGui::PopStyleVar();
 				ImGui::EndMenu();
 			}
-
 			ImGui::EndMenuBar();
 			ImGui::PopStyleColor();
 		}
-
 	}
 
 	void EditorLayer::OnScenePlay()

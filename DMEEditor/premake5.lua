@@ -1,5 +1,9 @@
 project "DMEEditor"
-    kind "WindowedApp"
+    if HideConsole == true then
+       kind "WindowedApp"
+       else
+        kind "ConsoleApp"
+    end
     language "C++"
     cppdialect "C++20"
     staticruntime "off"
