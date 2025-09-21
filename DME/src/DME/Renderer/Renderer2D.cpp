@@ -77,7 +77,7 @@ namespace DME
 		LineVertex* LineVertexBufferBase = nullptr;
 		LineVertex* LineVertexBufferPtr = nullptr;
 
-		float LineWidth = 2.0f;
+		float LineWidth = 1.0f;
 
 		std::array<Ref<Texture2D>, MaxTextureSlots> TextureSlots;
 		uint32_t TextureSlotIndex = 1; // 0 = white texture
@@ -194,15 +194,16 @@ namespace DME
 		{
 			case DebugRendererMode::Normal:
 				glPolygonMode(GL_FRONT_AND_BACK, GL_FILL);
+				glLineWidth(0.5f);
 				break;
 
 			case DebugRendererMode::Wireframe:
 				glPolygonMode(GL_FRONT_AND_BACK, GL_LINE);
-				glLineWidth(2.0f);
+				glLineWidth(0.5f);
 				break;
 			case DebugRendererMode::Point:
 				glPolygonMode(GL_FRONT_AND_BACK, GL_POINT);
-				glPointSize(3.0f);
+				glPointSize(0.5f);
 				break;
 
 			default:
@@ -224,15 +225,16 @@ namespace DME
 		{
 			case DebugRendererMode::Normal:
 				glPolygonMode(GL_FRONT_AND_BACK, GL_FILL);
+				glLineWidth(0.5f);
 				break;
 
 			case DebugRendererMode::Wireframe:
 				glPolygonMode(GL_FRONT_AND_BACK, GL_LINE);
-				glLineWidth(2.0f);
+				glLineWidth(0.5f);
 				break;
 			case DebugRendererMode::Point:
 				glPolygonMode(GL_FRONT_AND_BACK, GL_POINT);
-				glPointSize(3.0f);
+				glPointSize(0.5f);
 				break;
 
 			default:
@@ -254,15 +256,16 @@ namespace DME
 		{
 			case DebugRendererMode::Normal:
 				glPolygonMode(GL_FRONT_AND_BACK, GL_FILL);
+				glLineWidth(0.5f);
 				break;
 
 			case DebugRendererMode::Wireframe:
 				glPolygonMode(GL_FRONT_AND_BACK, GL_LINE);
-				glLineWidth(2.0f);
+				glLineWidth(0.5f);
 				break;
 			case DebugRendererMode::Point:
 				glPolygonMode(GL_FRONT_AND_BACK, GL_POINT);
-				glPointSize(3.0f);
+				glPointSize(0.5f);
 				break;
 
 			default:

@@ -28,9 +28,6 @@ namespace DME {
 
 		void DeleteSelectedEntity();
 
-		bool GetTextureFullPack() const;
-		void ClearTexturePack();
-
 	public: // Layer overrides
 
 		void OnAttach() override;
@@ -39,8 +36,8 @@ namespace DME {
 
 	public: // Events
 
-		static bool OnKeyPressed(const KeyPressedEvent& event);
-		static bool OnMouseButtonPressed(const MouseButtonPressedEvent& event);
+		bool OnKeyPressed(const KeyPressedEvent& event);
+		bool OnMouseButtonPressed(const MouseButtonPressedEvent& event);
 
 	public: // UI
 

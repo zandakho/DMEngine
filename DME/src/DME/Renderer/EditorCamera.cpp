@@ -6,8 +6,6 @@
 #include "DME/Core/KeyCodes.h"
 #include "DME/Core/MouseCodes.h"
 
-#include <glfw/glfw3.h>
-
 #define GLM_ENABLE_EXPERIMENTAL
 #include <glm/gtx/quaternion.hpp>
 

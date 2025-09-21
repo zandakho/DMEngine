@@ -36,9 +36,12 @@ namespace DME
 		void OnUpdateRuntime(TimeStep ts);
 		void OnViewportResize(uint32_t width, uint32_t height);
 
+		void UpdateSelectionHighlight(Entity selectedEntity);
+
 		void DuplicateEntity(Entity entity);
 
 		Entity GetPrimaryCameraEntity();
+		void SetPrimaryCameraEntity(Entity entity);
 
 		template<typename... Components>
 		auto GetAllEntitiesWith()

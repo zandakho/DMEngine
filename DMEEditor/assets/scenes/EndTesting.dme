@@ -1,6 +1,6 @@
 Scene: Untitled
 Entities:
-  - Entity: 17269525044186335535
+  - Entity: 16536303226351214073
     TagComponent:
       Tag: Empty Entity
     TransformComponent:
@@ -20,7 +20,7 @@ Entities:
       Friction: 0.5
       Restitution: 0
       RestitutionThreshold: 0.5
-  - Entity: 17072472493756541534
+  - Entity: 2151585493323360290
     TagComponent:
       Tag: Empty Entity
     TransformComponent:
@@ -40,7 +40,7 @@ Entities:
       Friction: 0.5
       Restitution: 0
       RestitutionThreshold: 0.5
-  - Entity: 17917983415465834238
+  - Entity: 9510695322327778105
     TagComponent:
       Tag: Empty Entity
     TransformComponent:
@@ -60,7 +60,7 @@ Entities:
       Friction: 0.5
       Restitution: 0
       RestitutionThreshold: 0.5
-  - Entity: 14174984299340811853
+  - Entity: 17729891375513064515
     TagComponent:
       Tag: Empty Entity
     TransformComponent:
@@ -80,12 +80,12 @@ Entities:
       Friction: 0.5
       Restitution: 0
       RestitutionThreshold: 0.5
-  - Entity: 947997674630835471
+  - Entity: 57334325231010606
     TagComponent:
       Tag: Empty Entity
     TransformComponent:
-      Position: [-1.82729769, 2.17031193, 0]
-      Rotation: [0, 0, 0]
+      Position: [-6.18901539, 2.17031193, 0]
+      Rotation: [0, -0, 0]
       Scale: [0.531176925, 2.78040195, 1.13]
     SpriteRendererComponent:
       Color: [1, 1, 1, 1]
@@ -100,12 +100,12 @@ Entities:
       Friction: 0.5
       Restitution: 0
       RestitutionThreshold: 0.5
-  - Entity: 17778985045147053759
+  - Entity: 17440551339535372975
     TagComponent:
       Tag: Empty Entity
     TransformComponent:
-      Position: [-4.47470665, 2.17031193, 0]
-      Rotation: [0, 0, 0]
+      Position: [-2.75651908, 6.10413742, 0]
+      Rotation: [0, -0, 0]
       Scale: [0.531176925, 2.78040195, 1.13]
     SpriteRendererComponent:
       Color: [1, 1, 1, 1]
@@ -120,7 +120,7 @@ Entities:
       Friction: 0.5
       Restitution: 0
       RestitutionThreshold: 0.5
-  - Entity: 16710273437621407485
+  - Entity: 12963399575185354463
     TagComponent:
       Tag: Empty Entity
     TransformComponent:
@@ -140,7 +140,7 @@ Entities:
       Friction: 0.5
       Restitution: 0
       RestitutionThreshold: 0.5
-  - Entity: 3329335634844763008
+  - Entity: 2918027297721990787
     TagComponent:
       Tag: Empty Entity
     TransformComponent:
@@ -160,7 +160,7 @@ Entities:
       Friction: 0.5
       Restitution: 0
       RestitutionThreshold: 0.5
-  - Entity: 4185017809671381323
+  - Entity: 4926717419832076158
     TagComponent:
       Tag: Floor
     TransformComponent:
@@ -180,7 +180,7 @@ Entities:
       Friction: 0.5
       Restitution: 0
       RestitutionThreshold: 0.5
-  - Entity: 2020155409150389131
+  - Entity: 6354451738397538752
     TagComponent:
       Tag: SizeOf
     TransformComponent:
@@ -205,7 +205,7 @@ Entities:
       Friction: 0.5
       Restitution: 0.800000012
       RestitutionThreshold: 0.5
-  - Entity: 17045435631608068651
+  - Entity: 7543097543153643169
     TagComponent:
       Tag: Camera
     TransformComponent:

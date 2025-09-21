@@ -134,6 +134,21 @@ namespace DME
 		}
 	}
 
+	void Scene::UpdateSelectionHighlight(Entity selectedEntity)
+	{
+		auto view = m_Registry.view<CameraComponent>();
+		for (auto [entity, camera] : view.each())
+		{
+			camera.IsSelected = false;
+		}
+
+		if (selectedEntity && selectedEntity.HasComponent<CameraComponent>())
+		{
+			auto& camera = selectedEntity.GetComponent<CameraComponent>();
+			camera.IsSelected = true;
+		}
+	}
+
 	void Scene::OnRuntimeStart()
 	{
 		OnPhysics2DStart();
@@ -367,9 +382,47 @@ namespace DME
 
 		{
 			auto view = m_Registry.view<TransformComponent, CameraComponent>();
-			for (auto [entity, transform, camera] : view.each())
+			for (auto [entity, transform, cameracomponent] : view.each())
 			{
-				Renderer2D::DrawQuad(transform.GetTransform(), camera.Camera.GetCameraTexture(), { 1.0f }, camera.Camera.GetCameraTextureColor(), static_cast<int>(entity));
+				glm::vec4 textureColor = cameracomponent.IsSelected
+					? glm::vec4(3.0f, 2.0f, 0.0f, 1.0f)
+					: cameracomponent.Camera.GetCameraTextureColor();
+
+				glm::mat4 transformed =
+					glm::translate(glm::mat4(1.0f), transform.Position) *
+					glm::toMat4(transform.GetOrientation()) *
+					glm::scale(glm::mat4(1.0f), { 1.0f, 1.0f, 1.0f });
+
+				Renderer2D::DrawQuad(transformed, cameracomponent.Camera.GetCameraTexture(),
+					1.0f, textureColor, static_cast<int>(entity));
+
+				glm::mat4 transformedRect =
+					glm::translate(glm::mat4(1.0f), transform.Position + transform.GetForwardDirection()) *
+					glm::toMat4(transform.GetOrientation()) *
+					glm::scale(glm::mat4(1.0f), transform.Scale);
+
+				Renderer2D::DrawRect(transformedRect, textureColor, static_cast<int>(entity));
+
+				glm::vec3 rectPosition = transform.Position + transform.GetForwardDirection();
+				glm::quat rectOrientation = transform.GetOrientation();
+				glm::vec3 rectScale = transform.Scale;
+
+				glm::vec3 right = rectOrientation * glm::vec3(1.0f, 0.0f, 0.0f);
+				glm::vec3 up = rectOrientation * glm::vec3(0.0f, 1.0f, 0.0f);
+
+				glm::vec3 halfSize = rectScale * 0.5f;
+				glm::vec3 worldCorners[4] = {
+					rectPosition - right * halfSize.x + up * halfSize.y, 
+					rectPosition + right * halfSize.x + up * halfSize.y, 
+					rectPosition + right * halfSize.x - up * halfSize.y, 
+					rectPosition - right * halfSize.x - up * halfSize.y  
+				};
+
+				Renderer2D::DrawLine(transform.Position, worldCorners[0], textureColor, static_cast<int>(entity));
+				Renderer2D::DrawLine(transform.Position, worldCorners[1], textureColor, static_cast<int>(entity));
+				Renderer2D::DrawLine(transform.Position, worldCorners[2], textureColor, static_cast<int>(entity));
+				Renderer2D::DrawLine(transform.Position, worldCorners[3], textureColor, static_cast<int>(entity));
+
 			}
 
 		}
@@ -404,6 +457,22 @@ namespace DME
 				return Entity{ entity, this };
 		}
 		return {};
+	}
+
+	void Scene::SetPrimaryCameraEntity(Entity entity)
+	{
+		auto view = m_Registry.view<CameraComponent>();
+		for (auto e : view)
+		{
+			auto& camera = view.get<CameraComponent>(e);
+			camera.Primary = false;
+		}
+
+		if (entity && entity.HasComponent<CameraComponent>())
+		{
+			auto& camera = entity.GetComponent<CameraComponent>();
+			camera.Primary = true;
+		}
 	}
 
 	template<typename T>

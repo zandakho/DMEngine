@@ -21,9 +21,6 @@ namespace DME {
 		void SetContext(Entity entity) { m_SelectedEntity = entity; }
 		Entity GetSelectedEntity() const { return m_SelectedEntity; }
 
-		bool GetFulltexturePack() const;
-		void ClearTexturePack();
-
 	public: // Layer overrides
 		void OnAttach() override;
 		void OnDetach() override;
@@ -31,8 +28,8 @@ namespace DME {
 
 	public: // Events
 
-    	static bool OnKeyPressed(const KeyPressedEvent& event);
-		static bool OnMouseButtonPressed(const MouseButtonPressedEvent& event);
+    	bool OnKeyPressed(const KeyPressedEvent& event);
+		bool OnMouseButtonPressed(const MouseButtonPressedEvent& event);
 
     public:
 

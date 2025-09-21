@@ -60,6 +60,8 @@ void main()
 {
 	vec4 textColor = Input.Color;
 
+	if (textColor.a < 0.1) discard;
+
 	switch(int(v_TextIndex))
 	{
 		case  0: textColor *= texture(u_Textures[ 0], Input.TextCoord * Input.TilingFactor); break;
@@ -95,9 +97,6 @@ void main()
 		case 30: textColor *= texture(u_Textures[30], Input.TextCoord * Input.TilingFactor); break;
 		case 31: textColor *= texture(u_Textures[31], Input.TextCoord * Input.TilingFactor); break;
 	}
-
-	if (texColor.a == 0.0)
-		discard;
 
 	o_Color = textColor;
 

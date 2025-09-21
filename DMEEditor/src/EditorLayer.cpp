@@ -15,6 +15,8 @@
 #include <glm/gtc/matrix_transform.hpp>
 #include <glm/gtc/type_ptr.hpp>
 
+#include "GLFW/include/GLFW/glfw3.h"
+
 namespace DME
 {
 
@@ -33,19 +35,19 @@ namespace DME
 		m_SceneHierarchyPanel.OnAttach();
 		m_PropertiesPanel.OnAttach();
 
-		m_IconPlay = Texture2D::Create("Resources/Icons/Viewport/PlayButton.png");
-		m_IconSimulate = Texture2D::Create("Resources/Icons/Viewport/SimulateButton.png");
-		m_IconStop = Texture2D::Create("Resources/Icons/Viewport/StopButton.png");
+		m_IconPlay = Texture2D::Create("Resources/Icons/Viewport/Viewport_PlayIcon_Img.png");
+		m_IconSimulate = Texture2D::Create("Resources/Icons/Viewport/Viewport_SimulateIcon_Img.png");
+		m_IconStop = Texture2D::Create("Resources/Icons/Viewport/Viewport_StopIcon_Img.png");
 
-		m_IconCursor = Texture2D::Create("Resources/Icons/Viewport/Viewport_Cursor_Img.png");
-		m_IconMove = Texture2D::Create("Resources/Icons/Viewport/Viewport_Move_Img.png");
-		m_IconRotate = Texture2D::Create("Resources/Icons/Viewport/Viewport_Rotate_Img.png");
-		m_IconScale = Texture2D::Create("Resources/Icons/Viewport/Viewport_Resize_Img.png");
+		m_IconCursor = Texture2D::Create("Resources/Icons/Viewport/Viewport_CursorIcon_Img.png");
+		m_IconMove = Texture2D::Create("Resources/Icons/Viewport/Viewport_MoveIcon_Img.png");
+		m_IconRotate = Texture2D::Create("Resources/Icons/Viewport/Viewport_RotateIcon_Img.png");
+		m_IconScale = Texture2D::Create("Resources/Icons/Viewport/Viewport_ResizeIcon_Img.png");
 
-		m_IconLocal = Texture2D::Create("Resources/Icons/Viewport/Viewport_Local_Img.png");
-		m_IconWorld = Texture2D::Create("Resources/Icons/Viewport/Viewport_World_Img.png");
+		m_IconLocal = Texture2D::Create("Resources/Icons/Viewport/Viewport_LocalIcon_Img.png");
+		m_IconWorld = Texture2D::Create("Resources/Icons/Viewport/Viewport_WorldIcon_Img.png");
 
-		m_SettingButton = Texture2D::Create("Resources/Icons/Editor/SettingsIcon_Img.png");
+		m_IconSave = Texture2D::Create("Resources/Icons/Editor/Editor_SaveIcon_Img.png");
 
 		FramebufferSpecification fbSpec;
 		fbSpec.Attachments = { FramebufferTextureFormat::RGBA8, FramebufferTextureFormat::RED_INTEGER, FramebufferTextureFormat::Depth };
@@ -66,7 +68,7 @@ namespace DME
 
 		m_EditorCamera = EditorCamera(30.0f, 1.778f, 0.1f, 1000.0f);
 
-		Renderer2D::SetLineWidth(4.0f);
+		Renderer2D::SetLineWidth(2.0f);
 
 	}
 
@@ -108,31 +110,8 @@ namespace DME
 
 		m_Framebuffer->ClearAttachment(1, -1);
 
-		switch (m_SceneState)
-		{
-		case SceneState::Edit:
-		{
-			if (m_ViewportFocused)
-				m_CameraController.OnUpdate(ts);
 
-			m_EditorCamera.OnUpdate(ts);
-
-			m_ActiveScene->OnUpdateEditor(ts, m_EditorCamera);
-			break;
-		}
-		case SceneState::Simulate:
-		{
-			m_EditorCamera.OnUpdate(ts);
-
-			m_ActiveScene->OnUpdateSimulation(ts, m_EditorCamera);
-			break;
-		}
-		case SceneState::Play:
-		{
-			m_ActiveScene->OnUpdateRuntime(ts);
-			break;
-		}
-		}
+		SwitchSceneStateOnUpdate(ts);
 
 		auto [mx, my] = ImGui::GetMousePos();
 		mx -= m_ViewportBounds[0].x;
@@ -189,18 +168,59 @@ namespace DME
 	void EditorLayer::OnDockspace()
 	{
 
-		ImGui::SetNextWindowPos({ ImGui::GetMainViewport()->WorkPos });
-		ImGui::SetNextWindowSize({ ImGui::GetMainViewport()->WorkSize.x, 90 });
+		static bool dragging = false;
+		static double dragStartX, dragStartY;
+		static int winStartX, winStartY;
+
+		ImGui::SetNextWindowPos(ImGui::GetMainViewport()->WorkPos);
+		ImGui::SetNextWindowSize({ ImGui::GetMainViewport()->WorkSize.x, 80 });
 		ImGui::SetNextWindowViewport(ImGui::GetMainViewport()->ID);
 		ImGui::PushStyleVar(ImGuiStyleVar_WindowPadding, ImVec2(0.0f, 0.0f));
-		ImGui::Begin("TopWindow", nullptr, ImGuiWindowFlags_NoDocking | ImGuiWindowFlags_NoTitleBar | ImGuiWindowFlags_NoCollapse | ImGuiWindowFlags_NoResize | ImGuiWindowFlags_NoMove | ImGuiWindowFlags_MenuBar);
+		ImGui::Begin("TopWindow", nullptr, ImGuiWindowFlags_NoDocking | ImGuiWindowFlags_NoTitleBar | ImGuiWindowFlags_NoCollapse | ImGuiWindowFlags_NoResize | ImGuiWindowFlags_MenuBar);
 		ImGui::PopStyleVar();
 
 		UITabBar();
 
-		ImGui::BeginChild("Child##Top Window", ImGui::GetContentRegionAvail(), ImGuiChildFlags_AlwaysUseWindowPadding | ImGuiChildFlags_Borders);
+		ImGui::BeginChild("Child##Top Window", { 0 , 0 }, ImGuiChildFlags_AlwaysUseWindowPadding | ImGuiChildFlags_FrameStyle);
 
-		ImGui::Checkbox("Modal", &m_SceneHierarchyWindow);
+		ImGui::SetCursorPosY(10);
+
+		if (ImGuiDMEEditor::IconButtonWithText("Save", reinterpret_cast<ImTextureID*>(static_cast<uintptr_t>(m_IconSave->GetRendererID())))) SaveScene();
+
+		ImGui::SameLine();
+
+		ImGui::SeparatorEx(ImGuiSeparatorFlags_Vertical, 2.0f);
+
+		ImGui::SameLine();
+
+		{
+			Ref<Texture2D> icon = (m_SceneState == SceneState::Edit || m_SceneState == SceneState::Simulate) ? m_IconPlay : m_IconStop;
+			std::string ButtonID = std::format("Image | {0}", static_cast<uintptr_t>(icon->GetRendererID()));
+			if (ImGuiDMEEditor::IconButton(ButtonID.c_str(), reinterpret_cast<ImTextureID*>(static_cast<uintptr_t>(icon->GetRendererID())), { 28, 28 }))
+			{
+				if (m_SceneState == SceneState::Edit || m_SceneState == SceneState::Simulate)
+					OnScenePlay();
+				else if (m_SceneState == SceneState::Play)
+					OnSceneStop();
+			}
+
+		}
+
+		ImGui::SameLine();
+
+
+		{
+			Ref<Texture2D> icon = (m_SceneState == SceneState::Edit || m_SceneState == SceneState::Play) ? m_IconSimulate : m_IconStop;
+			std::string ButtonID = std::format("Image | {0}", static_cast<uintptr_t>(icon->GetRendererID()));
+			if (ImGuiDMEEditor::IconButton(ButtonID.c_str(), reinterpret_cast<ImTextureID*>(static_cast<uintptr_t>(icon->GetRendererID())), { 28, 28 }))
+			{
+				if (m_SceneState == SceneState::Edit || m_SceneState == SceneState::Play)
+					OnSceneSimulate();
+				else if (m_SceneState == SceneState::Simulate)
+					OnSceneStop();
+			}
+
+		}
 
 		ImGui::EndChild();
 
@@ -209,8 +229,8 @@ namespace DME
 
 		ImGuiWindowFlags window_flags = ImGuiWindowFlags_NoDocking;
 
-		ImGui::SetNextWindowPos({ ImGui::GetMainViewport()->WorkPos.x, ImGui::GetMainViewport()->WorkPos.y + 90 });
-		ImGui::SetNextWindowSize(ImGui::GetMainViewport()->WorkSize);
+		ImGui::SetNextWindowPos({ ImGui::GetMainViewport()->WorkPos.x, ImGui::GetMainViewport()->WorkPos.y + 80 });
+		ImGui::SetNextWindowSize({ ImGui::GetMainViewport()->WorkSize.x, ImGui::GetMainViewport()->WorkSize.y - 80 });
 		ImGui::SetNextWindowViewport(ImGui::GetMainViewport()->ID);
 		ImGui::PushStyleVar(ImGuiStyleVar_WindowRounding, 0.0f);
 		ImGui::PushStyleVar(ImGuiStyleVar_WindowBorderSize, 0.0f);
@@ -228,7 +248,7 @@ namespace DME
 		// Submit the DockSpace
 		ImGuiIO& io = ImGui::GetIO();
 		ImGuiStyle& style = ImGui::GetStyle();
-		float minWindowSizeX = style.WindowMinSize.x = 200.0f;
+		float minWindowSizeX = style.WindowMinSize.x = 30.0f;
 		float minWindowSizeY = style.WindowMinSize.y = 30.0f;
 		if (io.ConfigFlags & ImGuiConfigFlags_DockingEnable)
 		{
@@ -247,33 +267,20 @@ namespace DME
 
 		if (m_ViewportHoveredAndFocused)
 		{
+
 			m_CameraController.OnEvent(event);
+
 			if (m_SceneState == SceneState::Edit)
 			{
 				m_EditorCamera.OnEvent(event);
 			}
+
 		}
 
 		EventDispatcher dispatcher(event);
 
 		dispatcher.Dispatch<KeyPressedEvent>(DME_BIND_EVENT_FN(EditorLayer::OnKeyPressed));
 		dispatcher.Dispatch<MouseButtonPressedEvent>(DME_BIND_EVENT_FN(EditorLayer::OnMouseButtonPressed));
-
-		dispatcher.Dispatch<KeyPressedEvent>(DME_BIND_EVENT_FN(m_ConsolePanel.OnKeyPressed));
-		dispatcher.Dispatch<MouseButtonPressedEvent>(DME_BIND_EVENT_FN(m_ConsolePanel.OnMouseButtonPressed));
-
-		dispatcher.Dispatch<KeyPressedEvent>(DME_BIND_EVENT_FN(m_ContentBrowserPanel.OnKeyPressed));
-		dispatcher.Dispatch<MouseButtonPressedEvent>(DME_BIND_EVENT_FN(m_ContentBrowserPanel.OnMouseButtonPressed));
-
-		dispatcher.Dispatch<KeyPressedEvent>(DME_BIND_EVENT_FN(m_SceneHierarchyPanel.OnKeyPressed));
-		dispatcher.Dispatch<MouseButtonPressedEvent>(DME_BIND_EVENT_FN(m_SceneHierarchyPanel.OnMouseButtonPressed));
-
-		dispatcher.Dispatch<KeyPressedEvent>(DME_BIND_EVENT_FN(m_PropertiesPanel.OnKeyPressed));
-		dispatcher.Dispatch<MouseButtonPressedEvent>(DME_BIND_EVENT_FN(m_PropertiesPanel.OnMouseButtonPressed));
-
-		if (m_SceneState == SceneState::Play)
-			dispatcher.Dispatch<KeyPressedEvent>(DME_BIND_EVENT_FN(m_DebugRenderer.OnKeyPressed));
-
 		
 	}
 
@@ -329,9 +336,8 @@ namespace DME
 				{
 					if (!ImGuizmo::IsUsing())
 						m_GizmoType = -1;
-					break;
 				}
-					
+				break;
 			}
 
 			case Key::W:
@@ -341,8 +347,8 @@ namespace DME
 				{
 					if (!ImGuizmo::IsUsing() && m_GizmoType != ImGuizmo::OPERATION::TRANSLATE)
 						m_GizmoType = ImGuizmo::OPERATION::TRANSLATE;
-					break;
 				}
+				break;
 			}
 
 			case Key::E:
@@ -352,9 +358,7 @@ namespace DME
 					if (!ImGuizmo::IsUsing() && m_GizmoType != ImGuizmo::OPERATION::ROTATE)
 						m_GizmoType = ImGuizmo::OPERATION::ROTATE;
 				}
-
 				break;
-
 			}
 
 			case Key::R:
@@ -363,8 +367,8 @@ namespace DME
 				{
 					if (!ImGuizmo::IsUsing() && m_GizmoType != ImGuizmo::OPERATION::SCALE)
 						m_GizmoType = ImGuizmo::OPERATION::SCALE;
-					break;
 				}
+				break;
 			}
 
 			case Key::Delete:
@@ -374,11 +378,20 @@ namespace DME
 					DME_CORE_WARNING("Delete entity: {0}", m_SceneHierarchyPanel.GetSelectedEntity().GetName())
 					DeleteSelectedEntity();
 				}
-					break;
+				break;
 			}
 
 			default: break;
 		}
+
+		m_ConsolePanel.OnKeyPressed(event);
+		m_ContentBrowserPanel.OnKeyPressed(event);
+		m_SceneHierarchyPanel.OnKeyPressed(event);
+		m_PropertiesPanel.OnKeyPressed(event);
+
+		if (m_SceneState == SceneState::Play)
+			m_DebugRenderer.OnKeyPressed(event);
+
 		return false;
 	}
 
@@ -394,6 +407,13 @@ namespace DME
 
 			default: break;
 		}
+
+		m_ConsolePanel.OnMouseButtonPressed(event);
+		m_ContentBrowserPanel.OnMouseButtonPressed(event);
+		m_SceneHierarchyPanel.OnMouseButtonPressed(event);
+		m_PropertiesPanel.OnMouseButtonPressed(event);
+
+
 		return false;
 	}
 
@@ -497,6 +517,39 @@ namespace DME
 		}
 	}
 
+	void EditorLayer::SwitchSceneStateOnUpdate(TimeStep ts)
+	{
+		switch (m_SceneState)
+		{
+			case SceneState::Edit:
+			{
+				if (m_ViewportFocused)
+					m_CameraController.OnUpdate(ts);
+
+				m_EditorCamera.OnUpdate(ts);
+
+				s_DebugRendererMode = DebugRendererMode::Normal;
+
+				m_ActiveScene->OnUpdateEditor(ts, m_EditorCamera);
+				break;
+			}
+			case SceneState::Simulate:
+			{
+				m_EditorCamera.OnUpdate(ts);
+
+				s_DebugRendererMode = DebugRendererMode::Normal;
+
+				m_ActiveScene->OnUpdateSimulation(ts, m_EditorCamera);
+				break;
+			}
+			case SceneState::Play:
+			{
+				m_ActiveScene->OnUpdateRuntime(ts);
+				break;
+			}
+		}
+	}
+
 	void EditorLayer::OnScenePlay()
 	{
 		if (m_SceneState == SceneState::Simulate)
@@ -558,41 +611,46 @@ namespace DME
 			Renderer2D::BeginScene(m_EditorCamera);
 		}
 
-		if (Entity selectedEntity = m_SceneHierarchyPanel.GetSelectedEntity())
+		if (m_SceneState == SceneState::Edit || m_SceneState == SceneState::Simulate)
 		{
-
-			if (selectedEntity.HasComponent<BoxCollider2DComponent>())
+			if (Entity selectedEntity = m_SceneHierarchyPanel.GetSelectedEntity())
 			{
-				const TransformComponent& transform = selectedEntity.GetComponent<TransformComponent>();
-				const BoxCollider2DComponent& bc2d = selectedEntity.GetComponent<BoxCollider2DComponent>();
 
-				glm::vec3 translation = transform.Position + glm::vec3(bc2d.Offset, 0.001f);
-				glm::vec3 scale = transform.Scale * glm::vec3(bc2d.Size * 2.0f, 1.0f);
+				if (selectedEntity.HasComponent<BoxCollider2DComponent>())
+				{
+					const TransformComponent& transform = selectedEntity.GetComponent<TransformComponent>();
+					const BoxCollider2DComponent& bc2d = selectedEntity.GetComponent<BoxCollider2DComponent>();
 
-				glm::mat4 position = glm::translate(glm::mat4(1.0f), translation)
-					* glm::rotate(glm::mat4(1.0f), transform.Rotation.z, glm::vec3(0.0f, 0.0f, 1.0f))
-					* glm::scale(glm::mat4(1.0f), scale);
+					glm::vec3 translation = transform.Position + glm::vec3(bc2d.Offset, 0.001f);
+					glm::vec3 scale = transform.Scale * glm::vec3(bc2d.Size * 2.0f, 1.0f);
 
-				Renderer2D::DrawRect(position, glm::vec4(1.0f, 0.5f, 0.0f, 1.0f));
+					glm::mat4 position = glm::translate(glm::mat4(1.0f), translation)
+						* glm::rotate(glm::mat4(1.0f), transform.Rotation.z, glm::vec3(0.0f, 0.0f, 1.0f))
+						* glm::scale(glm::mat4(1.0f), scale);
+
+					Renderer2D::DrawRect(position, glm::vec4(1.0f, 0.5f, 0.0f, 1.0f));
+				}
+
+				if (selectedEntity.HasComponent<CircleCollider2DComponent>())
+				{
+					const TransformComponent& transform = selectedEntity.GetComponent<TransformComponent>();
+					const CircleCollider2DComponent& cc2d = selectedEntity.GetComponent<CircleCollider2DComponent>();
+
+
+					glm::vec3 translation = transform.Position + glm::vec3(cc2d.Offset, 0.001f);
+					glm::vec3 scale = transform.Scale * glm::vec3(cc2d.Radius * 2.5f);
+
+					glm::mat4 position = glm::translate(glm::mat4(1.0f), translation) * glm::scale(glm::mat4(1.0f), scale);
+
+					Renderer2D::DrawCircle(position, glm::vec4(1.0f, 0.5f, 0.0f, 1.0f), 0.15f);
+
+				}
+
 			}
+			m_ActiveScene->UpdateSelectionHighlight(m_SceneHierarchyPanel.GetSelectedEntity());
 
-			if (selectedEntity.HasComponent<CircleCollider2DComponent>())
-			{
-				const TransformComponent& transform = selectedEntity.GetComponent<TransformComponent>();
-				const CircleCollider2DComponent& cc2d = selectedEntity.GetComponent<CircleCollider2DComponent>();
-
-
-				glm::vec3 translation = transform.Position + glm::vec3(cc2d.Offset, 0.001f);
-				glm::vec3 scale = transform.Scale * glm::vec3(cc2d.Radius * 2.5f);
-
-				glm::mat4 position = glm::translate(glm::mat4(1.0f), translation) * glm::scale(glm::mat4(1.0f), scale);
-
-				Renderer2D::DrawCircle(position, glm::vec4(1.0f, 0.5f, 0.0f, 1.0f), 0.15f);
-
-			}
 
 		}
-
 		Renderer2D::EndScene();
 	}
 
@@ -723,42 +781,6 @@ namespace DME
 			ImGui::PushStyleColor(ImGuiCol_Button, m_GizmoMode == ImGuizmo::WORLD ? ImVec4(0.2f, 0.6f, 0.9f, 0.5f) : ImVec4(0.2f, 0.2f, 0.2f, 0.5f));
 			if (ImGuiDMEEditor::IconButton("##World", reinterpret_cast<ImTextureID*>(static_cast<uintptr_t>(m_IconWorld->GetRendererID())), { 25, 25 })) m_GizmoMode = ImGuizmo::WORLD;
 			ImGui::PopStyleColor();
-
-			ImGui::SameLine();
-
-			ImGui::SeparatorEx(ImGuiSeparatorFlags_Vertical, 2.0f);
-
-
-			{
-				ImGui::SetCursorPosY(37.0f);
-				Ref<Texture2D> icon = (m_SceneState == SceneState::Edit || m_SceneState == SceneState::Simulate) ? m_IconPlay : m_IconStop;
-				std::string ButtonID = std::format("Image | {0}", static_cast<uintptr_t>(icon->GetRendererID()));
-				if (ImGuiDMEEditor::IconButton(ButtonID.c_str(), reinterpret_cast<ImTextureID*>(static_cast<uintptr_t>(icon->GetRendererID())), { 28, 28 }))
-				{
-					if (m_SceneState == SceneState::Edit || m_SceneState == SceneState::Simulate)
-						OnScenePlay();
-					else if (m_SceneState == SceneState::Play)
-						OnSceneStop();
-				}
-
-			}
-
-			ImGui::SameLine();
-
-
-			{
-				ImGui::SetCursorPosY(37.0f);
-				Ref<Texture2D> icon = (m_SceneState == SceneState::Edit || m_SceneState == SceneState::Play) ? m_IconSimulate : m_IconStop;
-				std::string ButtonID = std::format("Image | {0}", static_cast<uintptr_t>(icon->GetRendererID()));
-				if (ImGuiDMEEditor::IconButton(ButtonID.c_str(), reinterpret_cast<ImTextureID*>(static_cast<uintptr_t>(icon->GetRendererID())), { 28, 28 }))
-				{
-					if (m_SceneState == SceneState::Edit || m_SceneState == SceneState::Play)
-						OnSceneSimulate();
-					else if (m_SceneState == SceneState::Simulate)
-						OnSceneStop();
-				}
-
-			}
 
 			ImGui::EndMenuBar();
 		}

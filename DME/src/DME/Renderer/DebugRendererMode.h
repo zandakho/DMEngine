@@ -23,9 +23,7 @@ namespace DME
 
 		std::string DebugModeToString(DebugRendererMode mode);
 
-
-		bool OnKeyPressed(KeyPressedEvent& event);
-
+		bool OnKeyPressed(const KeyPressedEvent& event);
 	};
 
 	extern DebugRendererMode s_DebugRendererMode;

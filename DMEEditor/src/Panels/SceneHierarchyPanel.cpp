@@ -17,14 +17,14 @@ namespace DME {
 
 	void SceneHierarchyPanel::OnAttach()
 	{
-		m_PlusSmallButton = Texture2D::Create("Resources/Icons/SceneHieararchy/Plus_Small_Green_Img.png");
-		m_DeleteButton = Texture2D::Create("Resources/Icons/SceneHieararchy/Delete_Button_Img.png");
-
+		m_PlusSmallButton = Texture2D::Create("Resources/Icons/SceneHieararchy/SH_PlusSmallIcon_Img.png");
+		m_DeleteButton = Texture2D::Create("Resources/Icons/SceneHieararchy/SH_DeleteIcon_Img.png");
 	}
 
 	void SceneHierarchyPanel::OnDetach()
 	{
-		ClearTexturePack();
+		m_PlusSmallButton.reset();
+		m_DeleteButton.reset();
 	}
 
 	void SceneHierarchyPanel::SetContext(const Ref<Scene>& context) 
@@ -37,7 +37,6 @@ namespace DME {
 
 	void SceneHierarchyPanel::OnImGuiRender()
 	{
-		if (!GetTextureFullPack()) return;
 		if (!m_Context) return;
 
 		ImGui::Begin("Scene Hierarchy", &m_SceneHierarchyRender, ImGuiWindowFlags_NoCollapse);
@@ -80,17 +79,6 @@ namespace DME {
 
 		GetContext()->DestroyEntity(GetSelectedEntity());
 		ClearSelectedContext();
-	}
-
-	bool SceneHierarchyPanel::GetTextureFullPack() const
-	{
-		return m_PlusSmallButton && m_DeleteButton;
-	}
-
-	void SceneHierarchyPanel::ClearTexturePack()
-	{
-		m_PlusSmallButton = nullptr;
-		m_DeleteButton = nullptr;
 	}
 
     bool SceneHierarchyPanel::OnKeyPressed(const KeyPressedEvent& event)

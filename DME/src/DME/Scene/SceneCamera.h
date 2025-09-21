@@ -36,12 +36,12 @@ namespace DME
 		void SetOrthographicFarClip(float farClip) { m_OrthographicFar = farClip; RecalculateProjection(); }
 
 		glm::vec4 GetCameraTextureColor() const { return m_CameraTextureColor; }
-		void SetCameraTextureColor(glm::vec4 color) { m_CameraTextureColor = color; }
 
 		Ref<Texture2D> GetCameraTexture() const { return m_CameraTexture; }
 
 		ProjectionType GetProjectionType() const { return m_ProjectionType; }
 		void SetProjectionType(ProjectionType type) { m_ProjectionType = type; RecalculateProjection(); }
+
 	private:
 		void RecalculateProjection();
 

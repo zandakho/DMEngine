@@ -25,7 +25,7 @@ namespace DME
 		}
 	}
 
-	bool DebugRenderer::OnKeyPressed(KeyPressedEvent& event)
+	bool DebugRenderer::OnKeyPressed(const KeyPressedEvent& event)
 	{
 		if (event.IsRepeat())
 			return false;

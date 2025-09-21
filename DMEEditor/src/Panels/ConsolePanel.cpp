@@ -9,37 +9,23 @@
 namespace DME
 {
 
-	bool ConsolePanel::GetTextureFullPack() const
-	{
-		return m_SettingsIcon && m_MagnifyingIcon && m_FilterIcon && m_BrushIcon;
-	}
-
-	void ConsolePanel::ClearTexturePack()
-	{
-		m_SettingsIcon = nullptr;
-		m_MagnifyingIcon = nullptr;
-		m_FilterIcon = nullptr;
-	}
-	
 	void ConsolePanel::OnAttach()
 	{
-		m_SettingsIcon = Texture2D::Create("Resources/Icons/Console/SettingsIcon_Img.png");
-		m_MagnifyingIcon = Texture2D::Create("Resources/Icons/Console/MagnifyingGlassIcon_Img.png");
-		m_FilterIcon = Texture2D::Create("Resources/Icons/Console/FilterIcon_Img.png");
-		m_BrushIcon = Texture2D::Create("Resources/Icons/Console/BrushIcon_Img.png");
+		m_SettingsIcon = Texture2D::Create("Resources/Icons/Console/Console_SettingsIcon_Img.png");
+		m_MagnifyingIcon = Texture2D::Create("Resources/Icons/Console/Console_MagnifyingGlassIcon_Img.png");
+		m_FilterIcon = Texture2D::Create("Resources/Icons/Console/Console_FilterIcon_Img.png");
+		m_BrushIcon = Texture2D::Create("Resources/Icons/Console/Console_BrushIcon_Img.png");
 	}
 
 	void ConsolePanel::OnDetach()
 	{
-		ClearTexturePack();
+		m_SettingsIcon.reset();
+		m_MagnifyingIcon.reset();
+		m_FilterIcon.reset();
 	}
 
 	void ConsolePanel::OnImGuiRender()
 	{
-
-		if (!GetTextureFullPack())
-			return;
-
 		const char* levels[] = { "All", "Info", "Warn", "Error", "Critical" };
 		static int currentLevel = 0;
 		static float ConsoleWindowFontScale = 1.0f;
@@ -109,7 +95,7 @@ namespace DME
 			ImGui::EndPopup();
 		}
 
-		ImGui::BeginChild("Logs");
+		ImGui::BeginChild("Logs", { 0, 0 }, ImGuiChildFlags_AlwaysUseWindowPadding, ImGuiWindowFlags_AlwaysUseWindowPadding);
 
 		ImGui::SetWindowFontScale(ConsoleWindowFontScale);
 		if (DME::Log::m_ImGuiSink)

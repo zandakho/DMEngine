@@ -29,33 +29,41 @@ namespace DME
 	}
 
 	ContentBrowserPanel::ContentBrowserPanel() : m_CurrentDirectory(g_AssetPath)
-	{ }
+	{
+	}
 
 	void ContentBrowserPanel::OnAttach()
 	{
-		m_FolderIcon = Texture2D::Create("Resources/Icons/ContentBrowser/FolderIcon_Img.png");
-		m_FileIcon = Texture2D::Create("Resources/Icons/ContentBrowser/FileIcon_Img.png");
-		m_BackButtonIcon = Texture2D::Create("Resources/Icons/ContentBrowser/BackIcon_Img.png");
-		m_SettingsButtonIcon = Texture2D::Create("Resources/Icons/ContentBrowser/SettingsIcon_Img.png");
-		m_SceneIcon = Texture2D::Create("Resources/Icons/ContentBrowser/SceneIcon_Img.png");
-		m_ShadersFVIcon = Texture2D::Create("Resources/Icons/ContentBrowser/ShadersFVIcon_Img.png");
-		m_OpenFolderIcon = Texture2D::Create("Resources/Icons/ContentBrowser/OpenFolderIcon_Img.png");
-		m_CloseFolderIcon = Texture2D::Create("Resources/Icons/ContentBrowser/CloseFolderIcon_Img.png");
-		m_PlusSmallGreenIcon = Texture2D::Create("Resources/Icons/ContentBrowser/PlusSmallGreenIcon_Img.png");
+		m_FolderIcon = Texture2D::Create("Resources/Icons/ContentBrowser/CB_FolderIcon_Img.png");
+		m_FileIcon = Texture2D::Create("Resources/Icons/ContentBrowser/CB_FileIcon_Img.png");
+		m_BackIcon = Texture2D::Create("Resources/Icons/ContentBrowser/CB_BackIcon_Img.png");
+		m_SettingsIcon = Texture2D::Create("Resources/Icons/ContentBrowser/CB_SettingsIcon_Img.png");
+		m_SceneIcon = Texture2D::Create("Resources/Icons/ContentBrowser/CB_SceneIcon_Img.png");
+		m_ShadersFVIcon = Texture2D::Create("Resources/Icons/ContentBrowser/CB_ShadersFVIcon_Img.png");
+		m_OpenFolderIcon = Texture2D::Create("Resources/Icons/ContentBrowser/CB_OpenFolderIcon_Img.png");
+		m_CloseFolderIcon = Texture2D::Create("Resources/Icons/ContentBrowser/CB_CloseFolderIcon_Img.png");
+		m_PlusSmallIcon = Texture2D::Create("Resources/Icons/ContentBrowser/CB_PlusSmallIcon_Img.png");
 	}
 
 	void ContentBrowserPanel::OnDetach()
 	{
-		ClearTexturePack();
+		m_FolderIcon.reset();
+		m_FileIcon.reset();
+		m_BackIcon.reset();
+		m_SettingsIcon.reset();
+		m_SceneIcon.reset();
+		m_ShadersFVIcon.reset();
+		m_CloseFolderIcon.reset();
+		m_PlusSmallIcon.reset();
+		m_OpenFolderIcon.reset();
+		m_TextureCache.clear();
 	}
 
 	void ContentBrowserPanel::OnImGuiRender()
 	{
-		if (!GetTextureFullPack()) return;
+		ImGui::Begin("Content Browser", &m_ContentBrowserRender, ImGuiWindowFlags_NoCollapse | ImGuiWindowFlags_AlwaysUseWindowPadding);
 
-		ImGui::Begin("Content Browser", &m_ContentBrowserRender, ImGuiWindowFlags_NoCollapse);
-
-		ImGui::BeginChild("##Directories", { 100, ImGui::GetContentRegionAvail().y }, ImGuiChildFlags_ResizeX | ImGuiChildFlags_AlwaysUseWindowPadding);
+		ImGui::BeginChild("##Directories", { 100, 0 }, ImGuiChildFlags_ResizeX | ImGuiChildFlags_AlwaysUseWindowPadding);
 
 		DrawDirectoryTree(g_AssetPath);
 
@@ -68,7 +76,7 @@ namespace DME
 		if (m_CurrentDirectory != std::filesystem::path(g_AssetPath))
 		{
 			if (ImGuiDMEEditor::IconButton("##Back button",
-				reinterpret_cast<ImTextureID*>(static_cast<uintptr_t>(m_BackButtonIcon->GetRendererID())),
+				reinterpret_cast<ImTextureID*>(static_cast<uintptr_t>(m_BackIcon->GetRendererID())),
 				{ 28, 28 }, { 1.0f,1.0f,1.0f,1.0f }))
 			{
 				m_CurrentDirectory = m_CurrentDirectory.parent_path();
@@ -77,7 +85,7 @@ namespace DME
 
 		ImGui::SameLine();
 
-		if (ImGuiDMEEditor::IconButtonWithText("ADD##ContentChildBrowser", reinterpret_cast<ImTextureID*>(static_cast<uint64_t>(m_PlusSmallGreenIcon->GetRendererID()))))
+		if (ImGuiDMEEditor::IconButtonWithText("ADD##ContentChildBrowser", reinterpret_cast<ImTextureID*>(static_cast<uint64_t>(m_PlusSmallIcon->GetRendererID()))))
 		{
 			strcpy_s(m_NewFolderName, "New Folder");
 			ImGui::OpenPopup("AddItemDialogWindow");
@@ -149,7 +157,7 @@ namespace DME
 		ImGui::SameLine();
 
 		if (ImGuiDMEEditor::IconButton("##Settings",
-			reinterpret_cast<ImTextureID*>(static_cast<uintptr_t>(m_SettingsButtonIcon->GetRendererID())),
+			reinterpret_cast<ImTextureID*>(static_cast<uintptr_t>(m_SettingsIcon->GetRendererID())),
 			{ 28, 28 }))
 			ImGui::OpenPopup("##SettingsWindow");
 
@@ -289,7 +297,7 @@ namespace DME
 			ImVec2(16, 16), { 0, 1 }, {1, 0});
 		ImGui::SameLine();
 
-		if (ImGui::Selectable(folderName.c_str(), m_CurrentDirectory == directory, ImGuiSelectableFlags_AllowDoubleClick))
+		if (ImGui::Selectable(folderName.c_str(), m_CurrentDirectory == directory, ImGuiSelectableFlags_AllowDoubleClick | ImGuiSelectableFlags_SpanAvailWidth))
 			m_CurrentDirectory = directory;
 
 		if (ImGui::IsItemClicked())
@@ -307,34 +315,11 @@ namespace DME
 		}
 	}
 
-	bool ContentBrowserPanel::GetTextureFullPack() const
-	{
-		return m_FileIcon && m_FolderIcon && m_BackButtonIcon && m_SettingsButtonIcon && m_SceneIcon && m_ShadersFVIcon;
-	}
-
-	void ContentBrowserPanel::ClearTexturePack()
-	{
-		m_FolderIcon = nullptr;
-		m_FileIcon = nullptr;
-		m_BackButtonIcon = nullptr;
-		m_SettingsButtonIcon = nullptr;
-		m_SceneIcon = nullptr;
-		m_ShadersFVIcon = nullptr;
-		m_CloseFolderIcon = nullptr;
-		m_PlusSmallGreenIcon = nullptr;
-		m_OpenFolderIcon = nullptr;
-		m_TextureCache.clear();
-	}
 
 	bool ContentBrowserPanel::OnKeyPressed(const KeyPressedEvent& event)
 	{
 		if (event.IsRepeat())
 			return false;
-
-		bool control = Input::IsKeyPressed(Key::LeftControl) || Input::IsKeyPressed(Key::RightControl);
-		bool super = Input::IsKeyPressed(Key::LeftSuper) || Input::IsKeyPressed(Key::RightSuper);
-		bool shift = Input::IsKeyPressed(Key::LeftShift) || Input::IsKeyPressed(Key::RightShift);
-		bool alt = Input::IsKeyPressed(Key::LeftAlt) || Input::IsKeyPressed(Key::RightAlt);
 
 		switch (event.GetKeyCode())
 		{

@@ -21,11 +21,6 @@ namespace DME
 		
 		ContentBrowserPanel();
 
-	public: // Helpers (Get&Set)
-
-		bool GetTextureFullPack() const;
-		void ClearTexturePack();
-
 	public: // Layer overrides
 
 		void OnAttach() override;
@@ -38,12 +33,12 @@ namespace DME
 
 	public: // Events
 
-		static bool OnKeyPressed(const KeyPressedEvent& event);
-		static bool OnMouseButtonPressed(const MouseButtonPressedEvent& event);
+		bool OnKeyPressed(const KeyPressedEvent& event);
+		bool OnMouseButtonPressed(const MouseButtonPressedEvent& event);
 
 	public:
 
-		bool m_ContentBrowserRender;
+		bool m_ContentBrowserRender = true;
 
 	private: // Directory
 		
@@ -53,13 +48,13 @@ namespace DME
 
 		Ref<Texture2D> m_FolderIcon;
 		Ref<Texture2D> m_FileIcon;
-		Ref<Texture2D> m_BackButtonIcon;
-		Ref<Texture2D> m_SettingsButtonIcon;
+		Ref<Texture2D> m_BackIcon;
+		Ref<Texture2D> m_SettingsIcon;
 		Ref<Texture2D> m_SceneIcon;
 		Ref<Texture2D> m_ShadersFVIcon;
-		Ref<Texture2D> m_CloseFolderIcon;
-		Ref<Texture2D> m_PlusSmallGreenIcon;
 		Ref<Texture2D> m_OpenFolderIcon;
+		Ref<Texture2D> m_CloseFolderIcon;
+		Ref<Texture2D> m_PlusSmallIcon;
 
 		std::unordered_map<std::string, Ref<Texture2D>> m_TextureCache;
 

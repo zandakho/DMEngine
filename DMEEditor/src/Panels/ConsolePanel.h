@@ -14,11 +14,6 @@ namespace DME
 
 		ConsolePanel() = default;
 
-	public: // Helpers (Get&Set)
-
-		bool GetTextureFullPack() const;
-		void ClearTexturePack();
-
 	public: // Layer overrides
 
 		void OnAttach() override;
@@ -27,12 +22,12 @@ namespace DME
 
 	public: // Events
 
-		static bool OnKeyPressed(const KeyPressedEvent& event);
-		static bool OnMouseButtonPressed(const MouseButtonEvent& event);
+		bool OnKeyPressed(const KeyPressedEvent& event);
+		bool OnMouseButtonPressed(const MouseButtonEvent& event);
 
 	public:
 
-		bool m_ConsoleRender;
+		bool m_ConsoleRender = true;
 
 	private: // Textures
 

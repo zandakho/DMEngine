@@ -44,6 +44,8 @@ namespace DME
 		void OnDuplicateEntity() const;
 		void DeleteSelectedEntity();
 
+		void DrawCameraGizmo(Entity cameraEntity) const;
+
 	private: // SceneSerializer functions
 
 		void NewScene();
@@ -62,6 +64,8 @@ namespace DME
 		};
 
 		SceneState m_SceneState = SceneState::Edit;
+
+		void SwitchSceneStateOnUpdate(TimeStep ts);
 
 		void OnScenePlay();
 		void OnSceneSimulate();
@@ -120,7 +124,7 @@ namespace DME
 		Ref<Texture2D> m_IconPlay, m_IconSimulate, m_IconStop;
 		Ref<Texture2D> m_IconCursor, m_IconMove, m_IconRotate, m_IconScale;
 		Ref<Texture2D> m_IconLocal, m_IconWorld;
-		Ref<Texture2D> m_SettingButton;
+		Ref<Texture2D> m_IconSave;
 
 	private: // Window variables
 
@@ -138,6 +142,10 @@ namespace DME
 	private: // For debug
 
 		DebugRenderer m_DebugRenderer;
+
+		ImVec2 m_TopWindowPos = { 0, 0 };
+		bool m_TopWindowDragging = false;
+		ImVec2 m_TopWindowDragOffset = { 0, 0 };
 
 	};
 

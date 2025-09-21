@@ -15,20 +15,22 @@ namespace DME {
 
 	void PropertiesPanel::OnAttach()
 	{
-		m_PlusSmallButtonIcon = Texture2D::Create("Resources/Icons/Properties/Plus_Small_Green_Img.png");
-		m_DeleteButtonIcon = Texture2D::Create("Resources/Icons/Properties/Delete_Button_Img.png");
-		m_SettingsButtonIcon = Texture2D::Create("Resources/Icons/Properties/Settings_Img.png");
-		m_ResetButtonIcon = Texture2D::Create("Resources/Icons/Properties/Reset_Img.png");
+		m_PlusSmallButtonIcon = Texture2D::Create("Resources/Icons/Properties/Properties_PlusSmallIcon_Img.png");
+		m_DeleteButtonIcon = Texture2D::Create("Resources/Icons/Properties/Properties_DeleteIcon_Img.png");
+		m_SettingsButtonIcon = Texture2D::Create("Resources/Icons/Properties/Properties_SettingsIcon_Img.png");
+		m_ResetButtonIcon = Texture2D::Create("Resources/Icons/Properties/Properties_ResetIcon_Img.png");
 	}
 
 	void PropertiesPanel::OnDetach()
 	{
-		ClearTexturePack();
+		m_PlusSmallButtonIcon.reset();
+		m_DeleteButtonIcon.reset();
+		m_SettingsButtonIcon.reset();
+		m_ResetButtonIcon.reset();
 	}
 
 	void PropertiesPanel::OnImGuiRender()
 	{
-		if (!GetFulltexturePack()) return;
 
         ImGui::Begin("Properties", &m_PropertiesPanelRender, ImGuiWindowFlags_NoCollapse);
 
@@ -265,19 +267,6 @@ namespace DME {
         ImGui::End();
     }
 
-	bool PropertiesPanel::GetFulltexturePack() const
-	{
-		return m_PlusSmallButtonIcon && m_DeleteButtonIcon && m_SettingsButtonIcon && m_ResetButtonIcon;
-	}
-
-	void PropertiesPanel::ClearTexturePack()
-	{
-		m_PlusSmallButtonIcon = nullptr;
-		m_DeleteButtonIcon = nullptr;
-		m_SettingsButtonIcon = nullptr;
-		m_ResetButtonIcon = nullptr;
-	}
-
     template<typename T, typename UFunction>
     void PropertiesPanel::DrawComponent(const std::string& name, Entity entity, UFunction uifunction) 
 	{
@@ -339,7 +328,7 @@ namespace DME {
         }
     }
 
-    void PropertiesPanel::DrawVec3Control(const std::string& label, glm::vec3& values) 
+    void PropertiesPanel::DrawVec3Control(const std::string& label, glm::vec3& values)
 	{
         ImGui::PushID(label.c_str());
         ImGui::Columns(2);
@@ -348,11 +337,11 @@ namespace DME {
         ImGui::NextColumn();
 		ImGui::PushMultiItemsWidths(3, ImGui::CalcItemWidth() + 50);
 		ImGui::PushStyleVar(ImGuiStyleVar_ItemSpacing, ImVec2(4, 5));
-        ImGui::DragFloat("##ValuesX", &values.x, 0.1f, -FLT_MAX, FLT_MAX, "%.2f", ImGuiSliderFlags_DrawBorderX_ | ImGuiSliderFlags_Logarithmic);
+        ImGui::DragFloat("##ValuesX", &values.x, 0.1f, -FLT_MAX, FLT_MAX, "%.2f", ImGuiSliderFlags_DrawBorderX_);
 		ImGui::SameLine();
-		ImGui::DragFloat("##ValuesY", &values.y, 0.1f, -FLT_MAX, FLT_MAX, "%.2f", ImGuiSliderFlags_DrawBorderY_ | ImGuiSliderFlags_Logarithmic);
+		ImGui::DragFloat("##ValuesY", &values.y, 0.1f, -FLT_MAX, FLT_MAX, "%.2f", ImGuiSliderFlags_DrawBorderY_);
 		ImGui::SameLine();
-		ImGui::DragFloat("##ValuesZ", &values.z, 0.1f, -FLT_MAX, FLT_MAX, "%.2f", ImGuiSliderFlags_DrawBorderZ_ | ImGuiSliderFlags_Logarithmic);
+		ImGui::DragFloat("##ValuesZ", &values.z, 0.1f, -FLT_MAX, FLT_MAX, "%.2f", ImGuiSliderFlags_DrawBorderZ_);
 		ImGui::SameLine();
 		if (ImGuiDMEEditor::IconButton("##TextureSettings", reinterpret_cast<ImTextureID*>(static_cast<uint64_t>(m_ResetButtonIcon->GetRendererID())), {25.0f, 25.0f}))
 		{

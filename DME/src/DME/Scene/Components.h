@@ -42,6 +42,26 @@ namespace DME
 		TransformComponent() = default;
 		TransformComponent(const TransformComponent&) = default;
 		TransformComponent(const glm::vec3& position) : Position(position) {}
+
+		glm::quat GetOrientation() const
+		{
+			return glm::toMat4(glm::quat(Rotation));
+		}
+
+		glm::vec3 GetForwardDirection() const
+		{
+			return glm::rotate(GetOrientation(), glm::vec3(0.0f, 0.0f, -1.0f));
+		}
+
+		glm::vec3 GetRightDirection() const
+		{
+			return glm::rotate(GetOrientation(), glm::vec3(1.0f, 0.0f, 0.0f));
+		}
+
+		glm::vec3 GetUpDirection() const
+		{
+			return glm::rotate(GetOrientation(), glm::vec3(0.0f, 1.0f, 0.0f));
+		}
 		
 		glm::mat4 GetTransform() const
 		{
@@ -79,6 +99,7 @@ namespace DME
 		SceneCamera Camera;
 		bool Primary = true;
 		bool FixedAspectRatio = false;
+		bool IsSelected = false;
 
 		CameraComponent() = default;
 		CameraComponent(const CameraComponent&) = default;
