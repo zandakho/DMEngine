@@ -125,6 +125,7 @@ namespace DME
 		Ref<Texture2D> m_IconCursor, m_IconMove, m_IconRotate, m_IconScale;
 		Ref<Texture2D> m_IconLocal, m_IconWorld;
 		Ref<Texture2D> m_IconSave;
+		Ref<Texture2D> m_IconWindow, m_IconWindowClose, m_IconWindowFullscreen, m_IconWindowNoFullscreen, m_IconWindowMinimize;
 
 	private: // Window variables
 

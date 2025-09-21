@@ -49,6 +49,12 @@ namespace DME
 
 		m_IconSave = Texture2D::Create("Resources/Icons/Editor/Editor_SaveIcon_Img.png");
 
+		m_IconWindow = Texture2D::Create("Resources/Icons/Window/Window_WindowIcon_Img.png");
+		m_IconWindowClose = Texture2D::Create("Resources/Icons/Window/Window_WindowCloseIcon_Img.png");
+		m_IconWindowFullscreen = Texture2D::Create("Resources/Icons/Window/Window_WindowFullscreenIcon_Img.png");
+		m_IconWindowNoFullscreen = Texture2D::Create("Resources/Icons/Window/Window_WindowNoFullscreenIcon_Img.png");
+		m_IconWindowMinimize = Texture2D::Create("Resources/Icons/Window/Window_WindowMinimizeIcon_Img.png");
+
 		FramebufferSpecification fbSpec;
 		fbSpec.Attachments = { FramebufferTextureFormat::RGBA8, FramebufferTextureFormat::RED_INTEGER, FramebufferTextureFormat::Depth };
 		fbSpec.Width = 1600;
@@ -167,23 +173,52 @@ namespace DME
 
 	void EditorLayer::OnDockspace()
 	{
+		GLFWwindow* nativeWindow = static_cast<GLFWwindow*>(Application::Get().GetWindow().GetNativeWindow());
 
-		static bool dragging = false;
-		static double dragStartX, dragStartY;
-		static int winStartX, winStartY;
-
-		ImGui::SetNextWindowPos(ImGui::GetMainViewport()->WorkPos);
-		ImGui::SetNextWindowSize({ ImGui::GetMainViewport()->WorkSize.x, 80 });
+		ImGui::SetNextWindowPos({ ImGui::GetMainViewport()->WorkPos });
+		ImGui::SetNextWindowSize({ 45.0f, 45.0f });
 		ImGui::SetNextWindowViewport(ImGui::GetMainViewport()->ID);
+		ImGui::PushStyleVar(ImGuiStyleVar_WindowRounding, 0.0f);
 		ImGui::PushStyleVar(ImGuiStyleVar_WindowPadding, ImVec2(0.0f, 0.0f));
-		ImGui::Begin("TopWindow", nullptr, ImGuiWindowFlags_NoDocking | ImGuiWindowFlags_NoTitleBar | ImGuiWindowFlags_NoCollapse | ImGuiWindowFlags_NoResize | ImGuiWindowFlags_MenuBar);
-		ImGui::PopStyleVar();
+		ImGui::Begin("IconWindow", nullptr, ImGuiWindowFlags_NoDocking | ImGuiWindowFlags_NoTitleBar | ImGuiWindowFlags_NoCollapse | ImGuiWindowFlags_NoResize);
+		ImGui::PopStyleVar(2);
+
+		ImGui::SetCursorPosX(4.0f);
+		ImGui::Image(m_IconWindow->GetRendererID(), ImVec2(40, 40), { 0, 1 }, { 1, 0 });
+
+		ImGui::End();
+
+		ImGui::SetNextWindowPos({ ImGui::GetMainViewport()->WorkPos.x + 45.0f, ImGui::GetMainViewport()->WorkPos.y });
+		ImGui::SetNextWindowSize({ ImGui::GetMainViewport()->WorkSize.x, 45.0f });
+		ImGui::SetNextWindowViewport(ImGui::GetMainViewport()->ID);
+		ImGui::PushStyleVar(ImGuiStyleVar_WindowRounding, 0.0f);
+		ImGui::PushStyleVar(ImGuiStyleVar_WindowPadding, ImVec2(0.0f, 0.0f));
+		ImGui::Begin("MenuBarWindow", nullptr, ImGuiWindowFlags_NoDocking | ImGuiWindowFlags_NoTitleBar | ImGuiWindowFlags_NoCollapse | ImGuiWindowFlags_NoResize | ImGuiWindowFlags_MenuBar);
+		ImGui::PopStyleVar(2);
+
+		if (ImGui::IsWindowFocused() && ImGui::IsMouseDragging(ImGuiMouseButton_Left))
+		{
+			ImVec2 delta = ImGui::GetMouseDragDelta(ImGuiMouseButton_Left);
+			int wx = static_cast<int>(ImGui::GetWindowPos().x), wy = static_cast<int>(ImGui::GetWindowPos().y);
+			glfwGetWindowPos(nativeWindow, &wx, &wy);
+			glfwSetWindowPos(nativeWindow, wx + delta.x, wy + delta.y);
+			ImGui::ResetMouseDragDelta(ImGuiMouseButton_Left);
+		}
 
 		UITabBar();
+		
+		ImGui::End();
 
-		ImGui::BeginChild("Child##Top Window", { 0 , 0 }, ImGuiChildFlags_AlwaysUseWindowPadding | ImGuiChildFlags_FrameStyle);
+		ImGui::SetNextWindowPos({ ImGui::GetMainViewport()->WorkPos.x, ImGui::GetMainViewport()->WorkPos.y + 45.0f });
+		ImGui::SetNextWindowSize({ ImGui::GetMainViewport()->WorkSize.x, 45.0f });
+		ImGui::SetNextWindowViewport(ImGui::GetMainViewport()->ID);
+		ImGui::PushStyleVar(ImGuiStyleVar_WindowRounding, 0.0f);
+		ImGui::PushStyleColor(ImGuiCol_WindowBg, ImVec4(0.14f, 0.14f, 0.14f, 1.0f));
+		ImGui::Begin("ControlPanelWindow", nullptr, ImGuiWindowFlags_NoDocking | ImGuiWindowFlags_NoTitleBar | ImGuiWindowFlags_NoCollapse | ImGuiWindowFlags_NoResize);
+		ImGui::PopStyleColor();
+		ImGui::PopStyleVar();
 
-		ImGui::SetCursorPosY(10);
+		ImGui::SetCursorPosY(7);
 
 		if (ImGuiDMEEditor::IconButtonWithText("Save", reinterpret_cast<ImTextureID*>(static_cast<uintptr_t>(m_IconSave->GetRendererID())))) SaveScene();
 
@@ -222,15 +257,14 @@ namespace DME
 
 		}
 
-		ImGui::EndChild();
 
 		ImGui::End();
 
 
 		ImGuiWindowFlags window_flags = ImGuiWindowFlags_NoDocking;
 
-		ImGui::SetNextWindowPos({ ImGui::GetMainViewport()->WorkPos.x, ImGui::GetMainViewport()->WorkPos.y + 80 });
-		ImGui::SetNextWindowSize({ ImGui::GetMainViewport()->WorkSize.x, ImGui::GetMainViewport()->WorkSize.y - 80 });
+		ImGui::SetNextWindowPos({ ImGui::GetMainViewport()->WorkPos.x, ImGui::GetMainViewport()->WorkPos.y + 90 });
+		ImGui::SetNextWindowSize({ ImGui::GetMainViewport()->WorkSize.x, ImGui::GetMainViewport()->WorkSize.y - 90 });
 		ImGui::SetNextWindowViewport(ImGui::GetMainViewport()->ID);
 		ImGui::PushStyleVar(ImGuiStyleVar_WindowRounding, 0.0f);
 		ImGui::PushStyleVar(ImGuiStyleVar_WindowBorderSize, 0.0f);
@@ -422,6 +456,8 @@ namespace DME
 	void EditorLayer::UITabBar()
 	{
 
+		GLFWwindow* nativeWindow = static_cast<GLFWwindow*>(Application::Get().GetWindow().GetNativeWindow());
+
 		ImGui::PushStyleColor(ImGuiCol_HeaderHovered, ImVec4(0.2f, 0.5f, 0.8f, 0.7f));
 		if (ImGui::BeginMenuBar())
 		{
@@ -512,8 +548,37 @@ namespace DME
 				ImGui::PopStyleVar();
 				ImGui::EndMenu();
 			}
+
+			ImGui::SetCursorPosX(ImGui::GetContentRegionMax().x - 130);
+			ImGui::PushStyleVarX(ImGuiStyleVar_ItemSpacing, 0.0f);
+			ImGui::PushStyleColor(ImGuiCol_Button, ImVec4(0.0f, 0.0f, 0.0f, 0.0f));
+			ImGui::PushStyleVar(ImGuiStyleVar_FrameRounding, 0.0f);
+			if (ImGuiDMEEditor::IconButton("##MinimizeButton", reinterpret_cast<ImTextureID*>(static_cast<uintptr_t>(m_IconWindowMinimize->GetRendererID())), { 28, 28 })) glfwIconifyWindow(nativeWindow);
+			ImGui::PopStyleColor();
+
+			ImGui::SameLine();
+
+			Ref<Texture2D> icon = Application::Get().IsWindowMaximized(glfwGetWindowAttrib(nativeWindow, GLFW_MAXIMIZED)) ? m_IconWindowNoFullscreen : m_IconWindowFullscreen;
+			ImGui::PushStyleColor(ImGuiCol_Button, ImVec4(0.0f, 0.0f, 0.0f, 0.0f));
+			if (ImGuiDMEEditor::IconButton("##FullscreenButton", reinterpret_cast<ImTextureID*>(static_cast<uintptr_t>(icon->GetRendererID())), {28, 28}))
+			{
+				if (Application::Get().IsWindowMaximized(glfwGetWindowAttrib(nativeWindow, GLFW_MAXIMIZED)))
+					glfwRestoreWindow(nativeWindow);
+				else glfwMaximizeWindow(nativeWindow);
+			}
+			ImGui::PopStyleColor();
+
+			ImGui::SameLine();
+
+			ImGui::PushStyleColor(ImGuiCol_Button, ImVec4(0.0f, 0.0f, 0.0f, 0.0f));
+			ImGui::PushStyleColor(ImGuiCol_ButtonHovered, ImVec4(0.7f, 0.0f, 0.0f, 0.8f));
+			if (ImGuiDMEEditor::IconButton("##CloseWindow", reinterpret_cast<ImTextureID*>(static_cast<uintptr_t>(m_IconWindowClose->GetRendererID())), { 28, 28 })) Application::Get().Close();
+			ImGui::PopStyleColor(2);
+			ImGui::PopStyleVar(2);
+
 			ImGui::EndMenuBar();
 			ImGui::PopStyleColor();
+
 		}
 	}
 
@@ -755,32 +820,38 @@ namespace DME
 			ImGui::SetCursorPosY(39.0f);
 
 			ImGui::PushStyleColor(ImGuiCol_Button, m_GizmoType == -1 ? ImVec4(0.2f, 0.6f, 0.9f, 0.5f) : ImVec4(0.2f, 0.2f, 0.2f, 0.5f));
+			ImGui::PushStyleColor(ImGuiCol_ButtonHovered, m_GizmoType == -1 ? ImVec4(0.2f, 0.6f, 0.9f, 0.6f) : ImVec4(0.25f, 0.25f, 0.25f, 0.5f));
 			if (ImGuiDMEEditor::IconButton("##Cursor", reinterpret_cast<ImTextureID*>(static_cast<uintptr_t>(m_IconCursor->GetRendererID())), { 25, 25 })) m_GizmoType = -1; ImGui::SameLine();
-			ImGui::PopStyleColor();
+			ImGui::PopStyleColor(2);
 
 			ImGui::PushStyleColor(ImGuiCol_Button, m_GizmoType == ImGuizmo::OPERATION::TRANSLATE ? ImVec4(0.2f, 0.6f, 0.9f, 0.5f) : ImVec4(0.2f, 0.2f, 0.2f, 0.5f));
+			ImGui::PushStyleColor(ImGuiCol_ButtonHovered, m_GizmoType == ImGuizmo::OPERATION::TRANSLATE ? ImVec4(0.2f, 0.6f, 0.9f, 0.6f) : ImVec4(0.25f, 0.25f, 0.25f, 0.5f));
 			if (ImGuiDMEEditor::IconButton("##Move", reinterpret_cast<ImTextureID*>(static_cast<uintptr_t>(m_IconMove->GetRendererID())), { 25, 25 })) m_GizmoType = ImGuizmo::OPERATION::TRANSLATE; ImGui::SameLine();
-			ImGui::PopStyleColor();
+			ImGui::PopStyleColor(2);
 
 			ImGui::PushStyleColor(ImGuiCol_Button, m_GizmoType == ImGuizmo::OPERATION::ROTATE ? ImVec4(0.2f, 0.6f, 0.9f, 0.5f) : ImVec4(0.2f, 0.2f, 0.2f, 0.5f));
+			ImGui::PushStyleColor(ImGuiCol_ButtonHovered, m_GizmoType == ImGuizmo::OPERATION::ROTATE ? ImVec4(0.2f, 0.6f, 0.9f, 0.6f) : ImVec4(0.25f, 0.25f, 0.25f, 0.5f));
 			if (ImGuiDMEEditor::IconButton("##Rotate", reinterpret_cast<ImTextureID*>(static_cast<uintptr_t>(m_IconRotate->GetRendererID())), { 25, 25 })) m_GizmoType = ImGuizmo::OPERATION::ROTATE; ImGui::SameLine();
-			ImGui::PopStyleColor();
+			ImGui::PopStyleColor(2);
 
 			ImGui::PushStyleColor(ImGuiCol_Button, m_GizmoType == ImGuizmo::OPERATION::SCALE ? ImVec4(0.2f, 0.6f, 0.9f, 0.5f) : ImVec4(0.2f, 0.2f, 0.2f, 0.5f));
+			ImGui::PushStyleColor(ImGuiCol_ButtonHovered, m_GizmoType == ImGuizmo::OPERATION::SCALE ? ImVec4(0.2f, 0.6f, 0.9f, 0.6f) : ImVec4(0.25f, 0.25f, 0.25f, 0.5f));
 			if (ImGuiDMEEditor::IconButton("##Scale", reinterpret_cast<ImTextureID*>(static_cast<uintptr_t>(m_IconScale->GetRendererID())), { 25, 25 })) m_GizmoType = ImGuizmo::OPERATION::SCALE;
-			ImGui::PopStyleColor();
+			ImGui::PopStyleColor(2);
 
 			ImGui::SameLine();
 
 			ImGui::SeparatorEx(ImGuiSeparatorFlags_Vertical, 2.0f);
 
 			ImGui::PushStyleColor(ImGuiCol_Button, m_GizmoMode == ImGuizmo::LOCAL ? ImVec4(0.2f, 0.6f, 0.9f, 0.5f) : ImVec4(0.2f, 0.2f, 0.2f, 0.5f));
+			ImGui::PushStyleColor(ImGuiCol_ButtonHovered, m_GizmoMode == ImGuizmo::LOCAL ? ImVec4(0.2f, 0.6f, 0.9f, 0.6f) : ImVec4(0.25f, 0.25f, 0.25f, 0.5f));
 			if (ImGuiDMEEditor::IconButton("##Local", reinterpret_cast<ImTextureID*>(static_cast<uintptr_t>(m_IconLocal->GetRendererID())), { 25, 25 })) m_GizmoMode = ImGuizmo::LOCAL; ImGui::SameLine();
-			ImGui::PopStyleColor();
+			ImGui::PopStyleColor(2);
 
 			ImGui::PushStyleColor(ImGuiCol_Button, m_GizmoMode == ImGuizmo::WORLD ? ImVec4(0.2f, 0.6f, 0.9f, 0.5f) : ImVec4(0.2f, 0.2f, 0.2f, 0.5f));
+			ImGui::PushStyleColor(ImGuiCol_ButtonHovered, m_GizmoMode == ImGuizmo::WORLD ? ImVec4(0.2f, 0.6f, 0.9f, 0.6f) : ImVec4(0.25f, 0.25f, 0.25f, 0.5f));
 			if (ImGuiDMEEditor::IconButton("##World", reinterpret_cast<ImTextureID*>(static_cast<uintptr_t>(m_IconWorld->GetRendererID())), { 25, 25 })) m_GizmoMode = ImGuizmo::WORLD;
-			ImGui::PopStyleColor();
+			ImGui::PopStyleColor(2);
 
 			ImGui::EndMenuBar();
 		}

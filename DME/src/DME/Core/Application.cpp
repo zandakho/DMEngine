@@ -7,8 +7,9 @@
 #include "DME/Renderer/Renderer.h"
 													   
 #include "DME/Utils/PlatformUtils.h"
+#include "GLFW/glfw3.h"
 
-namespace DME
+ namespace DME
 {
 
 	Application* Application::s_Instance = nullptr;
@@ -119,7 +120,12 @@ namespace DME
 	{
 		m_Running = false;
 		return true;
-	} 
+	}
+
+	bool Application::IsWindowMaximized(bool maximized)
+	{
+		return maximized;
+	}
 
 	bool Application::OnWindowResize(WindowResizeEvent& event)
 	{

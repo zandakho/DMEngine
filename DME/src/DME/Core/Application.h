@@ -50,6 +50,11 @@ namespace DME
 		void Shutdown();
 
 		void Close() { m_Running = false; }
+		void Minimize() { m_Minimized = true; }
+		void Fullscreen() { m_Fullscreen = true; }
+		void NoFullscreen() { m_Fullscreen = false; }
+
+		bool IsWindowMaximized(bool maximized);
 
 		ImGuiLayer* GetImGuiLayer() { return m_ImGuiLayer; }
 
@@ -66,6 +71,7 @@ namespace DME
 
 		bool m_Running = true;
 		bool m_Minimized = false;
+		bool m_Fullscreen = false;
 		Scope<Window> m_Window;
 		ImGuiLayer* m_ImGuiLayer;
 		LayerStack m_LayerStack;

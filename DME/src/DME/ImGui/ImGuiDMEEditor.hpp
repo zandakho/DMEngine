@@ -400,7 +400,7 @@ namespace DME
             return pressed;
         }
 
-		inline bool IconButton(const char* label, ImTextureID* texture_id = nullptr, glm::vec2 size = { 0.0f, 0.0f } , glm::vec4 color = { 1.0f, 1.0f, 1.0f, 1.0f }) {
+		inline bool IconButton(const char* label, ImTextureID* texture_id = nullptr, glm::vec2 size = { 0.0f, 0.0f } , glm::vec4 color = { 1.0f, 1.0f, 1.0f, 1.0f }, ImGuiButtonFlags flags = 0) {
             ImGuiWindow* window = ImGui::GetCurrentWindow();
             if (window->SkipItems)
                 return false;
@@ -418,12 +418,12 @@ namespace DME
                 return false;
 
             bool hovered, held;
-            bool pressed = ImGui::ButtonBehavior(bb, id, &hovered, &held, 0);
+            bool pressed = ImGui::ButtonBehavior(bb, id, &hovered, &held, flags);
 
             const ImU32 col = ImGui::GetColorU32((held && hovered) ? ImGuiCol_ButtonActive :
                 hovered ? ImGuiCol_ButtonHovered : ImGuiCol_Button);
             ImGui::RenderNavHighlight(bb, ImGui::GetID(label));
-            ImGui::RenderFrame(bb.Min, bb.Max, col, true, 3.0f);
+            ImGui::RenderFrame(bb.Min, bb.Max, col, true, style.FrameRounding);
 
             if (texture_id) 
             {
@@ -433,7 +433,7 @@ namespace DME
             return pressed;
         }
 
-		inline bool IconButtonWithText(const char* label, ImTextureID* texture_id = nullptr)
+		inline bool IconButtonWithText(const char* label, ImTextureID* texture_id = nullptr, ImGuiButtonFlags flags = 0)
 		{
 			ImGuiWindow* window = ImGui::GetCurrentWindow();
 			if (window->SkipItems)
@@ -452,12 +452,12 @@ namespace DME
 				return false;
 
 			bool hovered, held;
-			bool pressed = ImGui::ButtonBehavior(bb, id, &hovered, &held, 0);
+			bool pressed = ImGui::ButtonBehavior(bb, id, &hovered, &held, flags);
 
 			const ImU32 col = ImGui::GetColorU32((held && hovered) ? ImGuiCol_ButtonActive :
 				hovered ? ImGuiCol_ButtonHovered : ImGuiCol_Button);
 			ImGui::RenderNavHighlight(bb, id);
-			ImGui::RenderFrame(bb.Min, bb.Max, col, true, 3.0f);
+			ImGui::RenderFrame(bb.Min, bb.Max, col, true, style.FrameRounding);
 
 			if (texture_id)
 			{

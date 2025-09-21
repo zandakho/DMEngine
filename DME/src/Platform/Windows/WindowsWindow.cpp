@@ -83,8 +83,23 @@ namespace DME
 		}
 
 		{
+			glfwWindowHint(GLFW_DECORATED, GLFW_FALSE);
 			DME_PROFILE_SCOPE("glfwCreateWindows")
 			m_Window = glfwCreateWindow(static_cast<uint32_t>(props.Width), static_cast<uint32_t>(props.Height), m_Data.Title.c_str(), nullptr, nullptr);
+
+			int icon_w = 0, icon_h = 0, icon_channels = 0;
+			stbi_set_flip_vertically_on_load(0);
+			unsigned char* icon_pixels = stbi_load("Resources/Icons/Window/Window_WindowIcon_Img.png", &icon_w, &icon_h, &icon_channels, 4);
+			if (icon_pixels)
+			{
+				GLFWimage images[1];
+				images[0].width = icon_w;
+				images[0].height = icon_h;
+				images[0].pixels = icon_pixels;
+				glfwSetWindowIcon(m_Window, 1, images);
+				stbi_image_free(icon_pixels);
+			}
+
 			++s_GLFWWindowCount;
 		}
 

@@ -29,6 +29,10 @@ namespace DME
 		io.ConfigFlags &= ~ImGuiConfigFlags_NoMouseCursorChange;
 		io.ConfigViewportsNoAutoMerge = true;
 		io.ConfigViewportPlatformFocusSetsImGuiFocus = true;
+		io.ConfigViewportsNoTaskBarIcon = true;
+		io.ConfigDockingAlwaysTabBar = true;
+		io.ConfigDockingWithShift = true;
+		io.ConfigViewportsNoDecoration = true;
 
 		io.Fonts->AddFontFromFileTTF("assets/fonts/opensans/OpenSans-Bold.ttf", 15, nullptr, io.Fonts->GetGlyphRangesCyrillic());
 		io.Fonts->AddFontFromFileTTF("assets/fonts/opensans/OpenSans-Bold.ttf", 18, nullptr, io.Fonts->GetGlyphRangesCyrillic());
