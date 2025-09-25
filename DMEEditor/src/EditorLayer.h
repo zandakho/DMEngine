@@ -136,7 +136,7 @@ namespace DME
 
 		bool m_ViewportWindow = true;
 		bool m_SettingsWindow = true;
-		bool m_DebugWindow = false;
+		bool m_DebugWindow = true;
 		bool m_DemoWindow = false;
 		bool m_RendererStatsWindow = false;
 

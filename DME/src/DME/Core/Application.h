@@ -12,6 +12,8 @@
 
 int main(int argc, char** argv);
 
+struct GLFWwindow;
+
 namespace DME
 {
 	struct ApplicationCommandLineArgs
@@ -28,7 +30,7 @@ namespace DME
 
 	struct ApplicationSpecification
 	{
-		std::string Name = "DME Application";
+		std::string Name = "DMEEditor";
 		std::string WorkingDirectory;
 		ApplicationCommandLineArgs CommandLineArgs;
 	};
@@ -47,14 +49,16 @@ namespace DME
 
 		Window& GetWindow() { return *m_Window; }
 
+		GLFWwindow* GetNativeWindow() { return static_cast<GLFWwindow*>(Get().GetWindow().GetNativeWindow()); }
+
 		void Shutdown();
 
 		void Close() { m_Running = false; }
 		void Minimize() { m_Minimized = true; }
-		void Fullscreen() { m_Fullscreen = true; }
-		void NoFullscreen() { m_Fullscreen = false; }
 
-		bool IsWindowMaximized(bool maximized);
+		bool IsWindowMaximized() const;
+		bool IsTitleBarHovered() const { return m_TitleBarHovered; }
+		void TitleBarHovered(bool hovered) { m_TitleBarHovered = hovered; }
 
 		ImGuiLayer* GetImGuiLayer() { return m_ImGuiLayer; }
 
@@ -71,15 +75,13 @@ namespace DME
 
 		bool m_Running = true;
 		bool m_Minimized = false;
-		bool m_Fullscreen = false;
+		bool m_TitleBarHovered = false;
+
 		Scope<Window> m_Window;
 		ImGuiLayer* m_ImGuiLayer;
 		LayerStack m_LayerStack;
 		float m_LastFrameTime = 0.0f;
 		ApplicationSpecification m_Specification;
-
-
-
 
 	private:
 		static Application* s_Instance;

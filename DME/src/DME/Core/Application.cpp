@@ -122,9 +122,9 @@
 		return true;
 	}
 
-	bool Application::IsWindowMaximized(bool maximized)
+	bool Application::IsWindowMaximized() const
 	{
-		return maximized;
+		return glfwGetWindowAttrib(Get().GetNativeWindow(), GLFW_MAXIMIZED);
 	}
 
 	bool Application::OnWindowResize(WindowResizeEvent& event)

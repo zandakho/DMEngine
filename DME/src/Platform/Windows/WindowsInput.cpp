@@ -10,28 +10,28 @@ namespace DME
 
 	bool Input::IsKeyPressed(KeyCode keycode)
 	{
-		auto window = static_cast<GLFWwindow*>(Application::Get().GetWindow().GetNativeWindow());
+		auto window = Application::Get().GetNativeWindow();
 		auto state = glfwGetKey(window, static_cast<uint32_t>(keycode));
 		return state == GLFW_PRESS;
 	}
 
 	bool Input::IsMouseButtonPressed(MouseCode button)
 	{
-		auto window = static_cast<GLFWwindow*>(Application::Get().GetWindow().GetNativeWindow());
+		auto window = Application::Get().GetNativeWindow();
 		auto state = glfwGetMouseButton(window, static_cast<uint32_t>(button));
 		return state == GLFW_PRESS;
 	}
 
 	bool Input::IsMouseButtonReleased(MouseCode button)
 	{
-		auto window = static_cast<GLFWwindow*>(Application::Get().GetWindow().GetNativeWindow());
+		auto window = Application::Get().GetNativeWindow();
 		auto state = glfwGetMouseButton(window, static_cast<uint32_t>(button));
 		return state == GLFW_REPEAT;
 	}
 
 	std::pair<float, float> Input::GetMousePosition()
 	{
-		auto window = static_cast<GLFWwindow*>(Application::Get().GetWindow().GetNativeWindow());
+		auto window = Application::Get().GetNativeWindow();
 		double x, y;
 		glfwGetCursorPos(window, &x, &y);
 
@@ -52,14 +52,14 @@ namespace DME
 
 	bool DME::Input::IsKeyPressedMode(KeyCode keycode)
 	{
-		auto window = static_cast<GLFWwindow*>(Application::Get().GetWindow().GetNativeWindow());
+		auto window = Application::Get().GetNativeWindow();
 		auto state = glfwGetKey(window, static_cast<uint32_t>(keycode));
 		return state == GLFW_PRESS;
 	}
 
 	bool DME::Input::IsKeyReleasedMode(KeyCode keycode)
 	{
-		auto window = static_cast<GLFWwindow*>(Application::Get().GetWindow().GetNativeWindow());
+		auto window = Application::Get().GetNativeWindow();
 		auto state = glfwGetKey(window, static_cast<uint32_t>(keycode));
 		return state == GLFW_REPEAT;
 	}

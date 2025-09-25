@@ -41,6 +41,7 @@ namespace DME
 	public:
 
 		EVENT_CLASS_TYPE(WindowMoved)
+		EVENT_CLASS_CATEGORY(EventCategoryApplication)
 	private:
 
 	};

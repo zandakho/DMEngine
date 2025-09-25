@@ -27,12 +27,10 @@ namespace DME
 		io.ConfigFlags |= ImGuiConfigFlags_DockingEnable;
 		io.ConfigFlags |= ImGuiConfigFlags_ViewportsEnable;
 		io.ConfigFlags &= ~ImGuiConfigFlags_NoMouseCursorChange;
-		io.ConfigViewportsNoAutoMerge = true;
-		io.ConfigViewportPlatformFocusSetsImGuiFocus = true;
-		io.ConfigViewportsNoTaskBarIcon = true;
+		io.ConfigViewportsNoAutoMerge = false;
 		io.ConfigDockingAlwaysTabBar = true;
-		io.ConfigDockingWithShift = true;
 		io.ConfigViewportsNoDecoration = true;
+		io.ConfigWindowsMoveFromTitleBarOnly = true;
 
 		io.Fonts->AddFontFromFileTTF("assets/fonts/opensans/OpenSans-Bold.ttf", 15, nullptr, io.Fonts->GetGlyphRangesCyrillic());
 		io.Fonts->AddFontFromFileTTF("assets/fonts/opensans/OpenSans-Bold.ttf", 18, nullptr, io.Fonts->GetGlyphRangesCyrillic());
@@ -146,7 +144,7 @@ namespace DME
 
 		if (io.ConfigFlags & ImGuiConfigFlags_ViewportsEnable)
 		{
-			ImGui::GetStyle().WindowRounding = 4.0f;
+			ImGui::GetStyle().WindowRounding = 0.0f;
 			ImGui::GetStyle().Colors[ImGuiCol_WindowBg].w = 1.0f;
 		}
 

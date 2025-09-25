@@ -10,6 +10,7 @@
 
 #include "imgui.h"
 #include "stb_image.h"
+#include "DME/Core/Application.h"
 
 namespace DME
 {
@@ -83,7 +84,7 @@ namespace DME
 		}
 
 		{
-			glfwWindowHint(GLFW_DECORATED, GLFW_FALSE);
+			glfwWindowHint(GLFW_TITLEBAR, GLFW_FALSE);
 			DME_PROFILE_SCOPE("glfwCreateWindows")
 			m_Window = glfwCreateWindow(static_cast<uint32_t>(props.Width), static_cast<uint32_t>(props.Height), m_Data.Title.c_str(), nullptr, nullptr);
 
@@ -192,7 +193,6 @@ namespace DME
 		glfwSetScrollCallback(m_Window, [](GLFWwindow* window, double xoffset, double yoffset)
 		{
 			WindowData& data = *(WindowData*)glfwGetWindowUserPointer(window);
-
 			MouseScrolledEvent event(static_cast<float>(xoffset), static_cast<float>(yoffset));
 			data.EventCallback(event);
 		});
@@ -202,6 +202,13 @@ namespace DME
 			WindowData& data = *(WindowData*)glfwGetWindowUserPointer(window);
 			MouseMovedEvent event(static_cast<float>(xpos), static_cast<float>(ypos));
 			data.EventCallback(event);
+		});
+
+		glfwSetTitlebarHitTestCallback(m_Window, [](GLFWwindow* window, int x, int y, int* hit)
+		{
+			WindowData& data = *(WindowData*)glfwGetWindowUserPointer(window);
+			*hit = static_cast<int>(Application::Get().IsTitleBarHovered());
+			
 		});
 	}
 
