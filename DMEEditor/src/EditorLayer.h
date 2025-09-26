@@ -44,7 +44,8 @@ namespace DME
 		void OnDuplicateEntity() const;
 		void DeleteSelectedEntity();
 
-		void DrawCameraGizmo(Entity cameraEntity) const;
+		Ref<Texture2D> SwitchDebugRenderModeIcons(DebugRendererMode mode) const;
+
 
 	private: // SceneSerializer functions
 
@@ -126,6 +127,7 @@ namespace DME
 		Ref<Texture2D> m_IconLocal, m_IconWorld;
 		Ref<Texture2D> m_IconSave;
 		Ref<Texture2D> m_IconWindow, m_IconWindowClose, m_IconWindowFullscreen, m_IconWindowNoFullscreen, m_IconWindowMinimize;
+		Ref<Texture2D> m_DRM_IconDefault, m_DRM_IconWireframe, m_DRM_IconPoint;
 
 	private: // Window variables
 

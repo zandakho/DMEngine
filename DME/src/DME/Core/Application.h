@@ -33,6 +33,9 @@ namespace DME
 		std::string Name = "DMEEditor";
 		std::string WorkingDirectory;
 		ApplicationCommandLineArgs CommandLineArgs;
+
+		std::string Icon = "Resources/Icons/TaskBar/TaskBar_TaskBarIcon_Img.png";
+
 	};
 
 	class Application

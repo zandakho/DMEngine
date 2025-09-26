@@ -55,6 +55,11 @@ namespace DME
 		m_IconWindowNoFullscreen = Texture2D::Create("Resources/Icons/Window/Window_WindowNoFullscreenIcon_Img.png");
 		m_IconWindowMinimize = Texture2D::Create("Resources/Icons/Window/Window_WindowMinimizeIcon_Img.png");
 
+		m_DRM_IconDefault = Texture2D::Create("Resources/Icons/DebugRenderMode/DRM_DefaultIcon_Img.png");
+		m_DRM_IconWireframe = Texture2D::Create("Resources/Icons/DebugRenderMode/DRM_WireframeIcon_Img.png");
+		m_DRM_IconPoint = Texture2D::Create("Resources/Icons/DebugRenderMode/DRM_PointIcon_Img.png");
+
+
 		FramebufferSpecification fbSpec;
 		fbSpec.Attachments = { FramebufferTextureFormat::RGBA8, FramebufferTextureFormat::RED_INTEGER, FramebufferTextureFormat::Depth };
 		fbSpec.Width = 1600;
@@ -188,7 +193,7 @@ namespace DME
 
 		ImGui::GetWindowDrawList()->AddRectFilledMultiColor(
 			window_pos,
-			ImVec2(window_pos.x + 400, window_pos.y + window_size.y),
+			ImVec2(window_pos.x + 500, window_pos.y + window_size.y),
 			ImColor(120, 40, 120, 130),
 			ImColor(0, 0, 0, 0),
 			ImColor(0, 0, 0, 0),
@@ -197,7 +202,8 @@ namespace DME
 		ImGui::PushStyleColor(ImGuiCol_ChildBg, IM_COL32(0, 0, 0, 0));
 		ImGui::BeginChild("##TitleBarChildIcon", ImVec2(70, 70), ImGuiChildFlags_None, ImGuiWindowFlags_NoScrollbar | ImGuiWindowFlags_NoScrollWithMouse | ImGuiWindowFlags_AlwaysUseWindowPadding);
 
-		ImGui::Image(m_IconWindow->GetRendererID(), ImVec2(40, 40), { 0, 1 }, { 1, 0 });
+		ImGui::SetCursorPos({0, 0});
+		ImGui::Image(m_IconWindow->GetRendererID(), ImVec2(64, 64), { 0, 1 }, { 1, 0 });
 
 		ImGui::EndChild();
 		ImGui::PopStyleColor();
@@ -485,32 +491,19 @@ namespace DME
 			{
 				ImGui::PushStyleVar(ImGuiStyleVar_FramePadding, ImVec2(2, 2));
 				ImGui::SeparatorText("Main");
-				ImGui::Checkbox("Console##Window", &m_ConsolePanel.m_ConsoleRender);
-				ImGui::Checkbox("ContentBrowser##Window", &m_ContentBrowserPanel.m_ContentBrowserRender);
-				ImGui::Checkbox("Viewport##Window", &m_ViewportWindow);
-				ImGui::Checkbox("Scene Hierarchy##Window", &m_SceneHierarchyPanel.m_SceneHierarchyRender);
-				ImGui::Checkbox("Properties##Window", &m_PropertiesPanel.m_PropertiesPanelRender);
+				ImGuiDMEEditor::Checkbox("Console##Window", &m_ConsolePanel.m_ConsoleRender);
+				ImGuiDMEEditor::Checkbox("ContentBrowser##Window", &m_ContentBrowserPanel.m_ContentBrowserRender);
+				ImGuiDMEEditor::Checkbox("Viewport##Window", &m_ViewportWindow);
+				ImGuiDMEEditor::Checkbox("Scene Hierarchy##Window", &m_SceneHierarchyPanel.m_SceneHierarchyRender);
+				ImGuiDMEEditor::Checkbox("Properties##Window", &m_PropertiesPanel.m_PropertiesPanelRender);
 
 				ImGui::SeparatorText("Other");
-				ImGui::Checkbox("Settings##Window", &m_SettingsWindow);
-				ImGui::Checkbox("Debug##Window", &m_DebugWindow);
-				ImGui::Checkbox("Demo##Window", &m_DemoWindow);
-				ImGui::Checkbox("Renderer Stats##Window", &m_RendererStatsWindow);
+				ImGuiDMEEditor::Checkbox("Settings##Window", &m_SettingsWindow);
+				ImGuiDMEEditor::Checkbox("Debug##Window", &m_DebugWindow);
+				ImGuiDMEEditor::Checkbox("Demo##Window", &m_DemoWindow);
+				ImGuiDMEEditor::Checkbox("Renderer Stats##Window", &m_RendererStatsWindow);
 
 				ImGui::PopStyleVar();
-				ImGui::EndMenu();
-			}
-
-			if (ImGui::BeginMenu("Mode"))
-			{
-				ImGui::SeparatorText("View mode");
-
-				ImGui::BeginDisabled(m_SceneState != SceneState::Play);
-				if (ImGuiDMEEditor::MenuItemEx("Default", nullptr, nullptr, s_DebugRendererMode == DebugRendererMode::Normal)) s_DebugRendererMode = DebugRendererMode::Normal;
-				if (ImGuiDMEEditor::MenuItemEx("Wireframe", nullptr, nullptr, s_DebugRendererMode == DebugRendererMode::Wireframe)) s_DebugRendererMode = DebugRendererMode::Wireframe;
-				if (ImGuiDMEEditor::MenuItemEx("Point", nullptr, nullptr, s_DebugRendererMode == DebugRendererMode::Point)) s_DebugRendererMode = DebugRendererMode::Point;
-				ImGui::EndDisabled();
-
 				ImGui::EndMenu();
 			}
 
@@ -518,22 +511,22 @@ namespace DME
 			{
 				ImGui::PushStyleVar(ImGuiStyleVar_FramePadding, ImVec2(2, 2));
 				ImGui::SeparatorText("Core");
-				ImGui::Checkbox("Core Log", &DME::LogSettings::m_GlobalCoreLogger);
+				ImGuiDMEEditor::Checkbox("Core Log", &DME::LogSettings::m_GlobalCoreLogger);
 				ImGui::Separator();
-				ImGui::Checkbox("Core Critical", &DME::LogSettings::m_CoreCriticalLogger);
-				ImGui::Checkbox("Core Error", &DME::LogSettings::m_CoreErrorLogger);
-				ImGui::Checkbox("Core Warning", &DME::LogSettings::m_CoreWarningLogger);
-				ImGui::Checkbox("Core Info", &DME::LogSettings::m_CoreInfoLogger);
-				ImGui::Checkbox("Core Trace", &DME::LogSettings::m_CoreTraceLogger);
+				ImGuiDMEEditor::Checkbox("Core Critical", &DME::LogSettings::m_CoreCriticalLogger);
+				ImGuiDMEEditor::Checkbox("Core Error", &DME::LogSettings::m_CoreErrorLogger);
+				ImGuiDMEEditor::Checkbox("Core Warning", &DME::LogSettings::m_CoreWarningLogger);
+				ImGuiDMEEditor::Checkbox("Core Info", &DME::LogSettings::m_CoreInfoLogger);
+				ImGuiDMEEditor::Checkbox("Core Trace", &DME::LogSettings::m_CoreTraceLogger);
 
 				ImGui::SeparatorText("Default");
-				ImGui::Checkbox("Default Log", &DME::LogSettings::m_GlobalLogger);
+				ImGuiDMEEditor::Checkbox("Default Log", &DME::LogSettings::m_GlobalLogger);
 				ImGui::Separator();
-				ImGui::Checkbox("Default Critical", &DME::LogSettings::m_CriticalLogger);
-				ImGui::Checkbox("Default Error", &DME::LogSettings::m_ErrorLogger);
-				ImGui::Checkbox("Default Warning", &DME::LogSettings::m_WarningLogger);
-				ImGui::Checkbox("Default Info", &DME::LogSettings::m_InfoLogger);
-				ImGui::Checkbox("Default Trace", &DME::LogSettings::m_TraceLogger);
+				ImGuiDMEEditor::Checkbox("Default Critical", &DME::LogSettings::m_CriticalLogger);
+				ImGuiDMEEditor::Checkbox("Default Error", &DME::LogSettings::m_ErrorLogger);
+				ImGuiDMEEditor::Checkbox("Default Warning", &DME::LogSettings::m_WarningLogger);
+				ImGuiDMEEditor::Checkbox("Default Info", &DME::LogSettings::m_InfoLogger);
+				ImGuiDMEEditor::Checkbox("Default Trace", &DME::LogSettings::m_TraceLogger);
 
 				ImGui::PopStyleVar();
 				ImGui::EndMenu();
@@ -716,6 +709,17 @@ namespace DME
 		m_SceneHierarchyPanel.ClearSelectedContext();
 	}
 
+	Ref<Texture2D> EditorLayer::SwitchDebugRenderModeIcons(DebugRendererMode mode) const
+	{
+		switch (mode)
+		{
+			case DebugRendererMode::Normal: return m_DRM_IconDefault;
+			case DebugRendererMode::Wireframe: return m_DRM_IconWireframe;
+			case DebugRendererMode::Point: return m_DRM_IconPoint;
+		}
+	}
+
+
 	// SceneSerializer functions
 	void EditorLayer::NewScene()
 	{
@@ -741,7 +745,7 @@ namespace DME
 
 		if (path.extension().string() != ".dme")
 		{
-			DME_WARNING("Could not load {0} - not a scene file", path.filename().string())
+			DME_WARNING("Could not load {0} - not a scene file", path.stem().string().c_str())
 			return;
 		}
 
@@ -786,7 +790,8 @@ namespace DME
 	void EditorLayer::ViewportWindow()
 	{
 		ImGui::PushStyleVar(ImGuiStyleVar_WindowPadding, ImVec2(1.5f, 1.5f));
-		ImGui::Begin("Viewport", nullptr, ImGuiWindowFlags_NoCollapse | ImGuiWindowFlags_NoScrollbar);
+		ImGui::Begin("Viewport", &m_ViewportWindow, ImGuiWindowFlags_NoCollapse | ImGuiWindowFlags_NoScrollbar);
+		ImGui::PopStyleVar();
 
 		auto viewportMinRegion = ImGui::GetWindowContentRegionMin();
 		auto viewportMaxRegion = ImGui::GetWindowContentRegionMax();
@@ -862,9 +867,11 @@ namespace DME
 		}
 
 		ImGui::PushStyleColor(ImGuiCol_ChildBg, IM_COL32(10, 10, 10, 140));
+		ImGui::PushStyleVar(ImGuiStyleVar_WindowPadding, ImVec2(1.5f, 1.5f));
 		ImGui::SetCursorPos({ 15, 41 });
-		ImGui::BeginChild("##GizmosControl", ImVec2(185, 30), ImGuiChildFlags_AlwaysUseWindowPadding);
+		ImGui::BeginChild("##GizmosControl", ImVec2(222, 30), ImGuiChildFlags_AlwaysUseWindowPadding);
 		ImGui::PopStyleColor();
+		ImGui::PopStyleVar();
 
 		ImGui::PushStyleColor(ImGuiCol_Button, m_GizmoType == -1 ? ImVec4(0.2f, 0.6f, 0.9f, 0.5f) : ImVec4(0.2f, 0.2f, 0.2f, 0.5f));
 		ImGui::PushStyleColor(ImGuiCol_ButtonHovered, m_GizmoType == -1 ? ImVec4(0.2f, 0.6f, 0.9f, 0.6f) : ImVec4(0.25f, 0.25f, 0.25f, 0.5f));
@@ -902,12 +909,35 @@ namespace DME
 		if (ImGuiDMEEditor::IconButton("##World", reinterpret_cast<ImTextureID*>(static_cast<uintptr_t>(m_IconWorld->GetRendererID())), { 26, 26 })) m_GizmoMode = ImGuizmo::WORLD;
 		ImGui::PopStyleColor(2);
 
+		ImGui::SameLine();
+
+		ImGui::SeparatorEx(ImGuiSeparatorFlags_Vertical, 2.0f);
+
+		ImGui::SameLine();
+
+		if (ImGuiDMEEditor::IconButton("##DebugRenderMode", reinterpret_cast<ImTextureID*>(static_cast<uintptr_t>(SwitchDebugRenderModeIcons(s_DebugRendererMode)->GetRendererID())), { 26, 26 })) ImGui::OpenPopup("DebugRenderModePopup");
+		if (ImGui::BeginPopup("DebugRenderModePopup", ImGuiWindowFlags_AlwaysUseWindowPadding | ImGuiWindowFlags_NoMove))
+		{
+
+			ImGui::SeparatorText("View mode");
+
+			ImGui::BeginDisabled(m_SceneState != SceneState::Play);
+			if (ImGui::Selectable("Default", s_DebugRendererMode == DebugRendererMode::Normal)) s_DebugRendererMode = DebugRendererMode::Normal;
+			if (ImGui::Selectable("Wireframe", s_DebugRendererMode == DebugRendererMode::Wireframe)) s_DebugRendererMode = DebugRendererMode::Wireframe;
+			if (ImGui::Selectable("Point", s_DebugRendererMode == DebugRendererMode::Point)) s_DebugRendererMode = DebugRendererMode::Point;
+			ImGui::EndDisabled();
+
+			ImGui::EndPopup();
+		}
+
 		ImGui::EndChild();
 
 		ImGui::PushStyleColor(ImGuiCol_ChildBg, IM_COL32(10, 10, 10, 140));
+		ImGui::PushStyleVar(ImGuiStyleVar_WindowPadding, ImVec2(1.5f, 1.5f));
 		ImGui::SetCursorPos({ ImGui::GetContentRegionAvail().x / 2 - (60.0f / 2), 41 });
 		ImGui::BeginChild("##SceneStateControl", ImVec2(60, 30), ImGuiChildFlags_AlwaysUseWindowPadding);
 		ImGui::PopStyleColor();
+		ImGui::PopStyleVar();
 
 		{
 			Ref<Texture2D> icon = (m_SceneState == SceneState::Edit || m_SceneState == SceneState::Simulate) ? m_IconPlay : m_IconStop;
@@ -941,7 +971,6 @@ namespace DME
 		ImGui::EndChild();
 
 		ImGui::End();
-		ImGui::PopStyleVar();
 	}
 
 	void EditorLayer::DebugWindow()

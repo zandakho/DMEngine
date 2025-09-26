@@ -90,7 +90,7 @@ namespace DME
 
 			int icon_w = 0, icon_h = 0, icon_channels = 0;
 			stbi_set_flip_vertically_on_load(0);
-			unsigned char* icon_pixels = stbi_load("Resources/Icons/Window/Window_WindowIcon_Img.png", &icon_w, &icon_h, &icon_channels, 4);
+			unsigned char* icon_pixels = stbi_load(Application::Get().GetSpecification().Icon.c_str(), &icon_w, &icon_h, &icon_channels, 4);
 			if (icon_pixels)
 			{
 				GLFWimage images[1];

@@ -1,6 +1,5 @@
 ﻿#pragma once
 
-
 #include "DME/Scene/Scene.h"
 
 namespace DME

@@ -272,9 +272,12 @@ namespace DME
 
 	void SceneSerializer::Serialize(const std::string& filepath)
 	{
+		std::filesystem::path filename = filepath;
+		std::string sceneName = filename.stem().string();
+
 		YAML::Emitter out;
 		out << YAML::BeginMap;
-		out << YAML::Key << "Scene" << YAML::Value << "Untitled";
+		out << YAML::Key << "Scene" << YAML::Value << sceneName;
 		out << YAML::Key << "Entities" << YAML::Value << YAML::BeginSeq;
 
 		m_Scene->m_Registry.view<entt::entity>().each([&](auto entityID)
@@ -419,6 +422,7 @@ namespace DME
 
 		return true;
 	}
+
 	bool SceneSerializer::DeSerializeRuntime(const std::string& filepath)
 	{
 		DME_CORE_ASSERT(false)

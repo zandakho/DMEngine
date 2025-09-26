@@ -21,30 +21,30 @@ namespace DME
 			ImGuiContext& g = *GImGui;
 			const ImGuiStyle& style = g.Style;
 			const ImGuiID id = window->GetID(label);
-			const ImVec2 label_size = ImGui::CalcTextSize(label, nullptr, true);
+			const ImVec2 label_size = ImGui::CalcTextSize(label, NULL, true);
 
 			const float square_sz = ImGui::GetFrameHeight();
 			const ImVec2 pos = window->DC.CursorPos;
-
-			const ImRect total_bb(pos, pos + ImVec2((label_size.x > 0.0f ? label_size.x + style.ItemInnerSpacing.x : 0.0f) + square_sz, ImMax(label_size.y, square_sz) + style.FramePadding.y * 2.0f));
-
+			const ImRect total_bb(pos, pos + ImVec2(square_sz + (label_size.x > 0.0f ? style.ItemInnerSpacing.x + label_size.x : 0.0f), label_size.y + style.FramePadding.y * 2.0f));
 			ImGui::ItemSize(total_bb, style.FramePadding.y);
 			const bool is_visible = ImGui::ItemAdd(total_bb, id);
 			const bool is_multi_select = (g.LastItemData.ItemFlags & ImGuiItemFlags_IsMultiSelect) != 0;
 			if (!is_visible)
-				if (!is_multi_select || !g.BoxSelectState.UnclipMode || !g.BoxSelectState.UnclipRect.Overlaps(total_bb))
+				if (!is_multi_select || !g.BoxSelectState.UnclipMode || !g.BoxSelectState.UnclipRect.Overlaps(total_bb)) // Extra layer of "no logic clip" for box-select support
 				{
 					IMGUI_TEST_ENGINE_ITEM_INFO(id, label, g.LastItemData.StatusFlags | ImGuiItemStatusFlags_Checkable | (*v ? ImGuiItemStatusFlags_Checked : 0));
 					return false;
 				}
 
+			// Range-Selection/Multi-selection support (header)
 			bool checked = *v;
 			if (is_multi_select)
-				ImGui::MultiSelectItemHeader(id, &checked, nullptr);
+				ImGui::MultiSelectItemHeader(id, &checked, NULL);
 
 			bool hovered, held;
 			bool pressed = ImGui::ButtonBehavior(total_bb, id, &hovered, &held);
 
+			// Range-Selection/Multi-selection support (footer)
 			if (is_multi_select)
 				ImGui::MultiSelectItemFooter(id, &checked, &pressed);
 			else if (pressed)
@@ -57,7 +57,8 @@ namespace DME
 				ImGui::MarkItemEdited(id);
 			}
 
-			const ImRect check_bb(ImVec2(total_bb.Max.x - square_sz, total_bb.Min.y), ImVec2(total_bb.Max.x, total_bb.Min.y + square_sz));
+			const float check_x = window->WorkRect.Max.x - square_sz - style.FramePadding.x;
+			const ImRect check_bb(ImVec2(check_x, pos.y), ImVec2(check_x + square_sz, pos.y + square_sz));
 
 			const bool mixed_value = (g.LastItemData.ItemFlags & ImGuiItemFlags_MixedValue) != 0;
 			if (is_visible)
@@ -66,6 +67,7 @@ namespace DME
 				ImGui::RenderFrame(check_bb.Min, check_bb.Max,
 					ImGui::GetColorU32((held && hovered) ? ImGuiCol_FrameBgActive : hovered ? ImGuiCol_FrameBgHovered : ImGuiCol_FrameBg),
 					true, style.FrameRounding);
+
 				ImU32 check_col = ImGui::GetColorU32(ImGuiCol_CheckMark);
 				if (mixed_value)
 				{
@@ -79,11 +81,7 @@ namespace DME
 				}
 			}
 
-			const ImVec2 label_pos(
-				total_bb.Min.x,
-				check_bb.Min.y + style.FramePadding.y
-			);
-
+			const ImVec2 label_pos = ImVec2(total_bb.Min.x, check_bb.Min.y + style.FramePadding.y);
 			if (g.LogEnabled)
 				ImGui::LogRenderedText(&label_pos, mixed_value ? "[~]" : *v ? "[x]" : "[ ]");
 

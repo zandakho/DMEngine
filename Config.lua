@@ -1,4 +1,4 @@
 CONFIG = 
 {
-    CONSOLE = true
+    CONSOLE = false
 }
