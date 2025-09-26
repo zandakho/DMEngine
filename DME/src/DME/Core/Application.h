@@ -58,7 +58,7 @@ namespace DME
 
 		bool IsWindowMaximized() const;
 		bool IsTitleBarHovered() const { return m_TitleBarHovered; }
-		void TitleBarHovered(bool hovered) { m_TitleBarHovered = hovered; }
+		void IsTitleBarHovered(bool hovered) { m_TitleBarHovered = hovered; }
 
 		ImGuiLayer* GetImGuiLayer() { return m_ImGuiLayer; }
 

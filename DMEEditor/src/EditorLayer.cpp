@@ -195,7 +195,7 @@ namespace DME
 			ImColor(120, 40, 120, 130)
 		);
 		ImGui::PushStyleColor(ImGuiCol_ChildBg, IM_COL32(0, 0, 0, 0));
-		ImGui::BeginChild("##TitleBarChildIcon", ImVec2(70, 70), ImGuiChildFlags_None, ImGuiWindowFlags_NoScrollbar | ImGuiWindowFlags_AlwaysUseWindowPadding);
+		ImGui::BeginChild("##TitleBarChildIcon", ImVec2(70, 70), ImGuiChildFlags_None, ImGuiWindowFlags_NoScrollbar | ImGuiWindowFlags_NoScrollWithMouse | ImGuiWindowFlags_AlwaysUseWindowPadding);
 
 		ImGui::Image(m_IconWindow->GetRendererID(), ImVec2(40, 40), { 0, 1 }, { 1, 0 });
 
@@ -207,7 +207,7 @@ namespace DME
 		ImGui::PushStyleColor(ImGuiCol_ChildBg, IM_COL32(0, 0, 0, 0));
 		ImGui::PushStyleColor(ImGuiCol_MenuBarBg, IM_COL32(0, 0, 0, 0));
 		ImGui::SetCursorPosX(70);
-		ImGui::BeginChild("##TitleBarChildMenuBar", ImVec2(ImGui::GetContentRegionAvail().x - 85, 70), ImGuiChildFlags_None, Application::Get().IsWindowMaximized() ? ImGuiWindowFlags_AlwaysUseWindowPadding | ImGuiWindowFlags_MenuBar | ImGuiWindowFlags_NoScrollbar : ImGuiWindowFlags_MenuBar | ImGuiWindowFlags_NoScrollbar);
+		ImGui::BeginChild("##TitleBarChildMenuBar", ImVec2(ImGui::GetContentRegionAvail().x - 85, 70), ImGuiChildFlags_None, Application::Get().IsWindowMaximized() ? ImGuiWindowFlags_AlwaysUseWindowPadding | ImGuiWindowFlags_MenuBar | ImGuiWindowFlags_NoScrollbar | ImGuiWindowFlags_NoScrollWithMouse : ImGuiWindowFlags_MenuBar | ImGuiWindowFlags_NoScrollbar | ImGuiWindowFlags_NoScrollWithMouse);
 
 		UITabBar();
 
@@ -258,9 +258,11 @@ namespace DME
 		window_flags |= ImGuiWindowFlags_NoBringToFrontOnFocus | ImGuiWindowFlags_NoNavFocus;
 
 		ImGui::PushStyleVar(ImGuiStyleVar_WindowPadding, ImVec2(0.0f, 0.0f));
+		ImGui::PushStyleColor(ImGuiCol_WindowBg, ImVec4(0.10f, 0.10f, 0.10f, 1.0f));
 
 		ImGui::Begin("Dockspace", nullptr, window_flags);
 
+		ImGui::PopStyleColor();
 		ImGui::PopStyleVar();
 
 		ImGui::PopStyleVar(2);
@@ -273,7 +275,9 @@ namespace DME
 		if (io.ConfigFlags & ImGuiConfigFlags_DockingEnable)
 		{
 			ImGuiID dockspace_id = ImGui::GetID("MyDockSpace");
+			ImGui::PushStyleColor(ImGuiCol_DockingEmptyBg, ImVec4(0.0f, 0.0f, 0.0f, 0.0f));
 			ImGui::DockSpace(dockspace_id, ImVec2(0.0f, 0.0f), ImGuiDockNodeFlags_None);
+			ImGui::PopStyleColor();
 		}
 
 		style.WindowMinSize.x = minWindowSizeX;
@@ -536,7 +540,7 @@ namespace DME
 			}
 
 			ImGui::InvisibleButton("##TitleBarDragZone", ImVec2(ImGui::GetContentRegionAvail().x, ImGui::GetFrameHeight()));
-			Application::Get().TitleBarHovered(ImGui::IsItemHovered());
+			Application::Get().IsTitleBarHovered(ImGui::IsItemHovered());
 
 			ImGui::SetCursorPosX(ImGui::GetContentRegionMax().x / 2 - (ImGui::CalcTextSize(Application::Get().GetSpecification().Name.c_str()).x / 2));
 			ImGui::Text("%s", Application::Get().GetSpecification().Name.c_str());
@@ -545,6 +549,12 @@ namespace DME
 			ImGui::PopStyleColor(2);
 
 		}
+
+		ImGui::PushStyleColor(ImGuiCol_FrameBg, IM_COL32(12, 12, 12, 160));
+		ImGui::BeginChild("##OpenSceneChild", !m_EditorScenePath.empty() ? ImVec2(ImGui::CalcTextSize(std::filesystem::path(m_EditorScenePath).stem().string().c_str()).x + ImGui::GetStyle().WindowPadding.x * 2.0f, 40) : ImVec2(ImGui::CalcTextSize("Untitled").x + ImGui::GetStyle().WindowPadding.x * 2.0f, 40), ImGuiChildFlags_FrameStyle, ImGuiWindowFlags_AlwaysUseWindowPadding);
+		ImGui::Text("%s", !m_EditorScenePath.empty() ? m_EditorScenePath.stem().string().c_str() : "Untitled");
+		ImGui::EndChild();
+		ImGui::PopStyleColor();
 
 	}
 

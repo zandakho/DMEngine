@@ -422,7 +422,6 @@ namespace DME
 				Renderer2D::DrawLine(transform.Position, worldCorners[1], textureColor, static_cast<int>(entity));
 				Renderer2D::DrawLine(transform.Position, worldCorners[2], textureColor, static_cast<int>(entity));
 				Renderer2D::DrawLine(transform.Position, worldCorners[3], textureColor, static_cast<int>(entity));
-
 			}
 
 		}

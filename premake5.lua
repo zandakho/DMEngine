@@ -1,5 +1,6 @@
 include "./vendor/premake/PremakeCustomization/SolutionItems.lua"
 include "Dependencies.lua"
+include "Config.lua"
 
 workspace "DME"
     architecture "x86_64"
@@ -23,7 +24,6 @@ workspace "DME"
     }
 
 outputdir = "%{cfg.buildcfg}-%{cfg.system}-%{cfg.architecture}"
-HideConsole = false;
 
 group "Vendor"
     include "vendor/premake"

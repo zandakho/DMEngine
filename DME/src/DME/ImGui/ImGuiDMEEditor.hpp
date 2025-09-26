@@ -11,164 +11,87 @@ namespace DME
 {
     namespace ImGuiDMEEditor
     {
-
-		inline bool BeginMenuBar(const char* str_id)
-		{
-			ImGuiWindow* window = ImGui::GetCurrentWindow();
-			if (window->SkipItems)
-				return false;
-			if (!(window->Flags & ImGuiWindowFlags_MenuBar))
-				return false;
-
-			IM_ASSERT(!window->DC.MenuBarAppending);
-			ImGui::BeginGroup(); // Backup position on layer 0 // FIXME: Misleading to use a group for that backup/restore
-			ImGui::PushID(str_id);
-
-			// We don't clip with current window clipping rectangle as it is already set to the area below. However we clip with window full rect.
-			// We remove 1 worth of rounding to Max.x to that text in long menus and small windows don't tend to display over the lower-right rounded area, which looks particularly glitchy.
-			const float border_top = ImMax(IM_ROUND(window->WindowBorderSize * 0.5f - window->TitleBarHeight), 0.0f);
-			const float border_half = IM_ROUND(window->WindowBorderSize * 0.5f);
-			ImRect bar_rect = window->MenuBarRect();
-			ImRect clip_rect(ImFloor(bar_rect.Min.x + border_half), ImFloor(bar_rect.Min.y + border_top), ImFloor(ImMax(bar_rect.Min.x, bar_rect.Max.x - ImMax(window->WindowRounding, border_half))), ImFloor(bar_rect.Max.y));
-			clip_rect.ClipWith(window->OuterRectClipped);
-			ImGui::PushClipRect(clip_rect.Min, clip_rect.Max, false);
-
-			// We overwrite CursorMaxPos because BeginGroup sets it to CursorPos (essentially the .EmitItem hack in EndMenuBar() would need something analogous here, maybe a BeginGroupEx() with flags).
-			window->DC.CursorPos = window->DC.CursorMaxPos = ImVec2(bar_rect.Min.x + window->DC.MenuBarOffset.x, bar_rect.Min.y + window->DC.MenuBarOffset.y);
-			window->DC.LayoutType = ImGuiLayoutType_Horizontal;
-			window->DC.IsSameLine = false;
-			window->DC.NavLayerCurrent = ImGuiNavLayer_Menu;
-			window->DC.MenuBarAppending = true;
-			ImGui::AlignTextToFramePadding();
-			return true;
-		}
-
-		inline void EndMenuBar()
-		{
-			ImGuiWindow* window = ImGui::GetCurrentWindow();
-			if (window->SkipItems)
-				return;
-			ImGuiContext& g = *GImGui;
-
-			IM_MSVC_WARNING_SUPPRESS(6011); // Static Analysis false positive "warning C6011: Dereferencing NULL pointer 'window'"
-			IM_ASSERT(window->Flags & ImGuiWindowFlags_MenuBar);
-			IM_ASSERT(window->DC.MenuBarAppending);
-
-			// Nav: When a move request within one of our child menu failed, capture the request to navigate among our siblings.
-			if (ImGui::NavMoveRequestButNoResultYet() && (g.NavMoveDir == ImGuiDir_Left || g.NavMoveDir == ImGuiDir_Right) && (g.NavWindow->Flags & ImGuiWindowFlags_ChildMenu))
-			{
-				// Try to find out if the request is for one of our child menu
-				ImGuiWindow* nav_earliest_child = g.NavWindow;
-				while (nav_earliest_child->ParentWindow && (nav_earliest_child->ParentWindow->Flags & ImGuiWindowFlags_ChildMenu))
-					nav_earliest_child = nav_earliest_child->ParentWindow;
-				if (nav_earliest_child->ParentWindow == window && nav_earliest_child->DC.ParentLayoutType == ImGuiLayoutType_Horizontal && (g.NavMoveFlags & ImGuiNavMoveFlags_Forwarded) == 0)
-				{
-					// To do so we claim focus back, restore NavId and then process the movement request for yet another frame.
-					// This involve a one-frame delay which isn't very problematic in this situation. We could remove it by scoring in advance for multiple window (probably not worth bothering)
-					const ImGuiNavLayer layer = ImGuiNavLayer_Menu;
-					IM_ASSERT(window->DC.NavLayersActiveMaskNext & (1 << layer)); // Sanity check (FIXME: Seems unnecessary)
-					ImGui::FocusWindow(window);
-					ImGui::SetNavID(window->NavLastIds[layer], layer, 0, window->NavRectRel[layer]);
-					// FIXME-NAV: How to deal with this when not using g.IO.ConfigNavCursorVisibleAuto?
-					if (g.NavCursorVisible)
-					{
-						g.NavCursorVisible = false; // Hide nav cursor for the current frame so we don't see the intermediary selection. Will be set again
-						g.NavCursorHideFrames = 2;
-					}
-					g.NavHighlightItemUnderNav = g.NavMousePosDirty = true;
-					ImGui::NavMoveRequestForward(g.NavMoveDir, g.NavMoveClipDir, g.NavMoveFlags, g.NavMoveScrollFlags); // Repeat
-				}
-			}
-
-			ImGui::PopClipRect();
-			ImGui::PopID();
-			IM_MSVC_WARNING_SUPPRESS(6011); // Static Analysis false positive "warning C6011: Dereferencing NULL pointer 'window'"
-			window->DC.MenuBarOffset.x = window->DC.CursorPos.x - window->Pos.x; // Save horizontal position so next append can reuse it. This is kinda equivalent to a per-layer CursorPos.
-
-			// FIXME: Extremely confusing, cleanup by (a) working on WorkRect stack system (b) not using a Group confusingly here.
-			ImGuiGroupData& group_data = g.GroupStack.back();
-			group_data.EmitItem = false;
-			ImVec2 restore_cursor_max_pos = group_data.BackupCursorMaxPos;
-			window->DC.IdealMaxPos.x = ImMax(window->DC.IdealMaxPos.x, window->DC.CursorMaxPos.x - window->Scroll.x); // Convert ideal extents for scrolling layer equivalent.
-			ImGui::EndGroup(); // Restore position on layer 0 // FIXME: Misleading to use a group for that backup/restore
-			window->DC.LayoutType = ImGuiLayoutType_Vertical;
-			window->DC.IsSameLine = false;
-			window->DC.NavLayerCurrent = ImGuiNavLayer_Main;
-			window->DC.MenuBarAppending = false;
-			window->DC.CursorMaxPos = restore_cursor_max_pos;
-		}
-
         inline bool Checkbox(const char* label, bool* v)
         {
 			
-            ImGuiWindow* window = ImGui::GetCurrentWindow();
-            if (window->SkipItems)
-                return false;
+			ImGuiWindow* window = ImGui::GetCurrentWindow();
+			if (window->SkipItems)
+				return false;
 
-            ImGuiContext& g = *GImGui;
-            const ImGuiStyle& style = g.Style;
-            const ImGuiID id = window->GetID(label);
-            const ImVec2 label_size = ImGui::CalcTextSize(label, nullptr, true);
+			ImGuiContext& g = *GImGui;
+			const ImGuiStyle& style = g.Style;
+			const ImGuiID id = window->GetID(label);
+			const ImVec2 label_size = ImGui::CalcTextSize(label, nullptr, true);
 
-            const float square_sz = ImGui::GetFrameHeight();
-            const ImVec2 pos = window->DC.CursorPos;
-            const ImRect total_bb(pos, pos + ImVec2(square_sz + (label_size.x > 0.0f ? style.ItemInnerSpacing.x + label_size.x : 0.0f), label_size.y + style.FramePadding.y * 2.0f));
-            ImGui::ItemSize(total_bb, style.FramePadding.y);
-            const bool is_visible = ImGui::ItemAdd(total_bb, id);
-            const bool is_multi_select = (g.LastItemData.ItemFlags & ImGuiItemFlags_IsMultiSelect) != 0;
-            if (!is_visible)
-                if (!is_multi_select || !g.BoxSelectState.UnclipMode || !g.BoxSelectState.UnclipRect.Overlaps(total_bb))
-                {
-                    IMGUI_TEST_ENGINE_ITEM_INFO(id, label, g.LastItemData.StatusFlags | ImGuiItemStatusFlags_Checkable | (*v ? ImGuiItemStatusFlags_Checked : 0));
-                    return false;
-                }
+			const float square_sz = ImGui::GetFrameHeight();
+			const ImVec2 pos = window->DC.CursorPos;
 
-            bool checked = *v;
-            if (is_multi_select)
-                ImGui::MultiSelectItemHeader(id, &checked, nullptr);
+			const ImRect total_bb(pos, pos + ImVec2((label_size.x > 0.0f ? label_size.x + style.ItemInnerSpacing.x : 0.0f) + square_sz, ImMax(label_size.y, square_sz) + style.FramePadding.y * 2.0f));
 
-            bool hovered, held;
-            bool pressed = ImGui::ButtonBehavior(total_bb, id, &hovered, &held);
+			ImGui::ItemSize(total_bb, style.FramePadding.y);
+			const bool is_visible = ImGui::ItemAdd(total_bb, id);
+			const bool is_multi_select = (g.LastItemData.ItemFlags & ImGuiItemFlags_IsMultiSelect) != 0;
+			if (!is_visible)
+				if (!is_multi_select || !g.BoxSelectState.UnclipMode || !g.BoxSelectState.UnclipRect.Overlaps(total_bb))
+				{
+					IMGUI_TEST_ENGINE_ITEM_INFO(id, label, g.LastItemData.StatusFlags | ImGuiItemStatusFlags_Checkable | (*v ? ImGuiItemStatusFlags_Checked : 0));
+					return false;
+				}
 
-            if (is_multi_select)
-                ImGui::MultiSelectItemFooter(id, &checked, &pressed);
-            else if (pressed)
-                checked = !checked;
+			bool checked = *v;
+			if (is_multi_select)
+				ImGui::MultiSelectItemHeader(id, &checked, nullptr);
 
-            if (*v != checked)
-            {
-                *v = checked;
-                pressed = true;
-                ImGui::MarkItemEdited(id);
-            }
+			bool hovered, held;
+			bool pressed = ImGui::ButtonBehavior(total_bb, id, &hovered, &held);
 
-            const ImRect check_bb(pos, pos + ImVec2(square_sz, square_sz));
-            const bool mixed_value = (g.LastItemData.ItemFlags & ImGuiItemFlags_MixedValue) != 0;
-            if (is_visible)
-            {
-                ImGui::RenderNavCursor(total_bb, id);
-                ImGui::RenderFrame(check_bb.Min, check_bb.Max, ImGui::GetColorU32((held && hovered) ? ImGuiCol_FrameBgActive : hovered ? ImGuiCol_FrameBgHovered : ImGuiCol_FrameBg), true, style.FrameRounding);
-                ImU32 check_col = ImGui::GetColorU32(ImGuiCol_CheckMark);
-                if (mixed_value)
-                {
-                    ImVec2 pad(ImMax(1.0f, IM_TRUNC(square_sz / 3.6f)), ImMax(1.0f, IM_TRUNC(square_sz / 3.6f)));
-                    window->DrawList->AddRectFilled(check_bb.Min + pad, check_bb.Max - pad, check_col, style.FrameRounding);
-                }
-                else if (*v)
-                {
-                    const float pad = ImMax(1.0f, IM_TRUNC(square_sz / 6.0f));
-                    ImGui::RenderCheckMark(window->DrawList, check_bb.Min + ImVec2(pad, pad), check_col, square_sz - pad * 2.0f);
-                }
-            }
-            const ImVec2 label_pos = ImVec2(check_bb.Max.x + style.ItemInnerSpacing.x, check_bb.Min.y + style.FramePadding.y);
-            if (g.LogEnabled)
-                ImGui::LogRenderedText(&label_pos, mixed_value ? "[~]" : *v ? "[x]" : "[ ]");
+			if (is_multi_select)
+				ImGui::MultiSelectItemFooter(id, &checked, &pressed);
+			else if (pressed)
+				checked = !checked;
 
-            if (is_visible && label_size.x > 0.0f)
-                ImGui::RenderText(label_pos, label);
+			if (*v != checked)
+			{
+				*v = checked;
+				pressed = true;
+				ImGui::MarkItemEdited(id);
+			}
 
-            IMGUI_TEST_ENGINE_ITEM_INFO(id, label, g.LastItemData.StatusFlags | ImGuiItemStatusFlags_Checkable | (*v ? ImGuiItemStatusFlags_Checked : 0));
-            return pressed;
+			const ImRect check_bb(ImVec2(total_bb.Max.x - square_sz, total_bb.Min.y), ImVec2(total_bb.Max.x, total_bb.Min.y + square_sz));
+
+			const bool mixed_value = (g.LastItemData.ItemFlags & ImGuiItemFlags_MixedValue) != 0;
+			if (is_visible)
+			{
+				ImGui::RenderNavCursor(total_bb, id);
+				ImGui::RenderFrame(check_bb.Min, check_bb.Max,
+					ImGui::GetColorU32((held && hovered) ? ImGuiCol_FrameBgActive : hovered ? ImGuiCol_FrameBgHovered : ImGuiCol_FrameBg),
+					true, style.FrameRounding);
+				ImU32 check_col = ImGui::GetColorU32(ImGuiCol_CheckMark);
+				if (mixed_value)
+				{
+					ImVec2 pad(ImMax(1.0f, IM_TRUNC(square_sz / 3.6f)), ImMax(1.0f, IM_TRUNC(square_sz / 3.6f)));
+					window->DrawList->AddRectFilled(check_bb.Min + pad, check_bb.Max - pad, check_col, style.FrameRounding);
+				}
+				else if (*v)
+				{
+					const float pad = ImMax(1.0f, IM_TRUNC(square_sz / 6.0f));
+					ImGui::RenderCheckMark(window->DrawList, check_bb.Min + ImVec2(pad, pad), check_col, square_sz - pad * 2.0f);
+				}
+			}
+
+			const ImVec2 label_pos(
+				total_bb.Min.x,
+				check_bb.Min.y + style.FramePadding.y
+			);
+
+			if (g.LogEnabled)
+				ImGui::LogRenderedText(&label_pos, mixed_value ? "[~]" : *v ? "[x]" : "[ ]");
+
+			if (is_visible && label_size.x > 0.0f)
+				ImGui::RenderText(label_pos, label);
+
+			IMGUI_TEST_ENGINE_ITEM_INFO(id, label, g.LastItemData.StatusFlags | ImGuiItemStatusFlags_Checkable | (*v ? ImGuiItemStatusFlags_Checked : 0));
+			return pressed;
         }
 
 		inline bool CheckboxAsRadio(const char* label, bool* value, ImTextureID* iconTexture = nullptr)
@@ -585,6 +508,5 @@ namespace DME
 
             return pressed;
         }
-
     }
 }

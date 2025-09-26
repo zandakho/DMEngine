@@ -287,31 +287,45 @@ namespace DME
 	void ContentBrowserPanel::DrawDirectoryTree(const std::filesystem::path& directory)
 	{
 		std::string folderName = directory.filename().string();
-		if (folderName.empty()) folderName = directory.string();
+		if (folderName.empty())
+			folderName = directory.string();
 
-		bool& openState = m_FolderStates[directory.string()];
+		ImGuiTreeNodeFlags nodeFlags = ImGuiTreeNodeFlags_SpanAvailWidth | ImGuiTreeNodeFlags_Framed;
+		if (m_CurrentDirectory == directory)
+			nodeFlags |= ImGuiTreeNodeFlags_Selected;
 
-		ImGui::Image(
+		ImGui::PushStyleVarY(ImGuiStyleVar_FramePadding, 2);
+		bool open = ImGui::TreeNodeEx(folderName.c_str(), nodeFlags);
+		ImGui::PopStyleVar();
+		ImVec2 cursorPos = ImGui::GetItemRectMin();
+		float lineHeight = ImGui::GetFrameHeight();
+
+		float iconSize = 16.0f;
+		float iconOffsetY = (lineHeight - iconSize) * 0.5f;
+
+		ImVec2 iconPos = cursorPos;
+		iconPos.x += ImGui::GetStyle().IndentSpacing + 8.0f;
+		iconPos.y += iconOffsetY - 2.0f;
+
+		ImGui::GetWindowDrawList()->AddImage(
 			reinterpret_cast<ImTextureID*>(static_cast<uintptr_t>(
-				openState ? m_OpenFolderIcon->GetRendererID() : m_CloseFolderIcon->GetRendererID())),
-			ImVec2(16, 16), { 0, 1 }, {1, 0});
-		ImGui::SameLine();
-
-		if (ImGui::Selectable(folderName.c_str(), m_CurrentDirectory == directory, ImGuiSelectableFlags_AllowDoubleClick | ImGuiSelectableFlags_SpanAvailWidth))
-			m_CurrentDirectory = directory;
+				open ? m_OpenFolderIcon->GetRendererID() : m_CloseFolderIcon->GetRendererID())),
+			iconPos,
+			ImVec2(iconPos.x + iconSize, iconPos.y + iconSize),
+			ImVec2(0, 1), ImVec2(1, 0)
+		);
 
 		if (ImGui::IsItemClicked())
-			openState = !openState;
+			m_CurrentDirectory = directory;
 
-		if (openState)
+		if (open)
 		{
-			ImGui::Indent(20.0f);
 			for (auto& entry : std::filesystem::directory_iterator(directory))
 			{
 				if (entry.is_directory())
 					DrawDirectoryTree(entry.path());
 			}
-			ImGui::Unindent(20.0f);
+			ImGui::TreePop();
 		}
 	}
 
