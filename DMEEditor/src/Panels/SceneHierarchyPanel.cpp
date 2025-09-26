@@ -19,6 +19,8 @@ namespace DME {
 	{
 		m_PlusSmallButton = Texture2D::Create("Resources/Icons/SceneHieararchy/SH_PlusSmallIcon_Img.png");
 		m_DeleteButton = Texture2D::Create("Resources/Icons/SceneHieararchy/SH_DeleteIcon_Img.png");
+
+
 	}
 
 	void SceneHierarchyPanel::OnDetach()
@@ -37,8 +39,6 @@ namespace DME {
 
 	void SceneHierarchyPanel::OnImGuiRender()
 	{
-		if (!m_Context) return;
-
 		ImGui::Begin("Scene Hierarchy", &m_SceneHierarchyRender, ImGuiWindowFlags_NoCollapse);
 
 		m_SceneHierarchyWindowFocused = ImGui::IsWindowFocused();
@@ -72,6 +72,12 @@ namespace DME {
 
 		ImGui::End();
 	}
+
+	void SceneHierarchyPanel::CreateSceneIfEmpty(Ref<Scene> scene)
+    {
+		if (!m_Context) m_Context = scene;
+    }
+
 
 	void SceneHierarchyPanel::DeleteSelectedEntity()
 	{

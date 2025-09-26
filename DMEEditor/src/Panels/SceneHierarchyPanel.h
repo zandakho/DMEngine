@@ -22,6 +22,8 @@ namespace DME {
 		void SetContext(const Ref<Scene>& context);
 		Ref<Scene> GetContext() { return m_Context; }
 
+		void CreateSceneIfEmpty(Ref<Scene> scene);
+
 		Entity GetSelectedEntity() const { return m_SelectionContext; }
 		void ClearSelectedContext() { m_SelectionContext = {}; }
 		void SetSelectedEntity(Entity entity) { m_SelectionContext = entity; }
@@ -42,6 +44,9 @@ namespace DME {
 	public: // UI
 
 		void DrawEntityNode(Entity entity);
+
+		void UpdateContext();
+		bool IsContextClear();
 
 	public:
 
